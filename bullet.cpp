@@ -46,9 +46,9 @@ void Bullet::_notification(int p_what)
     {
         case NOTIFICATION_DRAW:
         {
-            Ref<Texture> tex = type->get_texture();
-            if (tex.is_null())
+            if(type.is_null() or type->get_texture().is_null())
                 return;
+            Ref<Texture> tex = type->get_texture();
             RID ci = get_canvas_item();
 
             tex->draw(ci, -tex->get_size() / 2);
