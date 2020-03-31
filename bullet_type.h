@@ -27,7 +27,6 @@ class BulletType : public Resource{
         static void _bind_methods();
 
     public:
-
         BulletType();
         ~BulletType();
 
