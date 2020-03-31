@@ -4,8 +4,8 @@ Import('env')
 
 sources = [
     "register_types.cpp",
-    "summator.cpp",
-    "bullet_type.cpp"
+    "bullet_type.cpp",
+    "bullet.cpp",
 ]
 
 module_env = env.Clone()
