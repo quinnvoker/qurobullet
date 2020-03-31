@@ -1,0 +1,35 @@
+# SCsub
+
+Import('env')
+
+sources = [
+    "register_types.cpp",
+    "summator.cpp",
+    "bullet_type.cpp"
+]
+
+module_env = env.Clone()
+module_env.Append(CCFLAGS=['-O2'])
+module_env.Append(CXXFLAGS=['-std=c++11'])
+
+if ARGUMENTS.get('qurobullet_shared', 'no') == 'yes':
+    # Shared lib compilation
+    module_env.Append(CCFLAGS=['-fPIC']) # Needed to compile shared library
+    # We don't want godot's dependencies to be injected into our shared library.
+    module_env['LIBS'] = []
+
+    # Now define the shared library. Note that by default it would be built
+    # into the module's folder, however it's better to output it into `bin`
+    # next to the Godot binary.
+    shared_lib = module_env.SharedLibrary(target='#bin/qurobullet', source=sources)
+
+    # Finally notify the main env it has our shared lirary as a new dependency.
+    # To do so, SCons wants the name of the lib with it custom suffixes
+    # (e.g. ".x11.tools.64") but without the final ".so".
+    # We pass this along with the directory of our library to the main env.
+    shared_lib_shim = shared_lib[0].name.rsplit('.', 1)[0]
+    env.Append(LIBS=[shared_lib_shim])
+    env.Append(LIBPATH=['#bin'])
+else:
+    # Static compilation
+    module_env.add_source_files(env.modules_sources, sources)
