@@ -13,10 +13,11 @@ class BulletType : public Resource{
     private:
         Ref<Texture> texture;
         Ref<Material> material;
+        bool face_direction;
+        float scale;
         float damage;
         Ref<Shape2D> collision_shape;
         int collision_mask;
-        float scale;
         float speed;
         float linear_acceleration;
         float curve_rate;
@@ -35,6 +36,9 @@ class BulletType : public Resource{
 
         void set_material(Ref<Material> value);
         Ref<Material> get_material();
+
+        void set_face_direction(bool value);
+        bool get_face_direction();
 
         void set_damage(float value);
         float get_damage();
