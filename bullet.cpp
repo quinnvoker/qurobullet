@@ -1,9 +1,9 @@
 #include "bullet.h"
 
+#include "core/os/os.h"
+
 void Bullet::_bind_methods()
 {
-    ClassDB::bind_method(D_METHOD("_ready"), &Bullet::_ready);
-
     ClassDB::bind_method(D_METHOD("move", "delta"), &Bullet::move);
 
     ClassDB::bind_method(D_METHOD("set_active", "active"), &Bullet::set_active);
@@ -37,6 +37,8 @@ Bullet::~Bullet()
 
 void Bullet::_ready()
 {
+    if(get_tree()->is_node_being_edited(this))
+        return;
     set_active(false);
 }
 
@@ -55,6 +57,11 @@ void Bullet::_notification(int p_what)
         }
             
             break;
+        
+        case NOTIFICATION_READY:
+        {
+            _ready();
+        }
         
         default:
             break;
@@ -96,6 +103,12 @@ float Bullet::get_lifetime()
 void Bullet::set_direction(Vector2 value)
 {
     direction = value;
+    if(get_tree()->is_node_being_edited(this))
+        return;
+    if(!type.is_null() && type->get_face_direction())
+        set_rotation(direction.angle());
+    else
+        set_rotation(0.0);  
 }
 
 Vector2 Bullet::get_direction()

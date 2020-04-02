@@ -8,6 +8,12 @@ void BulletType::_bind_methods()
     ClassDB::bind_method(D_METHOD("set_material", "material"), &BulletType::set_material);
     ClassDB::bind_method(D_METHOD("get_material"), &BulletType::get_material);
 
+    ClassDB::bind_method(D_METHOD("set_face_direction", "enabled"), &BulletType::set_face_direction);
+    ClassDB::bind_method(D_METHOD("get_face_direction"), &BulletType::get_face_direction);
+
+    ClassDB::bind_method(D_METHOD("set_scale", "scale"), &BulletType::set_scale);
+    ClassDB::bind_method(D_METHOD("get_scale"), &BulletType::get_scale);
+
     ClassDB::bind_method(D_METHOD("set_damage", "damage"), &BulletType::set_damage);
     ClassDB::bind_method(D_METHOD("get_damage"), &BulletType::get_damage);
 
@@ -16,9 +22,6 @@ void BulletType::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("set_collision_mask", "collision_mask"), &BulletType::set_collision_mask);
     ClassDB::bind_method(D_METHOD("get_collision_mask"), &BulletType::get_collision_mask);
-
-    ClassDB::bind_method(D_METHOD("set_scale", "scale"), &BulletType::set_scale);
-    ClassDB::bind_method(D_METHOD("get_scale"), &BulletType::get_scale);
 
     ClassDB::bind_method(D_METHOD("set_speed", "speed"), &BulletType::set_speed);
     ClassDB::bind_method(D_METHOD("get_speed"), &BulletType::get_speed);
@@ -38,10 +41,11 @@ void BulletType::_bind_methods()
 
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "scale"), "set_scale", "get_scale");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage"), "set_damage", "get_damage");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "collision_shape", PROPERTY_HINT_RESOURCE_TYPE, "Shape2D"), "set_collision_shape", "get_collision_shape");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "collision_mask", PROPERTY_HINT_LAYERS_2D_PHYSICS), "set_collision_mask", "get_collision_mask");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "scale"), "set_scale", "get_scale");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "speed"), "set_speed", "get_speed");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "linear_acceleration"), "set_linear_acceleration", "get_linear_acceleration");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate"), "set_curve_rate", "get_curve_rate");
@@ -53,10 +57,11 @@ BulletType::BulletType()
 {
     texture = Ref<Texture>();
     material = Ref<Material>();
+    face_direction = false;
+    scale = 1.0;
     damage = 0.0;
     collision_shape = Ref<Shape2D>();
     collision_mask = 0;
-    scale = 1.0;
     speed = 100.0;
     linear_acceleration = 0.0;
     curve_rate = 0.0;
@@ -89,6 +94,26 @@ Ref<Material> BulletType::get_material()
     return material;
 }
 
+void BulletType::set_face_direction(bool value)
+{
+    face_direction = value;
+}
+
+bool BulletType::get_face_direction()
+{
+    return face_direction;
+}
+
+void BulletType::set_scale(float value)
+{
+    scale = value;
+}
+
+float BulletType::get_scale()
+{
+    return scale;
+}
+
 void BulletType::set_damage(float value)
 {
     damage = value;
@@ -117,16 +142,6 @@ void BulletType::set_collision_mask(int value)
 int BulletType::get_collision_mask()
 {
     return collision_mask;
-}
-
-void BulletType::set_scale(float value)
-{
-    scale = value;
-}
-
-float BulletType::get_scale()
-{
-    return scale;
 }
 
 void BulletType::set_speed(float value)
