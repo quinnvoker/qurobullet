@@ -1,5 +1,7 @@
 #include "bullet_server.h"
 
+#include "core/engine.h"
+#include "bullet_server_relay.h"
 #include "scene/resources/world_2d.h"
 #include "servers/physics_2d_server.h"
 #include <algorithm>
@@ -61,8 +63,11 @@ void BulletServer::_ready()
         return;
     set_physics_process(true);
     play_area = get_viewport_rect().grow(play_area_margin);
-    get_node(NodePath("/root/BulletServerRelay"))->connect("bullet_spawn_requested", this, "spawn_bullet");
-    get_node(NodePath("/root/BulletServerRelay"))->connect("volley_spawn_requested", this, "spawn_volley");
+    BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
+    relay->connect("bullet_spawn_requested", this, "spawn_bullet");
+    relay->connect("volley_spawn_requested", this, "spawn_volley");
+    //get_node(NodePath("/root/BulletServerRelay"))->connect("bullet_spawn_requested", this, "spawn_bullet");
+    //get_node(NodePath("/root/BulletServerRelay"))->connect("volley_spawn_requested", this, "spawn_volley");
     _init_bullets();
 }
 
@@ -72,7 +77,7 @@ void BulletServer::_physics_process(float delta)
         return;
     std::vector<int> bullet_indices_to_clear = std::vector<int>();
     Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
-    Physics2DDirectSpaceState::ShapeResult *result = new Physics2DDirectSpaceState::ShapeResult();
+    Physics2DDirectSpaceState::ShapeResult *result = memnew(Physics2DDirectSpaceState::ShapeResult);
     for( int i = 0; i < int(live_bullets.size()); i++ )
     {
         Bullet *bullet = live_bullets[i];
@@ -96,7 +101,7 @@ void BulletServer::_physics_process(float delta)
             bullet_indices_to_clear.push_back(i);
         }
     }
-    delete result;
+    memdelete(result);
     for(int i = 0; i < int(bullet_indices_to_clear.size()); i++)
     {
         Bullet *bullet = live_bullets[bullet_indices_to_clear[i] - i];
@@ -159,7 +164,7 @@ void BulletServer::_init_bullets()
 
 void BulletServer::_create_bullet()
 {
-    Bullet* bullet = new Bullet();
+    Bullet* bullet = memnew(Bullet);
     add_child(bullet);
     dead_bullets.insert(dead_bullets.begin(), bullet);
 }
@@ -186,7 +191,7 @@ void BulletServer::set_bullet_pool_size(int value)
             live_bullets.pop_back();
         }
         remove_child(bullet);
-        delete bullet;
+        memdelete(bullet);
     }
 }
 
