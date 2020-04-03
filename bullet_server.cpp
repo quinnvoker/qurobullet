@@ -28,7 +28,6 @@ BulletServer::BulletServer()
 {
     set_physics_process(true);
     bullet_pool_size = 1500;
-    play_area = Rect2();
     play_area_margin = 0;
 }
 
@@ -66,8 +65,6 @@ void BulletServer::_ready()
     BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
     relay->connect("bullet_spawn_requested", this, "spawn_bullet");
     relay->connect("volley_spawn_requested", this, "spawn_volley");
-    //get_node(NodePath("/root/BulletServerRelay"))->connect("bullet_spawn_requested", this, "spawn_bullet");
-    //get_node(NodePath("/root/BulletServerRelay"))->connect("volley_spawn_requested", this, "spawn_volley");
     _init_bullets();
 }
 
@@ -75,20 +72,19 @@ void BulletServer::_physics_process(float delta)
 {
     if(get_tree()->is_node_being_edited(this))
         return;
-    std::vector<int> bullet_indices_to_clear = std::vector<int>();
+    std::vector<int> bullet_indices_to_clear;
     Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
-    Physics2DDirectSpaceState::ShapeResult *result = memnew(Physics2DDirectSpaceState::ShapeResult);
+    Physics2DDirectSpaceState::ShapeResult results;
     for( int i = 0; i < int(live_bullets.size()); i++ )
     {
         Bullet *bullet = live_bullets[i];
         if(play_area.has_point(bullet->get_position()))
         {
             bullet->move(delta);
-            Ref<BulletType> bullet_type = bullet->get_type(); 
-            int collisions = space_state->intersect_shape(bullet_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0.0, result, 1, Set<RID>(), bullet_type->get_collision_mask(), true, true);
+            int collisions = bullet->intersect_shape(*space_state, &results);
             if(collisions > 0)
             {
-                emit_signal("object_hit", result->collider, bullet);
+                emit_signal("object_hit", results.collider, bullet);
                 bullet_indices_to_clear.push_back(i);
             }
             else
@@ -101,7 +97,6 @@ void BulletServer::_physics_process(float delta)
             bullet_indices_to_clear.push_back(i);
         }
     }
-    memdelete(result);
     for(int i = 0; i < int(bullet_indices_to_clear.size()); i++)
     {
         Bullet *bullet = live_bullets[bullet_indices_to_clear[i] - i];

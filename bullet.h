@@ -3,6 +3,7 @@
 
 #include "scene/2d/node_2d.h"
 #include "bullet_type.h"
+#include "servers/physics_2d_server.h"
 
 class Bullet : public Node2D
 {
@@ -29,6 +30,7 @@ class Bullet : public Node2D
         void _ready();
 
         void move(float delta);
+        int intersect_shape(Physics2DDirectSpaceState &p_space_state, Physics2DDirectSpaceState::ShapeResult *r_results);
 
         void set_active(bool value);
         bool get_active();
