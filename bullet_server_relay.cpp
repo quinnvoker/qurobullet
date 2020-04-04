@@ -14,10 +14,10 @@ BulletServerRelay::BulletServerRelay() {
 BulletServerRelay::~BulletServerRelay() {
 }
 
-void BulletServerRelay::on_bullet_fired(Ref<BulletType> type, Vector2 position, Vector2 direction) {
-	emit_signal("bullet_spawn_requested", type, position, direction);
+void BulletServerRelay::on_bullet_fired(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
+	emit_signal("bullet_spawn_requested", p_type, p_position, p_direction);
 }
 
-void BulletServerRelay::on_volley_fired(Ref<BulletType> type, Vector2 position, Array shots) {
-	emit_signal("volley_spawn_requested", type, position, shots);
+void BulletServerRelay::on_volley_fired(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_shots){
+	emit_signal("volley_spawn_requested", p_type, p_position, p_shots);
 }

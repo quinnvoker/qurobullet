@@ -14,8 +14,8 @@ public:
 	BulletServerRelay();
 	~BulletServerRelay();
 
-	void on_bullet_fired(Ref<BulletType> p_type, Vector2 p_position, Vector2 p_direction);
-	void on_volley_fired(Ref<BulletType> p_type, Vector2 p_position, Array shots);
+	void on_bullet_fired(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
+	void on_volley_fired(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_shots);
 };
 
 #endif
