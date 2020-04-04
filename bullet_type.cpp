@@ -70,98 +70,98 @@ BulletType::~BulletType() {
 	// cleanup goes here
 }
 
-void BulletType::set_texture(Ref<Texture> value) {
-	texture = value;
+void BulletType::set_texture(const Ref<Texture> &p_texture) {
+	texture = p_texture;
 }
 
-Ref<Texture> BulletType::get_texture() {
+Ref<Texture> BulletType::get_texture() const {
 	return texture;
 }
 
-void BulletType::set_material(Ref<Material> value) {
-	material = value;
+void BulletType::set_material(const Ref<Material> &p_material) {
+	material = p_material;
 }
 
-Ref<Material> BulletType::get_material() {
+Ref<Material> BulletType::get_material() const {
 	return material;
 }
 
-void BulletType::set_face_direction(bool value) {
-	face_direction = value;
+void BulletType::set_face_direction(bool p_enabled) {
+	face_direction = p_enabled;
 }
 
-bool BulletType::get_face_direction() {
+bool BulletType::get_face_direction() const {
 	return face_direction;
 }
 
-void BulletType::set_scale(float value) {
-	scale = value;
+void BulletType::set_scale(float p_scale) {
+	scale = p_scale;
 }
 
-float BulletType::get_scale() {
+float BulletType::get_scale() const {
 	return scale;
 }
 
-void BulletType::set_damage(float value) {
-	damage = value;
+void BulletType::set_damage(float p_amount) {
+	damage = p_amount;
 }
 
-float BulletType::get_damage() {
+float BulletType::get_damage() const {
 	return damage;
 }
 
-void BulletType::set_collision_shape(Ref<Shape2D> value) {
-	collision_shape = value;
+void BulletType::set_collision_shape(const Ref<Shape2D> &p_shape) {
+	collision_shape = p_shape;
 }
 
-Ref<Shape2D> BulletType::get_collision_shape() {
+Ref<Shape2D> BulletType::get_collision_shape() const {
 	return collision_shape;
 }
 
-void BulletType::set_collision_mask(int value) {
-	collision_mask = value;
+void BulletType::set_collision_mask(int p_mask) {
+	collision_mask = p_mask;
 }
 
-int BulletType::get_collision_mask() {
+int BulletType::get_collision_mask() const {
 	return collision_mask;
 }
 
-void BulletType::set_speed(float value) {
-	speed = value;
+void BulletType::set_speed(float p_speed) {
+	speed = p_speed;
 }
 
-float BulletType::get_speed() {
+float BulletType::get_speed() const {
 	return speed;
 }
 
-void BulletType::set_linear_acceleration(float value) {
-	linear_acceleration = value;
+void BulletType::set_linear_acceleration(float p_acceleration) {
+	linear_acceleration = p_acceleration;
 }
 
-float BulletType::get_linear_acceleration() {
+float BulletType::get_linear_acceleration() const {
 	return linear_acceleration;
 }
 
-void BulletType::set_curve_rate(float value) {
-	curve_rate = value;
+void BulletType::set_curve_rate(float p_degrees_per_sec) {
+	curve_rate = p_degrees_per_sec;
 }
 
-float BulletType::get_curve_rate() {
+float BulletType::get_curve_rate() const {
 	return curve_rate;
 }
 
-void BulletType::set_sin_amplitude(float value) {
-	sin_amplitude = value;
+void BulletType::set_sin_amplitude(float p_amplitude) {
+	sin_amplitude = p_amplitude;
 }
 
-float BulletType::get_sin_amplitude() {
+float BulletType::get_sin_amplitude() const {
 	return sin_amplitude;
 }
 
-void BulletType::set_sin_frequency(float value) {
-	sin_frequency = value;
+void BulletType::set_sin_frequency(float p_freq) {
+	sin_frequency = p_freq;
 }
 
-float BulletType::get_sin_frequency() {
+float BulletType::get_sin_frequency() const {
 	return sin_frequency;
 }

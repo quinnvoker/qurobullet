@@ -31,16 +31,16 @@ public:
 	void move(float delta);
 	int intersect_shape(Physics2DDirectSpaceState &p_space_state,  Physics2DDirectSpaceState::ShapeResult *r_results);
 
-	void set_active(bool p_value);
+	void set_active(bool p_active);
 	bool get_active() const;
 
-	void set_lifetime(float p_value);
+	void set_lifetime(float p_time);
 	float get_lifetime() const;
 
-	void set_direction(const Vector2 &p_value);
+	void set_direction(const Vector2 &p_direction);
 	Vector2 get_direction() const;
 
-	void set_type(const Ref<BulletType> &p_value);
+	void set_type(const Ref<BulletType> &p_type);
 	Ref<BulletType> get_type() const;
 };
 

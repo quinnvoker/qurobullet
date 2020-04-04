@@ -31,41 +31,41 @@ public:
 	BulletType();
 	~BulletType();
 
-	void set_texture(Ref<Texture> value);
-	Ref<Texture> get_texture();
+	void set_texture(const Ref<Texture> &p_texture);
+	Ref<Texture> get_texture() const;
 
-	void set_material(Ref<Material> value);
-	Ref<Material> get_material();
+	void set_material(const Ref<Material> &p_material);
+	Ref<Material> get_material() const;
 
-	void set_face_direction(bool value);
-	bool get_face_direction();
+	void set_face_direction(bool p_enabled);
+	bool get_face_direction() const;
 
-	void set_damage(float value);
-	float get_damage();
+	void set_damage(float p_amount);
+	float get_damage() const;
 
-	void set_collision_shape(Ref<Shape2D> value);
-	Ref<Shape2D> get_collision_shape();
+	void set_collision_shape(const Ref<Shape2D> &p_shape);
+	Ref<Shape2D> get_collision_shape() const;
 
-	void set_collision_mask(int value);
-	int get_collision_mask();
+	void set_collision_mask(int p_mask);
+	int get_collision_mask() const;
 
-	void set_scale(float value);
-	float get_scale();
+	void set_scale(float p_scale);
+	float get_scale() const;
 
-	void set_speed(float value);
-	float get_speed();
+	void set_speed(float p_speed);
+	float get_speed() const;
 
-	void set_linear_acceleration(float value);
-	float get_linear_acceleration();
+	void set_linear_acceleration(float p_acceleration);
+	float get_linear_acceleration() const;
 
-	void set_curve_rate(float value);
-	float get_curve_rate();
+	void set_curve_rate(float p_degrees_per_sec);
+	float get_curve_rate() const;
 
-	void set_sin_amplitude(float value);
-	float get_sin_amplitude();
+	void set_sin_amplitude(float p_amplitude);
+	float get_sin_amplitude() const;
 
-	void set_sin_frequency(float value);
-	float get_sin_frequency();
+	void set_sin_frequency(float p_freq);
+	float get_sin_frequency() const;
 };
 
 #endif
