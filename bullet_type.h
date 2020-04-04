@@ -3,70 +3,69 @@
 
 #include "core/reference.h"
 #include "core/resource.h"
-#include "scene/resources/texture.h"
 #include "scene/resources/material.h"
 #include "scene/resources/shape_2d.h"
+#include "scene/resources/texture.h"
 
-class BulletType : public Resource{
-    GDCLASS(BulletType, Resource);
+class BulletType : public Resource {
+	GDCLASS(BulletType, Resource);
 
-    private:
-        Ref<Texture> texture;
-        Ref<Material> material;
-        bool face_direction;
-        float scale;
-        float damage;
-        Ref<Shape2D> collision_shape;
-        int collision_mask;
-        float speed;
-        float linear_acceleration;
-        float curve_rate;
-        float sin_amplitude;
-        float sin_frequency;
-    
-    protected:
-        static void _bind_methods();
+private:
+	Ref<Texture> texture;
+	Ref<Material> material;
+	bool face_direction;
+	float scale;
+	float damage;
+	Ref<Shape2D> collision_shape;
+	int collision_mask;
+	float speed;
+	float linear_acceleration;
+	float curve_rate;
+	float sin_amplitude;
+	float sin_frequency;
 
-    public:
-        BulletType();
-        ~BulletType();
+protected:
+	static void _bind_methods();
 
-        void set_texture(Ref<Texture> value);
-        Ref<Texture> get_texture();
+public:
+	BulletType();
+	~BulletType();
 
-        void set_material(Ref<Material> value);
-        Ref<Material> get_material();
+	void set_texture(Ref<Texture> value);
+	Ref<Texture> get_texture();
 
-        void set_face_direction(bool value);
-        bool get_face_direction();
+	void set_material(Ref<Material> value);
+	Ref<Material> get_material();
 
-        void set_damage(float value);
-        float get_damage();
+	void set_face_direction(bool value);
+	bool get_face_direction();
 
-        void set_collision_shape(Ref<Shape2D> value);
-        Ref<Shape2D> get_collision_shape();
+	void set_damage(float value);
+	float get_damage();
 
-        void set_collision_mask(int value);
-        int get_collision_mask();
+	void set_collision_shape(Ref<Shape2D> value);
+	Ref<Shape2D> get_collision_shape();
 
-        void set_scale(float value);
-        float get_scale();
+	void set_collision_mask(int value);
+	int get_collision_mask();
 
-        void set_speed(float value);
-        float get_speed();
+	void set_scale(float value);
+	float get_scale();
 
-        void set_linear_acceleration(float value);
-        float get_linear_acceleration();
+	void set_speed(float value);
+	float get_speed();
 
-        void set_curve_rate(float value);
-        float get_curve_rate();
+	void set_linear_acceleration(float value);
+	float get_linear_acceleration();
 
-        void set_sin_amplitude(float value);
-        float get_sin_amplitude();
+	void set_curve_rate(float value);
+	float get_curve_rate();
 
-        void set_sin_frequency(float value);
-        float get_sin_frequency();
+	void set_sin_amplitude(float value);
+	float get_sin_amplitude();
+
+	void set_sin_frequency(float value);
+	float get_sin_frequency();
 };
-
 
 #endif

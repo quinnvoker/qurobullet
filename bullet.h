@@ -1,49 +1,47 @@
 #ifndef BULLET_H
 #define BULLET_H
 
-#include "scene/2d/node_2d.h"
 #include "bullet_type.h"
+#include "scene/2d/node_2d.h"
 #include "servers/physics_2d_server.h"
 
-class Bullet : public Node2D
-{
-    GDCLASS(Bullet, Node2D);
+class Bullet : public Node2D {
+	GDCLASS(Bullet, Node2D);
 
-    private:
-        bool active;
-        float lifetime;
+private:
+	bool active;
+	float lifetime;
 
-        Vector2 direction;
-        Vector2 perp_offset;
+	Vector2 direction;
+	Vector2 perp_offset;
 
-        Ref<BulletType> type;
-    
-    protected:
-        void _notification(int p_what);
+	Ref<BulletType> type;
 
-        static void _bind_methods();
+protected:
+	void _notification(int p_what);
 
-    public:
-        Bullet();
-        ~Bullet();
+	static void _bind_methods();
 
-        void _ready();
+public:
+	Bullet();
+	~Bullet();
 
-        void move(float delta);
-        int intersect_shape(Physics2DDirectSpaceState &p_space_state, Physics2DDirectSpaceState::ShapeResult *r_results);
+	void _ready();
 
-        void set_active(bool value);
-        bool get_active();
+	void move(float delta);
+	int intersect_shape(Physics2DDirectSpaceState &p_space_state, Physics2DDirectSpaceState::ShapeResult *r_results);
 
-        void set_lifetime(float value);
-        float get_lifetime();
+	void set_active(bool value);
+	bool get_active();
 
-        void set_direction(Vector2 value);
-        Vector2 get_direction();
+	void set_lifetime(float value);
+	float get_lifetime();
 
-        void set_type(Ref<BulletType> value);
-        Ref<BulletType> get_type();
+	void set_direction(Vector2 value);
+	Vector2 get_direction();
+
+	void set_type(Ref<BulletType> value);
+	Ref<BulletType> get_type();
 };
-
 
 #endif
