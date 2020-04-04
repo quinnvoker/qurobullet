@@ -79,6 +79,12 @@ void Bullet::move(float delta)
     perp_offset = new_perp_offset;
 }
 
+int Bullet::intersect_shape(Physics2DDirectSpaceState &p_space_state, Physics2DDirectSpaceState::ShapeResult *r_results)
+{
+    int collisions = p_space_state.intersect_shape(type->get_collision_shape()->get_rid(), get_transform(), Vector2(0,0), 0.0, r_results, 1, Set<RID>(), type->get_collision_mask(), true, true);
+    return collisions;
+}
+
 void Bullet::set_active(bool value)
 {
     active = value;
