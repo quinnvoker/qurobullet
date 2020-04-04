@@ -6,32 +6,6 @@
 #include "servers/physics_2d_server.h"
 #include <algorithm>
 
-void BulletServer::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &BulletServer::_physics_process);
-	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
-	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "shots"), &BulletServer::spawn_volley);
-
-	ClassDB::bind_method(D_METHOD("set_bullet_pool_size", "size"), &BulletServer::set_bullet_pool_size);
-	ClassDB::bind_method(D_METHOD("get_bullet_pool_size"), &BulletServer::get_bullet_pool_size);
-
-	ClassDB::bind_method(D_METHOD("set_play_area_margin", "margin"), &BulletServer::set_play_area_margin);
-	ClassDB::bind_method(D_METHOD("get_play_area_margin"), &BulletServer::get_play_area_margin);
-
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size"), "set_bullet_pool_size", "get_bullet_pool_size");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "play_area_margin"), "set_play_area_margin", "get_play_area_margin");
-
-	ADD_SIGNAL(MethodInfo("object_hit", PropertyInfo(Variant::OBJECT, "object", PROPERTY_HINT_RESOURCE_TYPE, "CollisionObject2D"), PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet")));
-}
-
-BulletServer::BulletServer() {
-	set_physics_process(true);
-	bullet_pool_size = 1500;
-	play_area_margin = 0;
-}
-
-BulletServer::~BulletServer() {
-}
-
 void BulletServer::_notification(int p_what) {
 	switch (p_what) {
 
@@ -161,4 +135,30 @@ void BulletServer::set_play_area_margin(int p_margin) {
 
 int BulletServer::get_play_area_margin() const {
 	return play_area_margin;
+}
+
+void BulletServer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &BulletServer::_physics_process);
+	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
+	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "shots"), &BulletServer::spawn_volley);
+
+	ClassDB::bind_method(D_METHOD("set_bullet_pool_size", "size"), &BulletServer::set_bullet_pool_size);
+	ClassDB::bind_method(D_METHOD("get_bullet_pool_size"), &BulletServer::get_bullet_pool_size);
+
+	ClassDB::bind_method(D_METHOD("set_play_area_margin", "margin"), &BulletServer::set_play_area_margin);
+	ClassDB::bind_method(D_METHOD("get_play_area_margin"), &BulletServer::get_play_area_margin);
+
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size"), "set_bullet_pool_size", "get_bullet_pool_size");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "play_area_margin"), "set_play_area_margin", "get_play_area_margin");
+
+	ADD_SIGNAL(MethodInfo("object_hit", PropertyInfo(Variant::OBJECT, "object", PROPERTY_HINT_RESOURCE_TYPE, "CollisionObject2D"), PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet")));
+}
+
+BulletServer::BulletServer() {
+	set_physics_process(true);
+	bullet_pool_size = 1500;
+	play_area_margin = 0;
+}
+
+BulletServer::~BulletServer() {
 }

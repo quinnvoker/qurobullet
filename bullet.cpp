@@ -2,36 +2,6 @@
 
 #include "core/os/os.h"
 
-void Bullet::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("move", "delta"), &Bullet::move);
-
-	ClassDB::bind_method(D_METHOD("set_active", "active"), &Bullet::set_active);
-	ClassDB::bind_method(D_METHOD("get_active"), &Bullet::get_active);
-
-	ClassDB::bind_method(D_METHOD("set_direction", "direction"), &Bullet::set_direction);
-	ClassDB::bind_method(D_METHOD("get_direction"), &Bullet::get_direction);
-
-	ClassDB::bind_method(D_METHOD("set_type", "type"), &Bullet::set_type);
-	ClassDB::bind_method(D_METHOD("get_type"), &Bullet::get_type);
-
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "active"), "set_active", "get_active");
-	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "direction"), "set_direction", "get_direction");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_type", "get_type");
-}
-
-Bullet::Bullet() {
-	active = false;
-	lifetime = 0.0;
-
-	direction = Vector2(1, 0);
-	perp_offset = Vector2(0, 0);
-
-	type = Ref<BulletType>();
-}
-
-Bullet::~Bullet() {
-}
-
 void Bullet::_ready() {
 	if (get_tree()->is_node_being_edited(this))
 		return;
@@ -117,4 +87,34 @@ void Bullet::set_type(const Ref<BulletType> &p_type) {
 
 Ref<BulletType> Bullet::get_type() const {
 	return type;
+}
+
+void Bullet::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("move", "delta"), &Bullet::move);
+
+	ClassDB::bind_method(D_METHOD("set_active", "active"), &Bullet::set_active);
+	ClassDB::bind_method(D_METHOD("get_active"), &Bullet::get_active);
+
+	ClassDB::bind_method(D_METHOD("set_direction", "direction"), &Bullet::set_direction);
+	ClassDB::bind_method(D_METHOD("get_direction"), &Bullet::get_direction);
+
+	ClassDB::bind_method(D_METHOD("set_type", "type"), &Bullet::set_type);
+	ClassDB::bind_method(D_METHOD("get_type"), &Bullet::get_type);
+
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "active"), "set_active", "get_active");
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "direction"), "set_direction", "get_direction");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_type", "get_type");
+}
+
+Bullet::Bullet() {
+	active = false;
+	lifetime = 0.0;
+
+	direction = Vector2(1, 0);
+	perp_offset = Vector2(0, 0);
+
+	type = Ref<BulletType>();
+}
+
+Bullet::~Bullet() {
 }
