@@ -75,25 +75,25 @@ int Bullet::intersect_shape(Physics2DDirectSpaceState &p_space_state, Physics2DD
 	return collisions;
 }
 
-void Bullet::set_active(bool value) {
-	active = value;
-	set_visible(value);
+void Bullet::set_active(bool p_value) {
+	active = p_value;
+	set_visible(active);
 }
 
-bool Bullet::get_active() {
+bool Bullet::get_active() const {
 	return active;
 }
 
-void Bullet::set_lifetime(float value) {
-	lifetime = value;
+void Bullet::set_lifetime(float p_value) {
+	lifetime = p_value;
 }
 
-float Bullet::get_lifetime() {
+float Bullet::get_lifetime() const {
 	return lifetime;
 }
 
-void Bullet::set_direction(Vector2 value) {
-	direction = value;
+void Bullet::set_direction(const Vector2 &p_value) {
+	direction = p_value;
 	if (get_tree()->is_node_being_edited(this))
 		return;
 	if (!type.is_null() && type->get_face_direction())
@@ -102,19 +102,19 @@ void Bullet::set_direction(Vector2 value) {
 		set_rotation(0.0);
 }
 
-Vector2 Bullet::get_direction() {
+Vector2 Bullet::get_direction() const {
 	return direction;
 }
 
-void Bullet::set_type(Ref<BulletType> value) {
+void Bullet::set_type(const Ref<BulletType> &p_value) {
 	lifetime = 0.0;
 	perp_offset = Vector2(0, 0);
-	type = value;
+	type = p_value;
 	set_scale(Vector2(type->get_scale(), type->get_scale()));
 	set_material(type->get_material());
 	update();
 }
 
-Ref<BulletType> Bullet::get_type() {
+Ref<BulletType> Bullet::get_type() const {
 	return type;
 }
