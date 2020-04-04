@@ -1,6 +1,7 @@
 #include "bullet.h"
 
 #include "core/os/os.h"
+#include "scene/resources/world_2d.h"
 
 void Bullet::_ready() {
 	if (get_tree()->is_node_being_edited(this))
@@ -38,11 +39,6 @@ void Bullet::move(float delta) {
 	Vector2 new_perp_offset = perpendicular * sin_point * type->get_sin_amplitude();
 	set_position(get_position() - perp_offset + direction * current_speed * delta + new_perp_offset);
 	perp_offset = new_perp_offset;
-}
-
-int Bullet::intersect_shape(Physics2DDirectSpaceState &p_space_state, Physics2DDirectSpaceState::ShapeResult *r_results) {
-	int collisions = p_space_state.intersect_shape(type->get_collision_shape()->get_rid(), get_transform(), Vector2(0, 0), 0.0, r_results, 1, Set<RID>(), type->get_collision_mask(), true, true);
-	return collisions;
 }
 
 void Bullet::set_active(bool p_active) {

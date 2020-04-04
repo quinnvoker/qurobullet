@@ -38,14 +38,21 @@ void BulletServer::_physics_process(float delta) {
 		return;
 	std::vector<int> bullet_indices_to_clear;
 	Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
-	Physics2DDirectSpaceState::ShapeResult results;
+	Vector<Physics2DDirectSpaceState::ShapeResult> results;
+	results.resize(32);
 	for (int i = 0; i < int(live_bullets.size()); i++) {
 		Bullet *bullet = live_bullets[i];
 		if (play_area.has_point(bullet->get_position())) {
 			bullet->move(delta);
-			int collisions = bullet->intersect_shape(*space_state, &results);
-			if (collisions > 0) {
-				emit_signal("object_hit", results.collider, bullet);
+			Ref<BulletType> b_type = bullet->get_type();
+			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), true, true);
+			if (collisions > 0){
+				Array colliders;
+				colliders.resize(collisions);
+				for (int c = 0; c < collisions; c++){
+					colliders[c] = results[c].collider;
+				}
+				emit_signal("collision_detected", bullet, colliders);
 				bullet_indices_to_clear.push_back(i);
 			} else {
 				bullet->set_lifetime(bullet->get_lifetime() + delta);
@@ -60,6 +67,18 @@ void BulletServer::_physics_process(float delta) {
 		live_bullets.erase(live_bullets.begin() + bullet_indices_to_clear[i] - i);
 		dead_bullets.insert(dead_bullets.begin(), bullet);
 	}
+}
+
+void BulletServer::_init_bullets() {
+	for (int i = 0; i < bullet_pool_size; i++) {
+		_create_bullet();
+	}
+}
+
+void BulletServer::_create_bullet() {
+	Bullet *bullet = memnew(Bullet);
+	add_child(bullet);
+	dead_bullets.insert(dead_bullets.begin(), bullet);
 }
 
 void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
@@ -87,18 +106,6 @@ void BulletServer::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_
 		spawn_bullet(p_type, p_position + shot["offset"], shot["direction"]);
 		shot.empty();
 	}
-}
-
-void BulletServer::_init_bullets() {
-	for (int i = 0; i < bullet_pool_size; i++) {
-		_create_bullet();
-	}
-}
-
-void BulletServer::_create_bullet() {
-	Bullet *bullet = memnew(Bullet);
-	add_child(bullet);
-	dead_bullets.insert(dead_bullets.begin(), bullet);
 }
 
 void BulletServer::set_bullet_pool_size(int p_size) {
@@ -138,7 +145,6 @@ int BulletServer::get_play_area_margin() const {
 }
 
 void BulletServer::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("_physics_process", "delta"), &BulletServer::_physics_process);
 	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
 	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "shots"), &BulletServer::spawn_volley);
 
@@ -151,7 +157,7 @@ void BulletServer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size"), "set_bullet_pool_size", "get_bullet_pool_size");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "play_area_margin"), "set_play_area_margin", "get_play_area_margin");
 
-	ADD_SIGNAL(MethodInfo("object_hit", PropertyInfo(Variant::OBJECT, "object", PROPERTY_HINT_RESOURCE_TYPE, "CollisionObject2D"), PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet")));
+	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::OBJECT, "Collider", PROPERTY_HINT_RESOURCE_TYPE, "CollisionObject2D")));
 }
 
 BulletServer::BulletServer() {
