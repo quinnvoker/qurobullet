@@ -88,7 +88,7 @@ void BulletServer::_physics_process(float delta) {
 	}
 }
 
-void BulletServer::spawn_bullet(Ref<BulletType> type, Vector2 position, Vector2 direction) {
+void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
 	Bullet *bullet;
 
 	if (dead_bullets.size() > 0) {
@@ -100,26 +100,19 @@ void BulletServer::spawn_bullet(Ref<BulletType> type, Vector2 position, Vector2 
 		live_bullets.pop_back();
 	}
 
-	bullet->set_position(position);
-	bullet->set_direction(direction);
-	bullet->set_type(type);
+	bullet->set_position(p_position);
+	bullet->set_direction(p_direction);
+	bullet->set_type(p_type);
 
 	live_bullets.insert(live_bullets.begin(), bullet);
 }
 
-void BulletServer::spawn_volley(Ref<BulletType> type, Vector2 position, Array shots) {
-	for (int i = 0; i < shots.size(); i++) {
-		Dictionary shot = shots[i];
-		spawn_bullet(type, position + shot["offset"], shot["direction"]);
+void BulletServer::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_shots) {
+	for (int i = 0; i < p_shots.size(); i++) {
+		Dictionary shot = p_shots[i];
+		spawn_bullet(p_type, p_position + shot["offset"], shot["direction"]);
 		shot.empty();
 	}
-}
-
-void BulletServer::kill_bullet(Bullet *bullet) {
-	bullet->set_active(false);
-	dead_bullets.insert(dead_bullets.begin(), bullet);
-	auto it = std::find(live_bullets.begin(), live_bullets.end(), bullet);
-	live_bullets.erase(it);
 }
 
 void BulletServer::_init_bullets() {
@@ -134,9 +127,9 @@ void BulletServer::_create_bullet() {
 	dead_bullets.insert(dead_bullets.begin(), bullet);
 }
 
-void BulletServer::set_bullet_pool_size(int value) {
-	if (value > -1)
-		bullet_pool_size = value;
+void BulletServer::set_bullet_pool_size(int p_size) {
+	if (p_size > -1)
+		bullet_pool_size = p_size;
 	if (!is_inside_tree() || get_tree()->is_node_being_edited(this))
 		return;
 	while (int(dead_bullets.size() + live_bullets.size()) < bullet_pool_size)
@@ -155,17 +148,17 @@ void BulletServer::set_bullet_pool_size(int value) {
 	}
 }
 
-int BulletServer::get_bullet_pool_size() {
+int BulletServer::get_bullet_pool_size() const {
 	return bullet_pool_size;
 }
 
-void BulletServer::set_play_area_margin(int value) {
-	play_area_margin = value;
+void BulletServer::set_play_area_margin(int p_margin) {
+	play_area_margin = p_margin;
 	if (!is_inside_tree() || get_tree()->is_node_being_edited(this))
 		return;
 	play_area = get_viewport_rect().grow(play_area_margin);
 }
 
-int BulletServer::get_play_area_margin() {
+int BulletServer::get_play_area_margin() const {
 	return play_area_margin;
 }

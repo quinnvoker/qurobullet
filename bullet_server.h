@@ -30,19 +30,17 @@ public:
 
 	void _physics_process(float delta);
 
-	void spawn_bullet(Ref<BulletType> type, Vector2 position, Vector2 direction);
-	void spawn_volley(Ref<BulletType> type, Vector2 position, Array shots);
-
-	void kill_bullet(Bullet *bullet);
+	void spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
+	void spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_shots);
 
 	void _init_bullets();
 	void _create_bullet();
 
-	void set_bullet_pool_size(int value);
-	int get_bullet_pool_size();
+	void set_bullet_pool_size(int p_size);
+	int get_bullet_pool_size() const;
 
-	void set_play_area_margin(int value);
-	int get_play_area_margin();
+	void set_play_area_margin(int p_margin);
+	int get_play_area_margin() const;
 };
 
 #endif
