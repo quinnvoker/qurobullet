@@ -8,7 +8,6 @@
 class Bullet : public Node2D {
 	GDCLASS(Bullet, Node2D);
 
-private:
 	bool active;
 	float lifetime;
 
@@ -16,6 +15,8 @@ private:
 	Vector2 perp_offset;
 
 	Ref<BulletType> type;
+
+	void _ready();
 
 protected:
 	void _notification(int p_what);
@@ -26,10 +27,7 @@ public:
 	Bullet();
 	~Bullet();
 
-	void _ready();
-
 	void move(float delta);
-	int intersect_shape(Physics2DDirectSpaceState &p_space_state,  Physics2DDirectSpaceState::ShapeResult *r_results);
 
 	void set_active(bool p_active);
 	bool get_active() const;
