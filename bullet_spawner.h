@@ -38,6 +38,7 @@ class BulletSpawner : public Node2D{
 
     void _ready();
     void _process(float delta);
+    void _physics_process(float delta);
 
     Array _update_shots();
     Vector2 _get_spawn_position(const Vector2 &p_shot_dir);
