@@ -4,6 +4,7 @@
 #include "core/engine.h"
 #include "scene/2d/node_2d.h"
 #include "bullet_type.h"
+#include "bullet_server_relay.h"
 #include <map>
 
 class BulletSpawner : public Node2D{
@@ -43,7 +44,7 @@ class BulletSpawner : public Node2D{
     void _physics_process(float delta);
 
     void _update_shots();
-    Vector2 _get_spawn_position(const Vector2 &p_shot_dir);
+    Vector2 _get_spawn_offset(const Vector2 &p_shot_dir);
 
     void _reset_global_transform();
     void _draw_shot_preview(const Color &p_border_col, const Color &p_shot_col);
@@ -64,6 +65,9 @@ public:
 
     void fire();
 
+    Array get_shots();
+    Array get_scattered_shots();
+
     void set_autofire(bool p_enabled);
     bool get_autofire() const;
 
@@ -72,9 +76,6 @@ public:
 
     void set_bullet_type(const Ref<BulletType> &p_type);
     Ref<BulletType> get_bullet_type() const;
-
-    Array get_shots();
-    Array get_scattered_shots();
 
     void set_spawn_radius(float p_radius);
     float get_spawn_radius() const;
@@ -106,6 +107,9 @@ public:
     void set_scatter_range_degrees(float p_degrees);
     float get_scatter_range_degrees() const;
 
+    void set_inherit_rotation(bool p_enabled);
+    bool get_inherit_rotation() const;
+
     void set_self_rotation(float p_radians);
     float get_self_rotation() const;
 
@@ -114,6 +118,9 @@ public:
 
     void set_adjusted_global_rotation(float p_radians);
     float get_adjusted_global_rotation() const;
+
+    void set_inherit_scale(bool p_enabled);
+    bool get_inherit_scale() const;
 
     void set_self_scale(const Vector2 &p_scale);
     Vector2 get_self_scale() const;
