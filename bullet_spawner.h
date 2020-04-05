@@ -1,6 +1,7 @@
 #ifndef BULLETSPAWNER_H
 #define BULLETSPAWNER_H
 
+#include "core/engine.h"
 #include "scene/2d/node_2d.h"
 #include "bullet_type.h"
 #include <map>
@@ -9,6 +10,7 @@ class BulletSpawner : public Node2D{
     GDCLASS(BulletSpawner, Node2D);
 
     bool autofire;
+    int autofire_step;
     int interval_frames;
 
     Ref<BulletType> bullet_type;
@@ -40,7 +42,7 @@ class BulletSpawner : public Node2D{
     void _process(float delta);
     void _physics_process(float delta);
 
-    Array _update_shots();
+    void _update_shots();
     Vector2 _get_spawn_position(const Vector2 &p_shot_dir);
 
     void _reset_global_transform();
@@ -86,6 +88,15 @@ public:
     void set_bullet_count(int p_count);
     int get_bullet_count() const;
 
+    void set_spread(float p_radians);
+    float get_spread() const;
+
+    void set_spread_degrees(float p_degrees);
+    float get_spread_degrees() const;
+
+    void set_volley_offset(float p_offset);
+    float get_volley_offset() const;
+
     void set_scatter_type(int p_type);
     int get_scatter_type() const;
 
@@ -105,10 +116,10 @@ public:
     float get_adjusted_global_rotation() const;
 
     void set_self_scale(const Vector2 &p_scale);
-    float get_self_scale() const;
+    Vector2 get_self_scale() const;
 
     void set_adjusted_global_scale(const Vector2 &p_scale);
-    float get_adjusted_global_scale() const;
+    Vector2 get_adjusted_global_scale() const;
 };
 
 
