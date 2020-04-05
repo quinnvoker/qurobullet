@@ -27,7 +27,9 @@ public:
 	Bullet();
 	~Bullet();
 
-	void move(float delta);
+	void spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
+
+	void update_position(float delta);
 
 	void set_active(bool p_active);
 	bool get_active() const;

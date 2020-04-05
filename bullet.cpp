@@ -31,7 +31,16 @@ void Bullet::_notification(int p_what) {
 	}
 }
 
-void Bullet::move(float delta) {
+void Bullet::spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction){
+	set_type(p_type);
+	set_position(p_position);
+	set_direction(p_direction);
+	set_active(true);
+	lifetime = 0.0;
+	perp_offset = Vector2(0, 0);
+}
+
+void Bullet::update_position(float delta) {
 	float current_speed = type->get_speed() + type->get_linear_acceleration() * lifetime;
 	direction = direction.rotated(type->get_curve_rate() * delta * Math_PI / 180);
 	Vector2 perpendicular = direction.rotated(90 * Math_PI / 180);
@@ -39,6 +48,7 @@ void Bullet::move(float delta) {
 	Vector2 new_perp_offset = perpendicular * sin_point * type->get_sin_amplitude();
 	set_position(get_position() - perp_offset + direction * current_speed * delta + new_perp_offset);
 	perp_offset = new_perp_offset;
+	lifetime += delta;
 }
 
 void Bullet::set_active(bool p_active) {
@@ -73,8 +83,6 @@ Vector2 Bullet::get_direction() const {
 }
 
 void Bullet::set_type(const Ref<BulletType> &p_type) {
-	lifetime = 0.0;
-	perp_offset = Vector2(0, 0);
 	type = p_type;
 	set_scale(Vector2(type->get_scale(), type->get_scale()));
 	set_material(type->get_material());
@@ -86,10 +94,14 @@ Ref<BulletType> Bullet::get_type() const {
 }
 
 void Bullet::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("move", "delta"), &Bullet::move);
+	ClassDB::bind_method(D_METHOD("spawn", "type", "position", "direction"), &Bullet::spawn);
+	ClassDB::bind_method(D_METHOD("update_position", "delta"), &Bullet::update_position);
 
 	ClassDB::bind_method(D_METHOD("set_active", "active"), &Bullet::set_active);
 	ClassDB::bind_method(D_METHOD("get_active"), &Bullet::get_active);
+
+	ClassDB::bind_method(D_METHOD("set_lifetime", "time"), &Bullet::set_lifetime);
+	ClassDB::bind_method(D_METHOD("get_lifetime"), &Bullet::get_lifetime);
 
 	ClassDB::bind_method(D_METHOD("set_direction", "direction"), &Bullet::set_direction);
 	ClassDB::bind_method(D_METHOD("get_direction"), &Bullet::get_direction);
@@ -98,6 +110,7 @@ void Bullet::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_type"), &Bullet::get_type);
 
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "active"), "set_active", "get_active");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lifetime"), "set_lifetime", "get_lifetime");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "direction"), "set_direction", "get_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_type", "get_type");
 }
