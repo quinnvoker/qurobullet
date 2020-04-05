@@ -423,6 +423,21 @@ void BulletSpawner::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_adjusted_global_scale", "scale"), &BulletSpawner::set_adjusted_global_scale);
     ClassDB::bind_method(D_METHOD("get_adjusted_global_scale"), &BulletSpawner::get_adjusted_global_scale);
+
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames"), "set_interval_frames", "get_interval_frames");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius"), "set_spawn_radius", "get_spawn_radius");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees"), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count"), "set_bullet_count", "get_bullet_count");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread_degrees"), "set_spread_degrees", "get_spread_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "volley_offset"), "set_volley_offset", "get_volley_offset");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "ScatterType"), "set_scatter_type", "get_scatter_type");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees"), "set_scatter_range_degrees", "get_scatter_range_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_rotation"), "set_inherit_rotation", "get_inherit_rotation");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "self_rotation_degrees"), "set_self_rotation_degrees", "get_self_rotation_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_scale"), "set_inherit_scale", "get_inherit_scale");
+    ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "self_scale"), "set_self_scale", "get_self_scale");
 }
 
 //initialiser/terminator
