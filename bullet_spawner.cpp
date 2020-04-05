@@ -2,15 +2,36 @@
 
 //"overrides"
 void BulletSpawner::_notification(int p_what) {
-    
+    switch (p_what) {
+
+		case NOTIFICATION_READY: {
+			_ready();
+		} break;
+
+		case NOTIFICATION_PHYSICS_PROCESS: {
+			_physics_process(get_physics_process_delta_time());
+		}
+
+		default:
+			break;
+	}
 }
 
 void BulletSpawner::_ready() {
-    
+    if (Engine::get_singleton()->is_editor_hint()){
+        return;
+    }
+    BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
+	connect("bullet_fired", relay, "on_bullet_fired");
+	connect("volley_fired", relay, "on_volley_fired");
+    if (!in_game_preview){
+        set_process(false);
+    }
 }
 
 void BulletSpawner::_process(float delta) {
-    
+    _reset_global_transform();
+    update();
 }
 
 void BulletSpawner::_physics_process(float delta){
@@ -28,6 +49,8 @@ void BulletSpawner::_physics_process(float delta){
 
 //public functions
 void BulletSpawner::fire() {
+    _reset_global_transform();
+    emit_signal("volley_fired", bullet_type, get_global_position, get_scattered_shots());
 }
 
 Array BulletSpawner::get_shots() {
@@ -38,15 +61,82 @@ Array BulletSpawner::get_shots() {
 }
 
 Array BulletSpawner::get_scattered_shots() {
-    //implement randomizer
-    return shots;    
+    if (scatter_range <= 0.0){
+        return get_shots();
+    } 
+
+    Array s_shots = get_shots().duplicate;
+
+    switch (scatter_type)
+    {
+    case VOLLEY:
+        float rand_offset = Math::randf() * scatter_range - scatter_range / 2;
+        for (int i = 0; i < s_shots.size(); i++){
+            Dictionary shot_info = s_shots[i];
+            Vector2 shot_dir = shot_info["direction"];
+            shot_info["direction"] = shot_dir.rotated(rand_offset);
+        }
+        break;
+    
+    case BULLET:
+        for (int i = 0; i < s_shots.size(); i++){
+            float rand_offset = Math::randf() * scatter_range - scatter_range / 2;
+            Dictionary shot_info = s_shots[i];
+            Vector2 shot_dir = shot_info["direction"];
+            shot_info["direction"] = shot_dir.rotated(rand_offset);
+        }
+    default:
+        break;
+    }
 }
 
 //private functions
 void BulletSpawner::_update_shots() {
+    Array new_shots;
+
+    if (bullet_count == 1 || spread == 0.0){
+        new_shots.resize(1);
+        Vector2 dir = Vector2(1,0).rotated(spawn_angle + volley_offset * spread / 2);
+        Dictionary shot_info;
+        shot_info["offset"] = dir * spawn_radius;
+        shot_info["direction"] = dir;
+        new_shots[0] = shot_info;
+    } else {
+        new_shots.resize(bullet_count);
+        Vector2 arc_start = Vector2(1,0).rotated(-spread / 2);
+        Vector2 arc_end = arc_start.rotated(spread);
+        float spacing = spread / (bullet_count - 1);
+        bool spacing_maxed = false;
+
+        Vector2 volley_start = arc_start;
+        //check if spacing between bullets is greater than the highest even spacing for bullet count on a circle. if so, make spacing even and update the volley start accordingly
+        if (spacing > 2 * M_PI / bullet_count){
+            spacing = 2 * M_PI / bullet_count;
+            volley_start = Vector2(-1,0).rotated(spacing / 2);
+            spacing_maxed = true;
+        }
+        
+        for (int i = 0; i < bullet_count; i++){
+            float shot_angle = spacing * i + volley_offset * spread / 2;
+            if (!spacing_maxed){
+                shot_angle = Math::wrapf(shot_angle, 0 - spacing / 2, spread + spacing / 2);
+            }
+            Vector2 shot_direction = volley_start.rotated(shot_angle);
+            if (spread > 2 * M_PI || Math::abs(shot_direction.angle()) <= arc_end.angle() + 0.001){
+                shot_direction = shot_direction.rotated(spawn_angle).rotated(get_adjusted_global_rotation());
+                Vector2 shot_position = _get_spawn_offset(shot_direction);
+                Dictionary shot_info;
+                shot_info["offset"] = shot_position;
+                shot_info["direction"] = shot_direction;
+                new_shots[i] = shot_info;
+            }
+        }
+    }
+    shots = new_shots;
+    shots_update_required = false;
 }
 
-Vector2 BulletSpawner::_get_spawn_position(const Vector2 &p_shot_dir) {
+Vector2 BulletSpawner::_get_spawn_offset(const Vector2 &p_shot_dir) {
     return (p_shot_dir * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
 }
 
@@ -171,6 +261,15 @@ float BulletSpawner::get_scatter_range_degrees() const {
     return scatter_range * 180.0/M_PI;
 }
 
+void BulletSpawner::set_inherit_rotation(bool p_enabled){
+    inherit_rotation = p_enabled;
+    shots_update_required = true;
+}
+
+bool BulletSpawner::get_inherit_rotation() const {
+    return inherit_rotation;
+}
+
 void BulletSpawner::set_self_rotation(float p_radians) {
     self_rotation = p_radians;
     shots_update_required = true;
@@ -208,6 +307,15 @@ float BulletSpawner::get_adjusted_global_rotation() const {
     } else {
         return self_rotation;
     }
+}
+
+void BulletSpawner::set_inherit_scale(bool p_enabled){
+    inherit_scale = p_enabled;
+    shots_update_required = true;
+}
+
+bool BulletSpawner::get_inherit_scale() const {
+    return inherit_scale;
 }
 
 void BulletSpawner::set_self_scale(const Vector2 &p_scale) {
@@ -252,7 +360,69 @@ void BulletSpawner::_draw_adjusted_arc(float p_inner_rad, float p_outer_rad, con
 
 //godot binds
 void BulletSpawner::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("fire"), &BulletSpawner::fire);
+    ClassDB::bind_method(D_METHOD("get_shots"), &BulletSpawner::get_shots);
+    ClassDB::bind_method(D_METHOD("get_scattered_shots"), &BulletSpawner::get_scattered_shots);
 
+    ClassDB::bind_method(D_METHOD("set_autofire", "enabled"), &BulletSpawner::set_autofire);
+    ClassDB::bind_method(D_METHOD("get_autofire"), &BulletSpawner::get_autofire);
+
+    ClassDB::bind_method(D_METHOD("set_interval_frames", "interval"), &BulletSpawner::set_interval_frames);
+    ClassDB::bind_method(D_METHOD("get_interval_frames"), &BulletSpawner::get_interval_frames);
+
+    ClassDB::bind_method(D_METHOD("set_bullet_type", "type"), &BulletSpawner::set_bullet_type);
+    ClassDB::bind_method(D_METHOD("get_bullet_type"), &BulletSpawner::get_bullet_type);
+
+    ClassDB::bind_method(D_METHOD("set_spawn_radius", "radius"), &BulletSpawner::set_spawn_radius);
+    ClassDB::bind_method(D_METHOD("get_spawn_radius"), &BulletSpawner::get_spawn_radius);
+
+    ClassDB::bind_method(D_METHOD("set_spawn_angle", "radians"), &BulletSpawner::set_spawn_angle);
+    ClassDB::bind_method(D_METHOD("get_spawn_angle"), &BulletSpawner::get_spawn_angle);
+
+    ClassDB::bind_method(D_METHOD("set_spawn_angle_degrees", "degrees"), &BulletSpawner::set_spawn_angle_degrees);
+    ClassDB::bind_method(D_METHOD("get_spawn_angle_degrees"), &BulletSpawner::get_spawn_angle_degrees);
+
+    ClassDB::bind_method(D_METHOD("set_bullet_count", "count"), &BulletSpawner::set_bullet_count);
+    ClassDB::bind_method(D_METHOD("get_bullet_count"), &BulletSpawner::get_bullet_count);
+
+    ClassDB::bind_method(D_METHOD("set_spread", "radians"), &BulletSpawner::set_spread);
+    ClassDB::bind_method(D_METHOD("get_spread"), &BulletSpawner::get_spread);
+
+    ClassDB::bind_method(D_METHOD("set_spread_degrees", "degrees"), &BulletSpawner::set_spread_degrees);
+    ClassDB::bind_method(D_METHOD("get_spread_degrees"), &BulletSpawner::get_spread_degrees);
+
+    ClassDB::bind_method(D_METHOD("set_volley_offset", "offset"), &BulletSpawner::set_volley_offset);
+    ClassDB::bind_method(D_METHOD("get_volley_offset"), &BulletSpawner::get_volley_offset);
+
+    ClassDB::bind_method(D_METHOD("set_scatter_type", "type"), &BulletSpawner::set_scatter_type);
+    ClassDB::bind_method(D_METHOD("get_scatter_type"), &BulletSpawner::get_scatter_type);
+
+    ClassDB::bind_method(D_METHOD("set_scatter_range", "radians"), &BulletSpawner::set_scatter_range);
+    ClassDB::bind_method(D_METHOD("get_scatter_range"), &BulletSpawner::get_scatter_range);
+
+    ClassDB::bind_method(D_METHOD("set_scatter_range_degrees", "degrees"), &BulletSpawner::set_scatter_range_degrees);
+    ClassDB::bind_method(D_METHOD("get_scatter_range_degrees"), &BulletSpawner::get_scatter_range_degrees);
+
+    ClassDB::bind_method(D_METHOD("set_inherit_rotation", "enabled"), &BulletSpawner::set_inherit_rotation);
+    ClassDB::bind_method(D_METHOD("get_inherit_rotation"), &BulletSpawner::get_inherit_rotation);
+
+    ClassDB::bind_method(D_METHOD("set_self_rotation", "radians"), &BulletSpawner::set_self_rotation);
+    ClassDB::bind_method(D_METHOD("get_self_rotation"), &BulletSpawner::get_self_rotation);
+
+    ClassDB::bind_method(D_METHOD("set_self_rotation_degrees", "degrees"), &BulletSpawner::set_self_rotation_degrees);
+    ClassDB::bind_method(D_METHOD("get_self_rotation_degrees"), &BulletSpawner::get_self_rotation_degrees);
+
+    ClassDB::bind_method(D_METHOD("set_adjusted_global_rotation", "radians"), &BulletSpawner::set_adjusted_global_rotation);
+    ClassDB::bind_method(D_METHOD("get_adjusted_global_rotation"), &BulletSpawner::get_adjusted_global_rotation);
+
+    ClassDB::bind_method(D_METHOD("set_inherit_scale", "enabled"), &BulletSpawner::set_inherit_scale);
+    ClassDB::bind_method(D_METHOD("get_inherit_scale"), &BulletSpawner::get_inherit_scale);
+
+    ClassDB::bind_method(D_METHOD("set_self_scale", "scale"), &BulletSpawner::set_self_scale);
+    ClassDB::bind_method(D_METHOD("get_self_scale"), &BulletSpawner::get_self_scale);
+
+    ClassDB::bind_method(D_METHOD("set_adjusted_global_scale", "scale"), &BulletSpawner::set_adjusted_global_scale);
+    ClassDB::bind_method(D_METHOD("get_adjusted_global_scale"), &BulletSpawner::get_adjusted_global_scale);
 }
 
 //initialiser/terminator
