@@ -43,7 +43,8 @@ void BulletServer::_physics_process(float delta) {
 	for (int i = 0; i < int(live_bullets.size()); i++) {
 		Bullet *bullet = live_bullets[i];
 		if (play_area.has_point(bullet->get_position())) {
-			bullet->move(delta);
+			bullet->update_position(delta);
+			//check collisions
 			Ref<BulletType> b_type = bullet->get_type();
 			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), true, true);
 			if (collisions > 0){
@@ -54,9 +55,7 @@ void BulletServer::_physics_process(float delta) {
 				}
 				emit_signal("collision_detected", bullet, colliders);
 				bullet_indices_to_clear.push_back(i);
-			} else {
-				bullet->set_lifetime(bullet->get_lifetime() + delta);
-			}
+			} 
 		} else {
 			bullet_indices_to_clear.push_back(i);
 		}
@@ -87,15 +86,12 @@ void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_
 	if (dead_bullets.size() > 0) {
 		bullet = dead_bullets.back();
 		dead_bullets.pop_back();
-		bullet->set_active(true);
 	} else {
 		bullet = live_bullets.back();
 		live_bullets.pop_back();
 	}
 
-	bullet->set_position(p_position);
-	bullet->set_direction(p_direction);
-	bullet->set_type(p_type);
+	bullet->spawn(p_type, p_position, p_direction);
 
 	live_bullets.insert(live_bullets.begin(), bullet);
 }
