@@ -28,22 +28,22 @@ void BulletSpawner::_physics_process(float delta){
 
 //public functions
 void BulletSpawner::fire() {
-    if (shots_update_required){
-        _update_shots();
-    }
 }
 
 Array BulletSpawner::get_shots() {
-    
+    if (shots_update_required){
+        _update_shots();
+    }
+    return shots;
 }
 
 Array BulletSpawner::get_scattered_shots() {
-    
+    //implement randomizer
+    return shots;    
 }
 
 //private functions
 void BulletSpawner::_update_shots() {
-    shots = get_shots();
 }
 
 Vector2 BulletSpawner::_get_spawn_position(const Vector2 &p_shot_dir) {
@@ -192,7 +192,7 @@ float BulletSpawner::get_self_rotation_degrees() const {
 void BulletSpawner::set_adjusted_global_rotation(float p_radians) {
     Node *parent = get_parent();
     Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
-    if (inherit_rotation & parent_2D != NULL){
+    if (inherit_rotation && parent_2D != NULL){
         self_rotation = p_radians - parent_2D->get_global_rotation();
     } else {
         self_rotation = p_radians;
@@ -203,7 +203,7 @@ void BulletSpawner::set_adjusted_global_rotation(float p_radians) {
 float BulletSpawner::get_adjusted_global_rotation() const {
     Node *parent = get_parent();
     Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
-    if (inherit_rotation & parent_2D != NULL){
+    if (inherit_rotation && parent_2D != NULL){
         return self_rotation + parent_2D ->get_global_rotation();
     } else {
         return self_rotation;
@@ -222,7 +222,7 @@ Vector2 BulletSpawner::get_self_scale() const {
 void BulletSpawner::set_adjusted_global_scale(const Vector2 &p_scale) {
     Node *parent = get_parent();
     Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
-    if (inherit_scale & parent_2D != NULL){
+    if (inherit_scale && parent_2D != NULL){
         self_scale = p_scale / parent_2D->get_global_scale();
     } else {
         self_scale = p_scale;
@@ -234,7 +234,7 @@ void BulletSpawner::set_adjusted_global_scale(const Vector2 &p_scale) {
 Vector2 BulletSpawner::get_adjusted_global_scale() const {
     Node *parent = get_parent();
     Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
-    if (inherit_scale & parent_2D != NULL){
+    if (inherit_scale && parent_2D != NULL){
         return self_scale * parent_2D->get_global_scale();
     } else {
         return self_scale;

@@ -7,8 +7,8 @@ sources = [
     "bullet_type.cpp",
     "bullet.cpp",
     "bullet_server.cpp",
-    "bullet_server_relay.cpp"
-    "bullet_spawner",
+    "bullet_server_relay.cpp",
+    "bullet_spawner.cpp",
 ]
 
 module_env = env.Clone()
