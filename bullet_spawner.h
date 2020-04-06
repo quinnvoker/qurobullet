@@ -16,7 +16,7 @@ class BulletSpawner : public Node2D{
 
     Ref<BulletType> bullet_type;
 
-    Array shots;
+    Array cached_shots;
     bool shots_update_required;
 
     float spawn_radius;
@@ -43,7 +43,7 @@ class BulletSpawner : public Node2D{
     void _process(float delta);
     void _physics_process(float delta);
 
-    void _update_shots();
+    void _update_cached_shots();
     Vector2 _get_spawn_offset(const Vector2 &p_shot_dir);
 
     void _reset_global_transform();
