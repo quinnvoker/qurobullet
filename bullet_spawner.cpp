@@ -14,7 +14,24 @@ void BulletSpawner::_notification(int p_what) {
         break;
 
         case NOTIFICATION_PROCESS: {
-            _process(get_process_delta_time());
+            //_process(get_process_delta_time());
+        }
+        break;
+
+        case NOTIFICATION_TRANSFORM_CHANGED: {
+            if (get_global_transform().get_rotation() != _previous_transform.get_rotation()){
+                set_global_rotation(0);
+                if (inherit_rotation){
+                    shots_update_required = true;
+                }
+            }
+            if (get_global_transform().get_scale() != _previous_transform.get_scale()){
+                set_global_scale(Vector2(1,1));
+                if (inherit_scale){
+                    shots_update_required = true;
+                }
+            }
+            _previous_transform = get_global_transform();
         }
         break;
 
@@ -24,6 +41,7 @@ void BulletSpawner::_notification(int p_what) {
 }
 
 void BulletSpawner::_ready() {
+    set_notify_transform(true);
     if (Engine::get_singleton()->is_editor_hint()){
         set_physics_process(false);
         set_process(true);
@@ -39,7 +57,7 @@ void BulletSpawner::_ready() {
 }
 
 void BulletSpawner::_process(float delta) {
-    _reset_global_transform();
+    //_reset_global_transform();
     update();
 }
 
@@ -48,17 +66,16 @@ void BulletSpawner::_physics_process(float delta){
         return;
     }
     if (autofire){
-        autofire_step++;
-        if (autofire_step >= interval_frames){
+        _autofire_step++;
+        if (_autofire_step >= interval_frames){
             fire();
-            autofire_step = 0;
+            _autofire_step = 0;
         }
     }
 }
 
 //public functions
 void BulletSpawner::fire() {
-    _reset_global_transform();
     emit_signal("volley_fired", bullet_type, get_global_position(), get_scattered_shots());
 }
 
@@ -108,14 +125,12 @@ void BulletSpawner::_update_cached_shots() {
     Array new_shots;
 
     if (bullet_count == 1 || spread == 0.0){
-        new_shots.resize(1);
         Vector2 dir = Vector2(1,0).rotated(spawn_angle + volley_offset * spread / 2);
         Dictionary shot_info;
         shot_info["offset"] = (dir * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
         shot_info["direction"] = dir.rotated(get_adjusted_global_rotation());
-        new_shots[0] = shot_info;
+        new_shots.push_back(shot_info);
     } else {
-        new_shots.resize(bullet_count);
         Vector2 arc_start = Vector2(1,0).rotated(-spread / 2);
         Vector2 arc_end = arc_start.rotated(spread);
         float spacing = spread / (bullet_count - 1);
@@ -136,12 +151,12 @@ void BulletSpawner::_update_cached_shots() {
             }
             Vector2 shot_direction = volley_start.rotated(shot_angle);
             if (spread > 2 * M_PI || Math::abs(shot_direction.angle()) <= arc_end.angle() + 0.001){
+                shot_direction = shot_direction.rotated(spawn_angle);
                 Vector2 shot_position = _get_spawn_offset(shot_direction);
-                shot_direction = shot_direction.rotated(spawn_angle).rotated(get_adjusted_global_rotation());
                 Dictionary shot_info;
                 shot_info["offset"] = shot_position;
-                shot_info["direction"] = shot_direction;
-                new_shots[i] = shot_info;
+                shot_info["direction"] = shot_direction.rotated(get_adjusted_global_rotation());
+                new_shots.push_back(shot_info);
             }
         }
     }
@@ -153,14 +168,10 @@ Vector2 BulletSpawner::_get_spawn_offset(const Vector2 &p_shot_dir) {
     return (p_shot_dir * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
 }
 
-void BulletSpawner::_reset_global_transform() {
-    set_global_transform(Transform2D(0, get_global_position()));
-}
-
 //setters/getters
 void BulletSpawner::set_autofire(bool p_enabled) {
     autofire = p_enabled;
-    autofire_step = 0;
+    _autofire_step = 0;
     if (autofire){
         fire();
     }
@@ -438,17 +449,17 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_adjusted_global_scale"), &BulletSpawner::get_adjusted_global_scale);
 
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames"), "set_interval_frames", "get_interval_frames");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "0,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius"), "set_spawn_radius", "get_spawn_radius");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees"), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count"), "set_bullet_count", "get_bullet_count");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread_degrees"), "set_spread_degrees", "get_spread_degrees");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "volley_offset"), "set_volley_offset", "get_volley_offset");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_spawn_radius", "get_spawn_radius");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_bullet_count", "get_bullet_count");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spread_degrees", "get_spread_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "volley_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_volley_offset", "get_volley_offset");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "VOLLEY, BULLET"), "set_scatter_type", "get_scatter_type");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees"), "set_scatter_range_degrees", "get_scatter_range_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_rotation"), "set_inherit_rotation", "get_inherit_rotation");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "self_rotation_degrees"), "set_self_rotation_degrees", "get_self_rotation_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "self_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_self_rotation_degrees", "get_self_rotation_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_scale"), "set_inherit_scale", "get_inherit_scale");
     ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "self_scale"), "set_self_scale", "get_self_scale");
 

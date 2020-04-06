@@ -11,7 +11,7 @@ class BulletSpawner : public Node2D{
     GDCLASS(BulletSpawner, Node2D);
 
     bool autofire;
-    int autofire_step;
+    int _autofire_step;
     int interval_frames;
 
     Ref<BulletType> bullet_type;
@@ -39,6 +39,8 @@ class BulletSpawner : public Node2D{
     bool in_game_preview;
     Color preview_color;
 
+    Transform2D _previous_transform;
+
     void _ready();
     void _process(float delta);
     void _physics_process(float delta);
@@ -46,7 +48,6 @@ class BulletSpawner : public Node2D{
     void _update_cached_shots();
     Vector2 _get_spawn_offset(const Vector2 &p_shot_dir);
 
-    void _reset_global_transform();
     void _draw_shot_preview(const Color &p_border_col, const Color &p_shot_col);
     void _draw_adjusted_arc(float p_inner_rad, float p_outer_rad, const Vector2 &p_arc_start, int p_point_count, const Color &p_color);
 
