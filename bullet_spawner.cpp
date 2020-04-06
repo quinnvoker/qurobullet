@@ -11,6 +11,12 @@ void BulletSpawner::_notification(int p_what) {
 		case NOTIFICATION_PHYSICS_PROCESS: {
 			_physics_process(get_physics_process_delta_time());
 		}
+        break;
+
+        case NOTIFICATION_PROCESS: {
+            _process(get_process_delta_time());
+        }
+        break;
 
 		default:
 			break;
@@ -19,11 +25,14 @@ void BulletSpawner::_notification(int p_what) {
 
 void BulletSpawner::_ready() {
     if (Engine::get_singleton()->is_editor_hint()){
+        set_physics_process(false);
+        set_process(true);
         return;
     }
     BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
 	connect("bullet_fired", relay, "on_bullet_fired");
 	connect("volley_fired", relay, "on_volley_fired");
+    set_physics_process(true);
     if (!in_game_preview){
         set_process(false);
     }
@@ -50,14 +59,14 @@ void BulletSpawner::_physics_process(float delta){
 //public functions
 void BulletSpawner::fire() {
     _reset_global_transform();
-    emit_signal("volley_fired", bullet_type, get_global_position, get_scattered_shots());
+    emit_signal("volley_fired", bullet_type, get_global_position(), get_scattered_shots());
 }
 
 Array BulletSpawner::get_shots() {
     if (shots_update_required){
-        _update_shots();
+        _update_cached_shots();
     }
-    return shots;
+    return cached_shots;
 }
 
 Array BulletSpawner::get_scattered_shots() {
@@ -65,12 +74,13 @@ Array BulletSpawner::get_scattered_shots() {
         return get_shots();
     } 
 
-    Array s_shots = get_shots().duplicate;
+    Array s_shots = get_shots().duplicate(true);
+    float rand_offset;
 
     switch (scatter_type)
     {
     case VOLLEY:
-        float rand_offset = Math::randf() * scatter_range - scatter_range / 2;
+        rand_offset = Math::randf() * scatter_range - scatter_range / 2;
         for (int i = 0; i < s_shots.size(); i++){
             Dictionary shot_info = s_shots[i];
             Vector2 shot_dir = shot_info["direction"];
@@ -80,26 +90,29 @@ Array BulletSpawner::get_scattered_shots() {
     
     case BULLET:
         for (int i = 0; i < s_shots.size(); i++){
-            float rand_offset = Math::randf() * scatter_range - scatter_range / 2;
+            rand_offset = Math::randf() * scatter_range - scatter_range / 2;
             Dictionary shot_info = s_shots[i];
             Vector2 shot_dir = shot_info["direction"];
             shot_info["direction"] = shot_dir.rotated(rand_offset);
         }
+        break;
+
     default:
         break;
     }
+    return s_shots;
 }
 
 //private functions
-void BulletSpawner::_update_shots() {
+void BulletSpawner::_update_cached_shots() {
     Array new_shots;
 
     if (bullet_count == 1 || spread == 0.0){
         new_shots.resize(1);
         Vector2 dir = Vector2(1,0).rotated(spawn_angle + volley_offset * spread / 2);
         Dictionary shot_info;
-        shot_info["offset"] = dir * spawn_radius;
-        shot_info["direction"] = dir;
+        shot_info["offset"] = (dir * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
+        shot_info["direction"] = dir.rotated(get_adjusted_global_rotation());
         new_shots[0] = shot_info;
     } else {
         new_shots.resize(bullet_count);
@@ -123,8 +136,8 @@ void BulletSpawner::_update_shots() {
             }
             Vector2 shot_direction = volley_start.rotated(shot_angle);
             if (spread > 2 * M_PI || Math::abs(shot_direction.angle()) <= arc_end.angle() + 0.001){
-                shot_direction = shot_direction.rotated(spawn_angle).rotated(get_adjusted_global_rotation());
                 Vector2 shot_position = _get_spawn_offset(shot_direction);
+                shot_direction = shot_direction.rotated(spawn_angle).rotated(get_adjusted_global_rotation());
                 Dictionary shot_info;
                 shot_info["offset"] = shot_position;
                 shot_info["direction"] = shot_direction;
@@ -132,7 +145,7 @@ void BulletSpawner::_update_shots() {
             }
         }
     }
-    shots = new_shots;
+    cached_shots = new_shots;
     shots_update_required = false;
 }
 
@@ -303,7 +316,7 @@ float BulletSpawner::get_adjusted_global_rotation() const {
     Node *parent = get_parent();
     Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
     if (inherit_rotation && parent_2D != NULL){
-        return self_rotation + parent_2D ->get_global_rotation();
+        return self_rotation + parent_2D->get_global_rotation();
     } else {
         return self_rotation;
     }
@@ -432,12 +445,15 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count"), "set_bullet_count", "get_bullet_count");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread_degrees"), "set_spread_degrees", "get_spread_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "volley_offset"), "set_volley_offset", "get_volley_offset");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "ScatterType"), "set_scatter_type", "get_scatter_type");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "VOLLEY, BULLET"), "set_scatter_type", "get_scatter_type");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees"), "set_scatter_range_degrees", "get_scatter_range_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_rotation"), "set_inherit_rotation", "get_inherit_rotation");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "self_rotation_degrees"), "set_self_rotation_degrees", "get_self_rotation_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_scale"), "set_inherit_scale", "get_inherit_scale");
     ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "self_scale"), "set_self_scale", "get_self_scale");
+
+    ADD_SIGNAL(MethodInfo("bullet_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::VECTOR2, "direction")));
+    ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::ARRAY, "shots")));
 }
 
 //initialiser/terminator
