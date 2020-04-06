@@ -137,14 +137,14 @@ void BulletType::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "scale"), "set_scale", "get_scale");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage"), "set_damage", "get_damage");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "collision_shape", PROPERTY_HINT_RESOURCE_TYPE, "Shape2D"), "set_collision_shape", "get_collision_shape");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "collision_mask", PROPERTY_HINT_LAYERS_2D_PHYSICS), "set_collision_mask", "get_collision_mask");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "speed"), "set_speed", "get_speed");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "linear_acceleration"), "set_linear_acceleration", "get_linear_acceleration");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate"), "set_curve_rate", "get_curve_rate");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_amplitude"), "set_sin_amplitude", "get_sin_amplitude");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_frequency"), "set_sin_frequency", "get_sin_frequency");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "speed", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_speed", "get_speed");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "linear_acceleration", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_linear_acceleration", "get_linear_acceleration");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater"), "set_curve_rate", "get_curve_rate");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_sin_amplitude", "get_sin_amplitude");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_frequency", PROPERTY_HINT_RANGE, "0,100,0.01,or_lesser,or_greater"), "set_sin_frequency", "get_sin_frequency");
 }
 
 BulletType::BulletType() {
