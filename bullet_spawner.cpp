@@ -454,11 +454,14 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_spawn_radius", "get_spawn_radius");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_bullet_count", "get_bullet_count");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_spread", "get_spread");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spread_degrees", "get_spread_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "volley_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_volley_offset", "get_volley_offset");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "VOLLEY, BULLET"), "set_scatter_type", "get_scatter_type");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_scatter_range", "get_scatter_range");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_rotation"), "set_inherit_rotation", "get_inherit_rotation");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "self_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_self_rotation", "get_self_rotation");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "self_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_self_rotation_degrees", "get_self_rotation_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_scale"), "set_inherit_scale", "get_inherit_scale");
     ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "self_scale"), "set_self_scale", "get_self_scale");
