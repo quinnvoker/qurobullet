@@ -129,14 +129,14 @@ int BulletServer::get_bullet_pool_size() const {
 	return bullet_pool_size;
 }
 
-void BulletServer::set_play_area_margin(int p_margin) {
+void BulletServer::set_play_area_margin(float p_margin) {
 	play_area_margin = p_margin;
 	if (!is_inside_tree() || get_tree()->is_node_being_edited(this))
 		return;
 	play_area = get_viewport_rect().grow(play_area_margin);
 }
 
-int BulletServer::get_play_area_margin() const {
+float BulletServer::get_play_area_margin() const {
 	return play_area_margin;
 }
 
@@ -150,8 +150,8 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_play_area_margin", "margin"), &BulletServer::set_play_area_margin);
 	ClassDB::bind_method(D_METHOD("get_play_area_margin"), &BulletServer::get_play_area_margin);
 
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size"), "set_bullet_pool_size", "get_bullet_pool_size");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "play_area_margin"), "set_play_area_margin", "get_play_area_margin");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size", PROPERTY_HINT_RANGE, "1,5000,1,or_greater"), "set_bullet_pool_size", "get_bullet_pool_size");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.1,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
 
 	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::OBJECT, "Collider", PROPERTY_HINT_RESOURCE_TYPE, "CollisionObject2D")));
 }

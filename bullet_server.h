@@ -11,7 +11,7 @@ class BulletServer : public Node2D {
 
 	int bullet_pool_size;
 	Rect2 play_area;
-	int play_area_margin;
+	float play_area_margin;
 
 	std::vector<Bullet *> live_bullets;
 	std::vector<Bullet *> dead_bullets;
@@ -37,8 +37,8 @@ public:
 	void set_bullet_pool_size(int p_size);
 	int get_bullet_pool_size() const;
 
-	void set_play_area_margin(int p_margin);
-	int get_play_area_margin() const;
+	void set_play_area_margin(float p_margin);
+	float get_play_area_margin() const;
 };
 
 #endif
