@@ -23,7 +23,7 @@ void BulletServer::_notification(int p_what) {
 }
 
 void BulletServer::_ready() {
-	if (get_tree()->is_node_being_edited(this))
+	if (Engine::get_singleton()->is_editor_hint())
 		return;
 	set_physics_process(true);
 	play_area = get_viewport_rect().grow(play_area_margin);
@@ -34,7 +34,7 @@ void BulletServer::_ready() {
 }
 
 void BulletServer::_physics_process(float delta) {
-	if (get_tree()->is_node_being_edited(this))
+	if (Engine::get_singleton()->is_editor_hint())
 		return;
 	std::vector<int> bullet_indices_to_clear;
 	Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
@@ -92,7 +92,6 @@ void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_
 	}
 
 	bullet->spawn(p_type, p_position, p_direction);
-
 	live_bullets.insert(live_bullets.begin(), bullet);
 }
 
@@ -107,7 +106,7 @@ void BulletServer::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_
 void BulletServer::set_bullet_pool_size(int p_size) {
 	if (p_size > -1)
 		bullet_pool_size = p_size;
-	if (!is_inside_tree() || get_tree()->is_node_being_edited(this))
+	if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint())
 		return;
 	while (int(dead_bullets.size() + live_bullets.size()) < bullet_pool_size)
 		_create_bullet();
@@ -131,7 +130,7 @@ int BulletServer::get_bullet_pool_size() const {
 
 void BulletServer::set_play_area_margin(float p_margin) {
 	play_area_margin = p_margin;
-	if (!is_inside_tree() || get_tree()->is_node_being_edited(this))
+	if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint())
 		return;
 	play_area = get_viewport_rect().grow(play_area_margin);
 }
@@ -151,7 +150,7 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_play_area_margin"), &BulletServer::get_play_area_margin);
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size", PROPERTY_HINT_RANGE, "1,5000,1,or_greater"), "set_bullet_pool_size", "get_bullet_pool_size");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.1,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
 
 	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::OBJECT, "Collider", PROPERTY_HINT_RESOURCE_TYPE, "CollisionObject2D")));
 }

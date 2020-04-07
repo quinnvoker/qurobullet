@@ -14,7 +14,7 @@ private:
 	Ref<Texture> texture;
 	Ref<Material> material;
 	bool face_direction;
-	float scale;
+	Vector2 scale;
 	float damage;
 	Ref<Shape2D> collision_shape;
 	int collision_mask;
@@ -49,8 +49,8 @@ public:
 	void set_collision_mask(int p_mask);
 	int get_collision_mask() const;
 
-	void set_scale(float p_scale);
-	float get_scale() const;
+	void set_scale(Vector2 p_scale);
+	Vector2 get_scale() const;
 
 	void set_speed(float p_speed);
 	float get_speed() const;

@@ -13,11 +13,6 @@ void BulletSpawner::_notification(int p_what) {
 		}
         break;
 
-        case NOTIFICATION_PROCESS: {
-            //_process(get_process_delta_time());
-        }
-        break;
-
         case NOTIFICATION_TRANSFORM_CHANGED: {
             if (get_global_transform().get_rotation() != _previous_transform.get_rotation()){
                 set_global_rotation(0);
@@ -314,7 +309,7 @@ float BulletSpawner::get_self_rotation_degrees() const {
 
 void BulletSpawner::set_adjusted_global_rotation(float p_radians) {
     Node *parent = get_parent();
-    Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
+    Node2D *parent_2D = Object::cast_to<Node2D>(parent);
     if (inherit_rotation && parent_2D != NULL){
         self_rotation = p_radians - parent_2D->get_global_rotation();
     } else {
@@ -325,7 +320,7 @@ void BulletSpawner::set_adjusted_global_rotation(float p_radians) {
 
 float BulletSpawner::get_adjusted_global_rotation() const {
     Node *parent = get_parent();
-    Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
+    Node2D *parent_2D = Object::cast_to<Node2D>(parent);
     if (inherit_rotation && parent_2D != NULL){
         return self_rotation + parent_2D->get_global_rotation();
     } else {
@@ -353,7 +348,7 @@ Vector2 BulletSpawner::get_self_scale() const {
 
 void BulletSpawner::set_adjusted_global_scale(const Vector2 &p_scale) {
     Node *parent = get_parent();
-    Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
+    Node2D *parent_2D = Object::cast_to<Node2D>(parent);
     if (inherit_scale && parent_2D != NULL){
         self_scale = p_scale / parent_2D->get_global_scale();
     } else {
@@ -365,7 +360,7 @@ void BulletSpawner::set_adjusted_global_scale(const Vector2 &p_scale) {
 
 Vector2 BulletSpawner::get_adjusted_global_scale() const {
     Node *parent = get_parent();
-    Node2D *parent_2D = dynamic_cast<Node2D*>(parent);
+    Node2D *parent_2D = Object::cast_to<Node2D>(parent);
     if (inherit_scale && parent_2D != NULL){
         return self_scale * parent_2D->get_global_scale();
     } else {

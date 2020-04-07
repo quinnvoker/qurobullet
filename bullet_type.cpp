@@ -24,11 +24,11 @@ bool BulletType::get_face_direction() const {
 	return face_direction;
 }
 
-void BulletType::set_scale(float p_scale) {
+void BulletType::set_scale(Vector2 p_scale) {
 	scale = p_scale;
 }
 
-float BulletType::get_scale() const {
+Vector2 BulletType::get_scale() const {
 	return scale;
 }
 
@@ -136,13 +136,13 @@ void BulletType::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "scale"), "set_scale", "get_scale");
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "collision_shape", PROPERTY_HINT_RESOURCE_TYPE, "Shape2D"), "set_collision_shape", "get_collision_shape");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "collision_mask", PROPERTY_HINT_LAYERS_2D_PHYSICS), "set_collision_mask", "get_collision_mask");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "speed", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_speed", "get_speed");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "linear_acceleration", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_linear_acceleration", "get_linear_acceleration");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater"), "set_curve_rate", "get_curve_rate");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate", PROPERTY_HINT_RANGE, "-360,360,0.01,or_lesser,or_greater"), "set_curve_rate", "get_curve_rate");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_sin_amplitude", "get_sin_amplitude");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_frequency", PROPERTY_HINT_RANGE, "0,100,0.01,or_lesser,or_greater"), "set_sin_frequency", "get_sin_frequency");
 }
@@ -151,7 +151,7 @@ BulletType::BulletType() {
 	texture = Ref<Texture>();
 	material = Ref<Material>();
 	face_direction = false;
-	scale = 1.0;
+	scale = Vector2(1,1);
 	damage = 0.0;
 	collision_shape = Ref<Shape2D>();
 	collision_mask = 0;
