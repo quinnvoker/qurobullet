@@ -355,7 +355,6 @@ void BulletSpawner::set_adjusted_global_scale(const Vector2 &p_scale) {
         self_scale = p_scale;
     }
     shots_update_required = true;
-
 }
 
 Vector2 BulletSpawner::get_adjusted_global_scale() const {
@@ -455,6 +454,7 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "VOLLEY, BULLET"), "set_scatter_type", "get_scatter_type");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_scatter_range", "get_scatter_range");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
+    ADD_GROUP("Transform Modifiers", "");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_rotation"), "set_inherit_rotation", "get_inherit_rotation");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "self_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_self_rotation", "get_self_rotation");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "self_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_self_rotation_degrees", "get_self_rotation_degrees");

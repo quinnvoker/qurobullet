@@ -16,22 +16,6 @@ Ref<Material> BulletType::get_material() const {
 	return material;
 }
 
-void BulletType::set_face_direction(bool p_enabled) {
-	face_direction = p_enabled;
-}
-
-bool BulletType::get_face_direction() const {
-	return face_direction;
-}
-
-void BulletType::set_scale(Vector2 p_scale) {
-	scale = p_scale;
-}
-
-Vector2 BulletType::get_scale() const {
-	return scale;
-}
-
 void BulletType::set_damage(float p_amount) {
 	damage = p_amount;
 }
@@ -96,18 +80,28 @@ float BulletType::get_sin_frequency() const {
 	return sin_frequency;
 }
 
+void BulletType::set_face_direction(bool p_enabled) {
+	face_direction = p_enabled;
+}
+
+bool BulletType::get_face_direction() const {
+	return face_direction;
+}
+
+void BulletType::set_scale(Vector2 p_scale) {
+	scale = p_scale;
+}
+
+Vector2 BulletType::get_scale() const {
+	return scale;
+}
+
 void BulletType::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_texture", "texture"), &BulletType::set_texture);
 	ClassDB::bind_method(D_METHOD("get_texture"), &BulletType::get_texture);
 
 	ClassDB::bind_method(D_METHOD("set_material", "material"), &BulletType::set_material);
 	ClassDB::bind_method(D_METHOD("get_material"), &BulletType::get_material);
-
-	ClassDB::bind_method(D_METHOD("set_face_direction", "enabled"), &BulletType::set_face_direction);
-	ClassDB::bind_method(D_METHOD("get_face_direction"), &BulletType::get_face_direction);
-
-	ClassDB::bind_method(D_METHOD("set_scale", "scale"), &BulletType::set_scale);
-	ClassDB::bind_method(D_METHOD("get_scale"), &BulletType::get_scale);
 
 	ClassDB::bind_method(D_METHOD("set_damage", "damage"), &BulletType::set_damage);
 	ClassDB::bind_method(D_METHOD("get_damage"), &BulletType::get_damage);
@@ -133,10 +127,14 @@ void BulletType::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_sin_frequency", "sin_frequency"), &BulletType::set_sin_frequency);
 	ClassDB::bind_method(D_METHOD("get_sin_frequency"), &BulletType::get_sin_frequency);
 
+	ClassDB::bind_method(D_METHOD("set_face_direction", "enabled"), &BulletType::set_face_direction);
+	ClassDB::bind_method(D_METHOD("get_face_direction"), &BulletType::get_face_direction);
+
+	ClassDB::bind_method(D_METHOD("set_scale", "scale"), &BulletType::set_scale);
+	ClassDB::bind_method(D_METHOD("get_scale"), &BulletType::get_scale);
+
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
-	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "collision_shape", PROPERTY_HINT_RESOURCE_TYPE, "Shape2D"), "set_collision_shape", "get_collision_shape");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "collision_mask", PROPERTY_HINT_LAYERS_2D_PHYSICS), "set_collision_mask", "get_collision_mask");
@@ -145,6 +143,9 @@ void BulletType::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate", PROPERTY_HINT_RANGE, "-360,360,0.01,or_lesser,or_greater"), "set_curve_rate", "get_curve_rate");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_sin_amplitude", "get_sin_amplitude");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_frequency", PROPERTY_HINT_RANGE, "0,100,0.01,or_lesser,or_greater"), "set_sin_frequency", "get_sin_frequency");
+	ADD_GROUP("Transform Modifiers", "");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
 }
 
 BulletType::BulletType() {

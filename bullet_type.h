@@ -13,8 +13,6 @@ class BulletType : public Resource {
 private:
 	Ref<Texture> texture;
 	Ref<Material> material;
-	bool face_direction;
-	Vector2 scale;
 	float damage;
 	Ref<Shape2D> collision_shape;
 	int collision_mask;
@@ -23,6 +21,8 @@ private:
 	float curve_rate;
 	float sin_amplitude;
 	float sin_frequency;
+	bool face_direction;
+	Vector2 scale;
 
 protected:
 	static void _bind_methods();
@@ -37,9 +37,6 @@ public:
 	void set_material(const Ref<Material> &p_material);
 	Ref<Material> get_material() const;
 
-	void set_face_direction(bool p_enabled);
-	bool get_face_direction() const;
-
 	void set_damage(float p_amount);
 	float get_damage() const;
 
@@ -48,9 +45,6 @@ public:
 
 	void set_collision_mask(int p_mask);
 	int get_collision_mask() const;
-
-	void set_scale(Vector2 p_scale);
-	Vector2 get_scale() const;
 
 	void set_speed(float p_speed);
 	float get_speed() const;
@@ -66,6 +60,12 @@ public:
 
 	void set_sin_frequency(float p_freq);
 	float get_sin_frequency() const;
+
+	void set_face_direction(bool p_enabled);
+	bool get_face_direction() const;
+
+	void set_scale(Vector2 p_scale);
+	Vector2 get_scale() const;
 };
 
 #endif
