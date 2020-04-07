@@ -4,7 +4,7 @@
 #include "scene/resources/world_2d.h"
 
 void Bullet::_ready() {
-	if (get_tree()->is_node_being_edited(this))
+	if (Engine::get_singleton()->is_editor_hint())
 		return;
 	set_active(false);
 }
@@ -42,7 +42,7 @@ void Bullet::spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, con
 
 void Bullet::update_position(float delta) {
 	float current_speed = type->get_speed() + type->get_linear_acceleration() * lifetime;
-	direction = direction.rotated(type->get_curve_rate() * delta * Math_PI / 180);
+	set_direction(direction.rotated(type->get_curve_rate() * delta * Math_PI / 180));
 	Vector2 perpendicular = direction.rotated(90 * Math_PI / 180);
 	float sin_point = sin(lifetime * type->get_sin_frequency());
 	Vector2 new_perp_offset = perpendicular * sin_point * type->get_sin_amplitude();
@@ -70,10 +70,8 @@ float Bullet::get_lifetime() const {
 
 void Bullet::set_direction(const Vector2 &p_direction) {
 	direction = p_direction;
-	if (get_tree()->is_node_being_edited(this))
-		return;
-	if (!type.is_null() && type->get_face_direction())
-		set_rotation(direction.angle());
+	if (!type.is_null())
+		set_rotation(direction.angle() * type->get_face_direction());
 	else
 		set_rotation(0.0);
 }
@@ -84,7 +82,7 @@ Vector2 Bullet::get_direction() const {
 
 void Bullet::set_type(const Ref<BulletType> &p_type) {
 	type = p_type;
-	set_scale(Vector2(type->get_scale(), type->get_scale()));
+	set_scale(type->get_scale());
 	set_material(type->get_material());
 	update();
 }
