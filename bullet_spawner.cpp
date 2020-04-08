@@ -443,7 +443,7 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_adjusted_global_scale"), &BulletSpawner::get_adjusted_global_scale);
 
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "0,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_spawn_radius", "get_spawn_radius");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
@@ -476,9 +476,9 @@ BulletSpawner::BulletSpawner() {
     volley_offset = 0.0;
     scatter_type = 0;
     scatter_range = 0.0;
-    inherit_rotation = false;
+    inherit_rotation = true;
     self_rotation = 0.0;
-    inherit_scale = false;
+    inherit_scale = true;
     self_scale = Vector2(1,1);
     in_game_preview = false;
     preview_color = Color(0.0, 1.0, 0.0, 1.0); //green
