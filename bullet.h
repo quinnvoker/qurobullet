@@ -10,6 +10,7 @@ class Bullet : public Node2D {
 
 	bool active;
 	float lifetime;
+	bool _popped;
 
 	Vector2 direction;
 	Vector2 perp_offset;
@@ -30,6 +31,9 @@ public:
 	void spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
 
 	void update_position(float delta);
+
+	void pop();
+	bool is_popped();
 
 	void set_active(bool p_active);
 	bool get_active() const;
