@@ -52,7 +52,6 @@ void BulletSpawner::_ready() {
 }
 
 void BulletSpawner::_process(float delta) {
-    //_reset_global_transform();
     update();
 }
 
@@ -132,7 +131,6 @@ void BulletSpawner::_update_cached_shots() {
         bool spacing_maxed = false;
 
         Vector2 volley_start = arc_start;
-        //check if spacing between bullets is greater than the highest even spacing for bullet count on a circle. if so, make spacing even and update the volley start accordingly
         if (spacing > 2 * M_PI / bullet_count){
             spacing = 2 * M_PI / bullet_count;
             volley_start = Vector2(-1,0).rotated(spacing / 2);
