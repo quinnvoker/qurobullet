@@ -23,6 +23,7 @@ void BulletServer::_notification(int p_what) {
 }
 
 void BulletServer::_ready() {
+	VS::get_singleton()->canvas_item_set_sort_children_by_y(get_canvas_item(), true);
 	if (Engine::get_singleton()->is_editor_hint())
 		return;
 	set_physics_process(true);
