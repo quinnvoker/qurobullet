@@ -25,6 +25,7 @@ void Bullet::_notification(int p_what) {
 		case NOTIFICATION_READY: {
 			_ready();
 		}
+		break;
 
 		default:
 			break;
@@ -36,6 +37,7 @@ void Bullet::spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, con
 	set_position(p_position);
 	set_direction(p_direction);
 	set_active(true);
+	_popped = false;
 	lifetime = 0.0;
 	perp_offset = Vector2(0, 0);
 }
@@ -49,6 +51,14 @@ void Bullet::update_position(float delta) {
 	set_position(get_position() - perp_offset + direction * current_speed * delta + new_perp_offset);
 	perp_offset = new_perp_offset;
 	lifetime += delta;
+}
+
+void Bullet::pop(){
+	_popped = true;
+}
+
+bool Bullet::is_popped(){
+	return _popped;
 }
 
 void Bullet::set_active(bool p_active) {
@@ -94,6 +104,9 @@ Ref<BulletType> Bullet::get_type() const {
 void Bullet::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn", "type", "position", "direction"), &Bullet::spawn);
 	ClassDB::bind_method(D_METHOD("update_position", "delta"), &Bullet::update_position);
+
+	ClassDB::bind_method(D_METHOD("pop"), &Bullet::pop);
+	ClassDB::bind_method(D_METHOD("is_popped"), &Bullet::is_popped);
 
 	ClassDB::bind_method(D_METHOD("set_active", "active"), &Bullet::set_active);
 	ClassDB::bind_method(D_METHOD("get_active"), &Bullet::get_active);
