@@ -15,11 +15,11 @@ class BulletServer : public Node2D {
 
 	bool auto_pop;
 
-	std::vector<Bullet *> live_bullets;
-	std::vector<Bullet *> dead_bullets;
+	Vector<Bullet *> live_bullets;
+	Vector<Bullet *> dead_bullets;
 
 	void _ready();
-	void _physics_process(float delta);
+	void _physics_process_internal(float delta);
 
 	void _init_bullets();
 	void _create_bullet();
