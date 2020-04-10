@@ -13,9 +13,10 @@ void BulletServer::_notification(int p_what) {
 			_ready();
 		} break;
 
-		case NOTIFICATION_PHYSICS_PROCESS: {
-			_physics_process(get_physics_process_delta_time());
+		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
+			_physics_process_internal(get_physics_process_delta_time());
 		}
+		break;
 
 		default:
 			break;
@@ -23,10 +24,9 @@ void BulletServer::_notification(int p_what) {
 }
 
 void BulletServer::_ready() {
-	VS::get_singleton()->canvas_item_set_sort_children_by_y(get_canvas_item(), true);
 	if (Engine::get_singleton()->is_editor_hint())
 		return;
-	set_physics_process(true);
+	set_physics_process_internal(true);
 	play_area = get_viewport_rect().grow(play_area_margin);
 	BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
 	relay->connect("bullet_spawn_requested", this, "spawn_bullet");
@@ -34,11 +34,11 @@ void BulletServer::_ready() {
 	_init_bullets();
 }
 
-void BulletServer::_physics_process(float delta) {
+void BulletServer::_physics_process_internal(float delta) {
 	if (Engine::get_singleton()->is_editor_hint())
 		return;
 
-	std::vector<int> bullet_indices_to_clear;
+	Vector<int> bullet_indices_to_clear;
 	Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
 	Vector<Physics2DDirectSpaceState::ShapeResult> results;
 	results.resize(32);
@@ -69,8 +69,8 @@ void BulletServer::_physics_process(float delta) {
 	for (int i = 0; i < int(bullet_indices_to_clear.size()); i++) {
 		Bullet *bullet = live_bullets[bullet_indices_to_clear[i] - i];
 		bullet->set_active(false);
-		live_bullets.erase(live_bullets.begin() + bullet_indices_to_clear[i] - i);
-		dead_bullets.insert(dead_bullets.begin(), bullet);
+		live_bullets.remove(bullet_indices_to_clear[i] - i);
+		dead_bullets.insert(0, bullet);
 	}
 }
 
@@ -83,22 +83,22 @@ void BulletServer::_init_bullets() {
 void BulletServer::_create_bullet() {
 	Bullet *bullet = memnew(Bullet);
 	add_child(bullet);
-	dead_bullets.insert(dead_bullets.begin(), bullet);
+	dead_bullets.insert(0, bullet);
 }
 
 void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
 	Bullet *bullet;
 
 	if (dead_bullets.size() > 0) {
-		bullet = dead_bullets.back();
-		dead_bullets.pop_back();
+		bullet = dead_bullets.get(dead_bullets.size() - 1);
+		dead_bullets.remove(dead_bullets.size() - 1);
 	} else {
-		bullet = live_bullets.back();
-		live_bullets.pop_back();
+		bullet = live_bullets.get(live_bullets.size() - 1);
+		live_bullets.remove(live_bullets.size() - 1);
 	}
 
 	bullet->spawn(p_type, p_position, p_direction);
-	live_bullets.insert(live_bullets.begin(), bullet);
+	live_bullets.insert(0, bullet);
 }
 
 void BulletServer::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_shots) {
@@ -119,11 +119,11 @@ void BulletServer::set_bullet_pool_size(int p_size) {
 	while (int(dead_bullets.size() + live_bullets.size()) > bullet_pool_size) {
 		Bullet *bullet;
 		if (dead_bullets.size() > 0) {
-			bullet = dead_bullets.back();
-			dead_bullets.pop_back();
+			bullet = dead_bullets.get(dead_bullets.size() - 1);
+		dead_bullets.remove(dead_bullets.size() - 1);
 		} else {
-			bullet = live_bullets.back();
-			live_bullets.pop_back();
+			bullet = live_bullets.get(live_bullets.size() - 1);
+			live_bullets.remove(live_bullets.size() - 1);
 		}
 		remove_child(bullet);
 		memdelete(bullet);
