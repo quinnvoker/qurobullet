@@ -45,9 +45,9 @@ void BulletServer::_physics_process(float delta) {
 	for (int i = 0; i < int(live_bullets.size()); i++) {
 		Bullet *bullet = live_bullets[i];
 
-		if (bullet->is_popped()){
-				bullet_indices_to_clear.push_back(i);
-		} else if (play_area.has_point(bullet->get_position())) {
+		if (bullet->is_popped() || !play_area.has_point(bullet->get_position())){
+			bullet_indices_to_clear.push_back(i);
+		} else {
 			bullet->update_position(delta);
 			Ref<BulletType> b_type = bullet->get_type();
 			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), true, true);
@@ -62,8 +62,6 @@ void BulletServer::_physics_process(float delta) {
 					bullet->pop();
 				}
 			}
-		} else {
-			bullet->pop();
 		}
 	}
 
