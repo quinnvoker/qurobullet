@@ -36,15 +36,19 @@ void BulletServer::_ready() {
 void BulletServer::_physics_process(float delta) {
 	if (Engine::get_singleton()->is_editor_hint())
 		return;
+
 	std::vector<int> bullet_indices_to_clear;
 	Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
 	Vector<Physics2DDirectSpaceState::ShapeResult> results;
 	results.resize(32);
+
 	for (int i = 0; i < int(live_bullets.size()); i++) {
 		Bullet *bullet = live_bullets[i];
-		if (play_area.has_point(bullet->get_position())) {
+
+		if (bullet->is_popped()){
+				bullet_indices_to_clear.push_back(i);
+		} else if (play_area.has_point(bullet->get_position())) {
 			bullet->update_position(delta);
-			//check collisions
 			Ref<BulletType> b_type = bullet->get_type();
 			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), true, true);
 			if (collisions > 0){
@@ -54,12 +58,15 @@ void BulletServer::_physics_process(float delta) {
 					colliders[c] = results[c].collider;
 				}
 				emit_signal("collision_detected", bullet, colliders);
-				bullet_indices_to_clear.push_back(i);
-			} 
+				if(auto_pop){
+					bullet->pop();
+				}
+			}
 		} else {
-			bullet_indices_to_clear.push_back(i);
+			bullet->pop();
 		}
 	}
+
 	for (int i = 0; i < int(bullet_indices_to_clear.size()); i++) {
 		Bullet *bullet = live_bullets[bullet_indices_to_clear[i] - i];
 		bullet->set_active(false);
@@ -139,6 +146,14 @@ float BulletServer::get_play_area_margin() const {
 	return play_area_margin;
 }
 
+void BulletServer::set_auto_pop(bool p_enabled){
+	auto_pop = p_enabled;
+}
+
+bool BulletServer::get_auto_pop() const {
+	return auto_pop;
+}
+
 void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
 	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "shots"), &BulletServer::spawn_volley);
@@ -149,16 +164,21 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_play_area_margin", "margin"), &BulletServer::set_play_area_margin);
 	ClassDB::bind_method(D_METHOD("get_play_area_margin"), &BulletServer::get_play_area_margin);
 
+	ClassDB::bind_method(D_METHOD("set_auto_pop", "enabled"), &BulletServer::set_auto_pop);
+	ClassDB::bind_method(D_METHOD("get_auto_pop"), &BulletServer::get_auto_pop);
+
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size", PROPERTY_HINT_RANGE, "1,5000,1,or_greater"), "set_bullet_pool_size", "get_bullet_pool_size");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "auto_pop"), "set_auto_pop", "get_auto_pop");
 
-	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::OBJECT, "Collider", PROPERTY_HINT_RESOURCE_TYPE, "CollisionObject2D")));
+	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "Colliders")));
 }
 
 BulletServer::BulletServer() {
 	set_physics_process(true);
 	bullet_pool_size = 1500;
 	play_area_margin = 0;
+	auto_pop = true;
 }
 
 BulletServer::~BulletServer() {

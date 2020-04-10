@@ -13,6 +13,8 @@ class BulletServer : public Node2D {
 	Rect2 play_area;
 	float play_area_margin;
 
+	bool auto_pop;
+
 	std::vector<Bullet *> live_bullets;
 	std::vector<Bullet *> dead_bullets;
 
@@ -39,6 +41,9 @@ public:
 
 	void set_play_area_margin(float p_margin);
 	float get_play_area_margin() const;
+
+	void set_auto_pop(bool p_enabled);
+	bool get_auto_pop() const;
 };
 
 #endif
