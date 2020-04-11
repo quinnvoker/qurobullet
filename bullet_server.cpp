@@ -12,6 +12,11 @@ void BulletServer::_notification(int p_what) {
 			_ready();
 		} break;
 
+		case NOTIFICATION_INTERNAL_PROCESS: {
+			_process_internal(get_process_delta_time());
+		}
+		break;
+
 		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
 			_physics_process_internal(get_physics_process_delta_time());
 		}
@@ -25,12 +30,20 @@ void BulletServer::_notification(int p_what) {
 void BulletServer::_ready() {
 	if (Engine::get_singleton()->is_editor_hint())
 		return;
+	set_process_internal(true);
 	set_physics_process_internal(true);
 	play_area = get_viewport_rect().grow(play_area_margin);
 	BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
 	relay->connect("bullet_spawn_requested", this, "spawn_bullet");
 	relay->connect("volley_spawn_requested", this, "spawn_volley");
 	_init_bullets();
+}
+
+void BulletServer::_internal_process(float delta) {
+	for (int i = 0; i < live_bullets.size(); i++){
+		Bullet *b = live_bullets[i];
+		VS::get_singleton()->canvas_item_set_transform(b->get_transform());
+	}
 }
 
 void BulletServer::_physics_process_internal(float delta) {
@@ -41,12 +54,12 @@ void BulletServer::_physics_process_internal(float delta) {
 	Vector<Physics2DDirectSpaceState::ShapeResult> results;
 	results.resize(32);
 
-	for (int i = 0; i < int(live_bullets.size()); i++) {
+	for (int i = 0; i < live_bullets.size(); i++) {
 		Bullet *bullet = live_bullets[i];
 
-		if (bullet->is_popped() || !play_area.has_point(bullet->get_position())){
+		if (bullet->is_popped()){
 			bullet_indices_to_clear.push_back(i);
-		} else {
+		} else if (!play_area.has_point(bullet->get_position())) {
 			bullet->update_position(delta);
 			Ref<BulletData> b_data = bullet->get_data();
 			int collisions = space_state->intersect_shape(b_data->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_data->get_collision_mask(), true, true);
@@ -62,9 +75,10 @@ void BulletServer::_physics_process_internal(float delta) {
 				}
 			}
 		}
+		
 	}
 
-	for (int i = 0; i < int(bullet_indices_to_clear.size()); i++) {
+	for (int i = 0; i < bullet_indices_to_clear.size(); i++) {
 		Bullet *bullet = live_bullets[bullet_indices_to_clear[i] - i];
 		live_bullets.remove(bullet_indices_to_clear[i] - i);
 		dead_bullets.insert(0, bullet);

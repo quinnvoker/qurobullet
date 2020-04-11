@@ -133,7 +133,6 @@ void BulletData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_scale", "scale"), &BulletData::set_scale);
 	ClassDB::bind_method(D_METHOD("get_scale"), &BulletData::get_scale);
 
-	/*
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
@@ -147,7 +146,6 @@ void BulletData::_bind_methods() {
 	ADD_GROUP("Transform Modifiers", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
-	*/
 }
 
 BulletData::BulletData() {

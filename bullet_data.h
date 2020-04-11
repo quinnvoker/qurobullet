@@ -1,14 +1,13 @@
 #ifndef BULLETDATA_H
 #define BULLETDATA_H
 
-#include "core/reference.h"
 #include "core/resource.h"
 #include "scene/resources/material.h"
 #include "scene/resources/shape_2d.h"
 #include "scene/resources/texture.h"
 
-class BulletData : public Reference {
-	GDCLASS(BulletData, Reference);
+class BulletData : public Resource {
+	GDCLASS(BulletData, Resource);
 
 private:
 	Ref<Texture> texture;
