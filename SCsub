@@ -4,7 +4,7 @@ Import('env')
 
 sources = [
     "register_types.cpp",
-    "bullet_type.cpp",
+    "bullet_data.cpp",
     "bullet.cpp",
     "bullet_server.cpp",
     "bullet_server_relay.cpp",

@@ -182,12 +182,12 @@ int BulletSpawner::get_interval_frames() const {
     return interval_frames;
 }
 
-void BulletSpawner::set_bullet_type(const Ref<BulletType> &p_type) {
+void BulletSpawner::set_bullet_type(const Ref<BulletData> &p_type) {
     bullet_type = p_type;
     shots_update_required = true;
 }
 
-Ref<BulletType> BulletSpawner::get_bullet_type() const {
+Ref<BulletData> BulletSpawner::get_bullet_type() const {
     return bullet_type;
 }
 
