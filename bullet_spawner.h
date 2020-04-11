@@ -3,7 +3,7 @@
 
 #include "core/engine.h"
 #include "scene/2d/node_2d.h"
-#include "bullet_type.h"
+#include "bullet_data.h"
 #include "bullet_server_relay.h"
 #include <map>
 
@@ -14,7 +14,7 @@ class BulletSpawner : public Node2D{
     int _autofire_step;
     int interval_frames;
 
-    Ref<BulletType> bullet_type;
+    Ref<BulletData> bullet_type;
 
     Array cached_shots;
     bool shots_update_required;
@@ -75,8 +75,8 @@ public:
     void set_interval_frames(int p_interval);
     int get_interval_frames() const;
 
-    void set_bullet_type(const Ref<BulletType> &p_type);
-    Ref<BulletType> get_bullet_type() const;
+    void set_bullet_type(const Ref<BulletData> &p_type);
+    Ref<BulletData> get_bullet_type() const;
 
     void set_spawn_radius(float p_radius);
     float get_spawn_radius() const;
