@@ -5,6 +5,8 @@
 #include "core/reference.h"
 #include "bullet_data.h"
 #include "core/math/transform_2d.h"
+#include "core/math/rect2.h"
+#include "scene/resources/texture.h"
 
 
 class Bullet : public Object {
@@ -54,6 +56,7 @@ class Bullet : public Object {
 		RID get_ci_rid() const;		
 
 		Bullet();
+		~Bullet();
 };
 
 #endif

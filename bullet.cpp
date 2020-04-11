@@ -8,6 +8,7 @@ void Bullet::spawn(const Ref<BulletData> &p_data, const Vector2 &p_position, con
     set_data(p_data);
     set_position(p_position);
     set_direction(p_direction);
+	VS::get_singleton()->canvas_item_set_visible(ci_rid, true);
 }
 
 void Bullet::update_position(float delta) {
@@ -23,6 +24,7 @@ void Bullet::update_position(float delta) {
 
 void Bullet::pop() {
     _popped = true;
+	VS::get_singleton()->canvas_item_set_visible(ci_rid, false);
 }
 
 bool Bullet::is_popped() {
@@ -38,6 +40,21 @@ float Bullet::get_time() const {
 }
 
 void Bullet::set_data(const Ref<BulletData> &p_data) {
+	if (!data.is_null){
+		if (p_data->get_texture() != data->get_texture()){
+			Ref<Texture> tex = p_data->get_texture();
+			VS::get_singleton()->canvas_item_clear(ci_rid);
+			VS::get_singleton()->canvas_item_add_texture_rect(ci_rid, Rect2(tex->get_size() / 2, tex->get_size()), tex->get_rid());
+		}
+		if (p_data->get_material() != data->get_material()){
+			VS::get_singleton()->canvas_item_set_material(ci_rid, p_data->get_material()->get_rid());
+		}
+	} else {
+		Ref<Texture> tex = p_data->get_texture();
+		VS::get_singleton()->canvas_item_clear(ci_rid);
+		VS::get_singleton()->canvas_item_add_texture_rect(ci_rid, Rect2(tex->get_size() / 2, tex->get_size()), tex->get_rid());
+		VS::get_singleton()->canvas_item_set_material(ci_rid, p_data->get_material()->get_rid());
+	}
     data = p_data;
 }
 
@@ -119,5 +136,10 @@ void Bullet::_bind_methods(){
 }
 
 Bullet::Bullet() {
+	ci_rid = VS::get_singleton()->canvas_item_create();
     direction = Vector2(0,0);
+}
+
+Bullet::~Bullet(){
+	VS::get_singleton()->free(ci_rid);
 }

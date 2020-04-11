@@ -70,7 +70,7 @@ void BulletSpawner::_physics_process(float delta){
 
 //public functions
 void BulletSpawner::fire() {
-    emit_signal("volley_fired", bullet_type, get_global_position(), get_scattered_shots());
+    emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), get_scattered_shots());
 }
 
 Array BulletSpawner::get_shots() {
