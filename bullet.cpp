@@ -17,7 +17,7 @@ void Bullet::update_position(float delta) {
 	Vector2 perpendicular = direction.rotated(90 * Math_PI / 180);
 	float sin_point = sin(time * data->get_sin_frequency());
 	Vector2 new_perp_offset = perpendicular * sin_point * data->get_sin_amplitude();
-	set_position(get_position() - _perp_offset + direction * current_speed * delta + new_perp_offset);
+	position = position - _perp_offset + direction * current_speed * delta + new_perp_offset;
 	_perp_offset = new_perp_offset;
 	time += delta;
 }
@@ -40,20 +40,16 @@ float Bullet::get_time() const {
 }
 
 void Bullet::set_data(const Ref<BulletData> &p_data) {
-	if (!data.is_null){
-		if (p_data->get_texture() != data->get_texture()){
-			Ref<Texture> tex = p_data->get_texture();
-			VS::get_singleton()->canvas_item_clear(ci_rid);
-			VS::get_singleton()->canvas_item_add_texture_rect(ci_rid, Rect2(tex->get_size() / 2, tex->get_size()), tex->get_rid());
-		}
+	if (!data.is_null()){
 		if (p_data->get_material() != data->get_material()){
-			VS::get_singleton()->canvas_item_set_material(ci_rid, p_data->get_material()->get_rid());
+			ci_set_material(p_data->get_material());
+		}
+		if (p_data->get_texture() != data->get_texture()){
+			ci_draw_texture(p_data->get_texture());
 		}
 	} else {
-		Ref<Texture> tex = p_data->get_texture();
-		VS::get_singleton()->canvas_item_clear(ci_rid);
-		VS::get_singleton()->canvas_item_add_texture_rect(ci_rid, Rect2(tex->get_size() / 2, tex->get_size()), tex->get_rid());
-		VS::get_singleton()->canvas_item_set_material(ci_rid, p_data->get_material()->get_rid());
+		ci_set_material(p_data->get_material());
+		ci_draw_texture(p_data->get_texture());
 	}
     data = p_data;
 }
@@ -106,6 +102,21 @@ void Bullet::set_ci_rid(const RID $p_rid){
 
 RID Bullet::get_ci_rid() const{
 	return ci_rid;
+}
+
+void Bullet::ci_set_material(const Ref<Material> &p_material){
+	if (p_material.is_null()){
+		return;
+	}
+	VS::get_singleton()->canvas_item_set_material(ci_rid, p_material->get_rid());
+}
+
+void Bullet::ci_draw_texture(const Ref<Texture> &p_texture){
+	VS::get_singleton()->canvas_item_clear(ci_rid);
+	if (p_texture.is_null()){
+		return;
+	}
+	VS::get_singleton()->canvas_item_add_texture_rect(ci_rid, Rect2(-p_texture->get_size() / 2, p_texture->get_size()), p_texture->get_rid());
 }
 
 void Bullet::_bind_methods(){
