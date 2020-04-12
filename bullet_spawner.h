@@ -75,8 +75,8 @@ public:
     void set_interval_frames(int p_interval);
     int get_interval_frames() const;
 
-    void set_bullet_type(const Ref<BulletData> &p_type);
-    Ref<BulletData> get_bullet_type() const;
+    void set_bullet_data(const Ref<BulletData> &p_type);
+    Ref<BulletData> get_bullet_data() const;
 
     void set_spawn_radius(float p_radius);
     float get_spawn_radius() const;

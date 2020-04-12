@@ -39,10 +39,10 @@ void BulletServer::_ready() {
 	_init_bullets();
 }
 
-void BulletServer::_internal_process(float delta) {
+void BulletServer::_process_internal(float delta) {
 	for (int i = 0; i < live_bullets.size(); i++){
 		Bullet *b = live_bullets[i];
-		VS::get_singleton()->canvas_item_set_transform(b->get_transform());
+		VS::get_singleton()->canvas_item_set_transform(b->get_ci_rid(), b->get_transform());
 	}
 }
 
@@ -56,10 +56,11 @@ void BulletServer::_physics_process_internal(float delta) {
 
 	for (int i = 0; i < live_bullets.size(); i++) {
 		Bullet *bullet = live_bullets[i];
+		VS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), i);
 
 		if (bullet->is_popped()){
 			bullet_indices_to_clear.push_back(i);
-		} else if (!play_area.has_point(bullet->get_position())) {
+		} else if (play_area.has_point(bullet->get_position())) {
 			bullet->update_position(delta);
 			Ref<BulletData> b_data = bullet->get_data();
 			int collisions = space_state->intersect_shape(b_data->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_data->get_collision_mask(), true, true);
@@ -74,6 +75,8 @@ void BulletServer::_physics_process_internal(float delta) {
 					bullet->pop();
 				}
 			}
+		} else {
+			bullet->pop();
 		}
 		
 	}
@@ -93,7 +96,7 @@ void BulletServer::_init_bullets() {
 
 void BulletServer::_create_bullet() {
 	Bullet *bullet = memnew(Bullet);
-	bullet->set_ci_rid(VS::get_singleton()->canvas_item_create());
+	VS::get_singleton()->canvas_item_set_parent(bullet->get_ci_rid(), get_canvas_item());
 	dead_bullets.insert(0, bullet);
 }
 
@@ -109,6 +112,7 @@ void BulletServer::spawn_bullet(const Ref<BulletData> &p_type, const Vector2 &p_
 	}
 
 	bullet->spawn(p_type, p_position, p_direction);
+	VS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), 0);
 	live_bullets.insert(0, bullet);
 }
 

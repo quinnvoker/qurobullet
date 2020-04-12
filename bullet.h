@@ -53,7 +53,10 @@ class Bullet : public Object {
 		Transform2D get_transform();
 
 		void set_ci_rid(const RID $p_rid);
-		RID get_ci_rid() const;		
+		RID get_ci_rid() const;
+
+		void ci_set_material(const Ref<Material> &p_material);
+		void ci_draw_texture(const Ref<Texture> &p_texture);
 
 		Bullet();
 		~Bullet();
