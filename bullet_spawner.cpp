@@ -60,17 +60,20 @@ void BulletSpawner::_physics_process(float delta){
         return;
     }
     if (autofire){
-        _autofire_step++;
-        if (_autofire_step >= interval_frames){
+        _autofire_time += delta;
+        if (_autofire_time >= interval_frames / ProjectSettings::get_singleton()->get("physics/common/physics_fps").operator float()){
             fire();
-            _autofire_step = 0;
+            _autofire_time = 0;
         }
     }
 }
 
 //public functions
 void BulletSpawner::fire() {
-    emit_signal("volley_fired", bullet_type, get_global_position(), get_scattered_shots());
+    if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint()){
+        return;
+    }
+    emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), get_scattered_shots());
 }
 
 Array BulletSpawner::get_shots() {
@@ -164,7 +167,7 @@ Vector2 BulletSpawner::_get_spawn_offset(const Vector2 &p_shot_dir) {
 //setters/getters
 void BulletSpawner::set_autofire(bool p_enabled) {
     autofire = p_enabled;
-    _autofire_step = 0;
+    _autofire_time = 0;
     if (autofire){
         fire();
     }
@@ -182,12 +185,12 @@ int BulletSpawner::get_interval_frames() const {
     return interval_frames;
 }
 
-void BulletSpawner::set_bullet_type(const Ref<BulletType> &p_type) {
+void BulletSpawner::set_bullet_data(const Ref<BulletData> &p_type) {
     bullet_type = p_type;
     shots_update_required = true;
 }
 
-Ref<BulletType> BulletSpawner::get_bullet_type() const {
+Ref<BulletData> BulletSpawner::get_bullet_data() const {
     return bullet_type;
 }
 
@@ -386,8 +389,8 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_interval_frames", "interval"), &BulletSpawner::set_interval_frames);
     ClassDB::bind_method(D_METHOD("get_interval_frames"), &BulletSpawner::get_interval_frames);
 
-    ClassDB::bind_method(D_METHOD("set_bullet_type", "type"), &BulletSpawner::set_bullet_type);
-    ClassDB::bind_method(D_METHOD("get_bullet_type"), &BulletSpawner::get_bullet_type);
+    ClassDB::bind_method(D_METHOD("set_bullet_data", "data"), &BulletSpawner::set_bullet_data);
+    ClassDB::bind_method(D_METHOD("get_bullet_data"), &BulletSpawner::get_bullet_data);
 
     ClassDB::bind_method(D_METHOD("set_spawn_radius", "radius"), &BulletSpawner::set_spawn_radius);
     ClassDB::bind_method(D_METHOD("get_spawn_radius"), &BulletSpawner::get_spawn_radius);
@@ -442,7 +445,7 @@ void BulletSpawner::_bind_methods() {
 
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_data", PROPERTY_HINT_RESOURCE_TYPE, "BulletData"), "set_bullet_data", "get_bullet_data");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_spawn_radius", "get_spawn_radius");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_bullet_count", "get_bullet_count");

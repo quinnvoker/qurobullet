@@ -1,14 +1,13 @@
-#ifndef BULLETTYPE_H
-#define BULLETTYPE_H
+#ifndef BULLETDATA_H
+#define BULLETDATA_H
 
-#include "core/reference.h"
 #include "core/resource.h"
 #include "scene/resources/material.h"
 #include "scene/resources/shape_2d.h"
 #include "scene/resources/texture.h"
 
-class BulletType : public Resource {
-	GDCLASS(BulletType, Resource);
+class BulletData : public Resource {
+	GDCLASS(BulletData, Resource);
 
 private:
 	Ref<Texture> texture;
@@ -28,8 +27,8 @@ protected:
 	static void _bind_methods();
 
 public:
-	BulletType();
-	~BulletType();
+	BulletData();
+	~BulletData();
 
 	void set_texture(const Ref<Texture> &p_texture);
 	Ref<Texture> get_texture() const;
