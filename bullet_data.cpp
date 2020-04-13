@@ -142,7 +142,7 @@ void BulletData::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "linear_acceleration", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_linear_acceleration", "get_linear_acceleration");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate", PROPERTY_HINT_RANGE, "-360,360,0.01,or_lesser,or_greater"), "set_curve_rate", "get_curve_rate");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_sin_amplitude", "get_sin_amplitude");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_frequency", PROPERTY_HINT_RANGE, "0,100,0.01,or_lesser,or_greater"), "set_sin_frequency", "get_sin_frequency");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "sin_frequency", PROPERTY_HINT_RANGE, "0,5,0.001,or_greater"), "set_sin_frequency", "get_sin_frequency");
 	ADD_GROUP("Transform Modifiers", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");

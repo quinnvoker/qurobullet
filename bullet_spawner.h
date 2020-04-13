@@ -11,7 +11,7 @@ class BulletSpawner : public Node2D{
     GDCLASS(BulletSpawner, Node2D);
 
     bool autofire;
-    int _autofire_step;
+    float _autofire_time;
     int interval_frames;
 
     Ref<BulletData> bullet_type;
