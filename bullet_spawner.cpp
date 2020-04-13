@@ -60,10 +60,10 @@ void BulletSpawner::_physics_process(float delta){
         return;
     }
     if (autofire){
-        _autofire_step++;
-        if (_autofire_step >= interval_frames){
+        _autofire_time += delta;
+        if (_autofire_time >= interval_frames / ProjectSettings::get_singleton()->get("physics/common/physics_fps").operator float()){
             fire();
-            _autofire_step = 0;
+            _autofire_time = 0;
         }
     }
 }
@@ -167,7 +167,7 @@ Vector2 BulletSpawner::_get_spawn_offset(const Vector2 &p_shot_dir) {
 //setters/getters
 void BulletSpawner::set_autofire(bool p_enabled) {
     autofire = p_enabled;
-    _autofire_step = 0;
+    _autofire_time = 0;
     if (autofire){
         fire();
     }

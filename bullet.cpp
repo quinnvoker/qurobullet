@@ -15,7 +15,7 @@ void Bullet::update_position(float delta) {
     float current_speed = data->get_speed() + data->get_linear_acceleration() * time;
 	set_direction(direction.rotated(data->get_curve_rate() * delta * Math_PI / 180));
 	Vector2 perpendicular = direction.rotated(90 * Math_PI / 180);
-	float sin_point = sin(time * data->get_sin_frequency());
+	float sin_point = sin(time * 2 * M_PI * data->get_sin_frequency());
 	Vector2 new_perp_offset = perpendicular * sin_point * data->get_sin_amplitude();
 	position = position - _perp_offset + direction * current_speed * delta + new_perp_offset;
 	_perp_offset = new_perp_offset;
