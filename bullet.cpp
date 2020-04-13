@@ -1,140 +1,156 @@
 #include "bullet.h"
 
-#include "core/os/os.h"
-#include "scene/resources/world_2d.h"
-
-void Bullet::_ready() {
-	if (Engine::get_singleton()->is_editor_hint())
-		return;
-	set_active(false);
-}
-
-void Bullet::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_DRAW: {
-			if (type.is_null() or type->get_texture().is_null())
-				return;
-			Ref<Texture> tex = type->get_texture();
-			RID ci = get_canvas_item();
-
-			tex->draw(ci, -tex->get_size() / 2);
-		}
-
-		break;
-
-		case NOTIFICATION_READY: {
-			_ready();
-		}
-		break;
-
-		default:
-			break;
-	}
-}
-
-void Bullet::spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction){
-	set_type(p_type);
-	set_position(p_position);
-	set_direction(p_direction);
-	set_active(true);
-	_popped = false;
-	lifetime = 0.0;
-	perp_offset = Vector2(0, 0);
+void Bullet::spawn(const Ref<BulletData> &p_data, const Vector2 &p_position, const Vector2 &p_direction) {
+	time = 0.0;
+	rotation = 0.0;
+    _popped = false;
+	_perp_offset = Vector2(0, 0);
+    set_data(p_data);
+    set_position(p_position);
+    set_direction(p_direction);
+	VS::get_singleton()->canvas_item_set_visible(ci_rid, true);
 }
 
 void Bullet::update_position(float delta) {
-	float current_speed = type->get_speed() + type->get_linear_acceleration() * lifetime;
-	set_direction(direction.rotated(type->get_curve_rate() * delta * Math_PI / 180));
+    float current_speed = data->get_speed() + data->get_linear_acceleration() * time;
+	set_direction(direction.rotated(data->get_curve_rate() * delta * Math_PI / 180));
 	Vector2 perpendicular = direction.rotated(90 * Math_PI / 180);
-	float sin_point = sin(lifetime * type->get_sin_frequency());
-	Vector2 new_perp_offset = perpendicular * sin_point * type->get_sin_amplitude();
-	set_position(get_position() - perp_offset + direction * current_speed * delta + new_perp_offset);
-	perp_offset = new_perp_offset;
-	lifetime += delta;
+	float sin_point = sin(time * 2 * M_PI * data->get_sin_frequency());
+	Vector2 new_perp_offset = perpendicular * sin_point * data->get_sin_amplitude();
+	position = position - _perp_offset + direction * current_speed * delta + new_perp_offset;
+	_perp_offset = new_perp_offset;
+	time += delta;
 }
 
-void Bullet::pop(){
-	_popped = true;
+void Bullet::pop() {
+    _popped = true;
+	VS::get_singleton()->canvas_item_set_visible(ci_rid, false);
 }
 
-bool Bullet::is_popped(){
-	return _popped;
+bool Bullet::is_popped() {
+    return _popped;
 }
 
-void Bullet::set_active(bool p_active) {
-	active = p_active;
-	set_visible(active);
+void Bullet::set_time(float p_time) {
+	time = p_time;    
 }
 
-bool Bullet::get_active() const {
-	return active;
+float Bullet::get_time() const {
+    return time;
 }
 
-void Bullet::set_lifetime(float p_time) {
-	lifetime = p_time;
+void Bullet::set_data(const Ref<BulletData> &p_data) {
+	if (!data.is_null()){
+		if (p_data->get_material() != data->get_material()){
+			ci_set_material(p_data->get_material());
+		}
+		if (p_data->get_texture() != data->get_texture()){
+			ci_draw_texture(p_data->get_texture());
+		}
+	} else {
+		ci_set_material(p_data->get_material());
+		ci_draw_texture(p_data->get_texture());
+	}
+    data = p_data;
 }
 
-float Bullet::get_lifetime() const {
-	return lifetime;
+Ref<BulletData> Bullet::get_data() const {
+    return data;
 }
 
 void Bullet::set_direction(const Vector2 &p_direction) {
-	direction = p_direction;
-	if (!type.is_null())
-		set_rotation(direction.angle() * type->get_face_direction());
-	else
-		set_rotation(0.0);
+    direction = p_direction;
+	if (!data.is_null() && data->get_face_direction()){
+		rotation = p_direction.angle();
+	}
 }
 
 Vector2 Bullet::get_direction() const {
-	return direction;
+    return direction;
 }
 
-void Bullet::set_type(const Ref<BulletType> &p_type) {
-	type = p_type;
-	set_scale(type->get_scale());
-	set_material(type->get_material());
-	update();
+void Bullet::set_position(const Vector2 &p_position) {
+    position = p_position;
 }
 
-Ref<BulletType> Bullet::get_type() const {
-	return type;
+Vector2 Bullet::get_position() const {
+    return position;
 }
 
-void Bullet::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("spawn", "type", "position", "direction"), &Bullet::spawn);
-	ClassDB::bind_method(D_METHOD("update_position", "delta"), &Bullet::update_position);
+void Bullet::set_rotation(float p_radians) {
+    rotation = 0.0;
+}
+
+float Bullet::get_rotation() const {
+    return rotation;
+}
+
+Transform2D Bullet::get_transform(){
+	Transform2D t;
+	t.set_origin(position);
+	if (data.is_null()){
+		t.set_rotation_and_scale(rotation, Vector2(1,1));
+	} else {
+		t.set_rotation_and_scale(rotation, data->get_scale());
+	}
+	return t;
+}
+
+void Bullet::set_ci_rid(const RID $p_rid){
+	ci_rid = $p_rid;
+}
+
+RID Bullet::get_ci_rid() const{
+	return ci_rid;
+}
+
+void Bullet::ci_set_material(const Ref<Material> &p_material){
+	if (p_material.is_null()){
+		return;
+	}
+	VS::get_singleton()->canvas_item_set_material(ci_rid, p_material->get_rid());
+}
+
+void Bullet::ci_draw_texture(const Ref<Texture> &p_texture){
+	VS::get_singleton()->canvas_item_clear(ci_rid);
+	if (p_texture.is_null()){
+		return;
+	}
+	VS::get_singleton()->canvas_item_add_texture_rect(ci_rid, Rect2(-p_texture->get_size() / 2, p_texture->get_size()), p_texture->get_rid());
+}
+
+void Bullet::_bind_methods(){
+	ClassDB::bind_method(D_METHOD("spawn", "data", "position", "direction"), &Bullet::spawn);
 
 	ClassDB::bind_method(D_METHOD("pop"), &Bullet::pop);
 	ClassDB::bind_method(D_METHOD("is_popped"), &Bullet::is_popped);
 
-	ClassDB::bind_method(D_METHOD("set_active", "active"), &Bullet::set_active);
-	ClassDB::bind_method(D_METHOD("get_active"), &Bullet::get_active);
+	ClassDB::bind_method(D_METHOD("set_time", "time"), &Bullet::set_time);
+	ClassDB::bind_method(D_METHOD("get_time"), &Bullet::get_time);
 
-	ClassDB::bind_method(D_METHOD("set_lifetime", "time"), &Bullet::set_lifetime);
-	ClassDB::bind_method(D_METHOD("get_lifetime"), &Bullet::get_lifetime);
+	ClassDB::bind_method(D_METHOD("set_data", "data"), &Bullet::set_data);
+	ClassDB::bind_method(D_METHOD("get_data"), &Bullet::get_data);
 
 	ClassDB::bind_method(D_METHOD("set_direction", "direction"), &Bullet::set_direction);
 	ClassDB::bind_method(D_METHOD("get_direction"), &Bullet::get_direction);
 
-	ClassDB::bind_method(D_METHOD("set_type", "type"), &Bullet::set_type);
-	ClassDB::bind_method(D_METHOD("get_type"), &Bullet::get_type);
+	ClassDB::bind_method(D_METHOD("set_position", "position"), &Bullet::set_position);
+	ClassDB::bind_method(D_METHOD("get_position"), &Bullet::get_position);
 
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "active"), "set_active", "get_active");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lifetime"), "set_lifetime", "get_lifetime");
-	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "direction"), "set_direction", "get_direction");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_type", "get_type");
+	ClassDB::bind_method(D_METHOD("set_rotation", "rotation"), &Bullet::set_rotation);
+	ClassDB::bind_method(D_METHOD("get_rotation"), &Bullet::get_rotation);
+
+	ClassDB::bind_method(D_METHOD("get_transform"), &Bullet::get_transform);
+
+	ClassDB::bind_method(D_METHOD("set_ci_rid", "canvas_item_rid"), &Bullet::set_ci_rid);
+	ClassDB::bind_method(D_METHOD("get_ci_rid"), &Bullet::get_ci_rid);
 }
 
 Bullet::Bullet() {
-	active = false;
-	lifetime = 0.0;
-
-	direction = Vector2(1, 0);
-	perp_offset = Vector2(0, 0);
-
-	type = Ref<BulletType>();
+	ci_rid = VS::get_singleton()->canvas_item_create();
+    direction = Vector2(0,0);
 }
 
-Bullet::~Bullet() {
+Bullet::~Bullet(){
+	VS::get_singleton()->free(ci_rid);
 }

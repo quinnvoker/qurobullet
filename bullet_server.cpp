@@ -4,7 +4,6 @@
 #include "core/engine.h"
 #include "scene/resources/world_2d.h"
 #include "servers/physics_2d_server.h"
-#include <algorithm>
 
 void BulletServer::_notification(int p_what) {
 	switch (p_what) {
@@ -12,6 +11,11 @@ void BulletServer::_notification(int p_what) {
 		case NOTIFICATION_READY: {
 			_ready();
 		} break;
+
+		case NOTIFICATION_INTERNAL_PROCESS: {
+			_process_internal(get_process_delta_time());
+		}
+		break;
 
 		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
 			_physics_process_internal(get_physics_process_delta_time());
@@ -26,6 +30,7 @@ void BulletServer::_notification(int p_what) {
 void BulletServer::_ready() {
 	if (Engine::get_singleton()->is_editor_hint())
 		return;
+	set_process_internal(true);
 	set_physics_process_internal(true);
 	play_area = get_viewport_rect().grow(play_area_margin);
 	BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
@@ -34,24 +39,31 @@ void BulletServer::_ready() {
 	_init_bullets();
 }
 
+void BulletServer::_process_internal(float delta) {
+	for (int i = 0; i < live_bullets.size(); i++){
+		Bullet *b = live_bullets[i];
+		VS::get_singleton()->canvas_item_set_transform(b->get_ci_rid(), b->get_transform());
+	}
+}
+
 void BulletServer::_physics_process_internal(float delta) {
 	if (Engine::get_singleton()->is_editor_hint())
 		return;
-
 	Vector<int> bullet_indices_to_clear;
 	Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
 	Vector<Physics2DDirectSpaceState::ShapeResult> results;
 	results.resize(32);
 
-	for (int i = 0; i < int(live_bullets.size()); i++) {
+	for (int i = 0; i < live_bullets.size(); i++) {
 		Bullet *bullet = live_bullets[i];
+		VS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), i);
 
-		if (bullet->is_popped() || !play_area.has_point(bullet->get_position())){
+		if (bullet->is_popped()){
 			bullet_indices_to_clear.push_back(i);
-		} else {
+		} else if (play_area.has_point(bullet->get_position())) {
 			bullet->update_position(delta);
-			Ref<BulletType> b_type = bullet->get_type();
-			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), true, true);
+			Ref<BulletData> b_data = bullet->get_data();
+			int collisions = space_state->intersect_shape(b_data->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_data->get_collision_mask(), true, true);
 			if (collisions > 0){
 				Array colliders;
 				colliders.resize(collisions);
@@ -63,12 +75,14 @@ void BulletServer::_physics_process_internal(float delta) {
 					bullet->pop();
 				}
 			}
+		} else {
+			bullet->pop();
 		}
+		
 	}
 
-	for (int i = 0; i < int(bullet_indices_to_clear.size()); i++) {
+	for (int i = 0; i < bullet_indices_to_clear.size(); i++) {
 		Bullet *bullet = live_bullets[bullet_indices_to_clear[i] - i];
-		bullet->set_active(false);
 		live_bullets.remove(bullet_indices_to_clear[i] - i);
 		dead_bullets.insert(0, bullet);
 	}
@@ -82,11 +96,11 @@ void BulletServer::_init_bullets() {
 
 void BulletServer::_create_bullet() {
 	Bullet *bullet = memnew(Bullet);
-	add_child(bullet);
+	VS::get_singleton()->canvas_item_set_parent(bullet->get_ci_rid(), get_canvas_item());
 	dead_bullets.insert(0, bullet);
 }
 
-void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
+void BulletServer::spawn_bullet(const Ref<BulletData> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
 	Bullet *bullet;
 
 	if (dead_bullets.size() > 0) {
@@ -98,10 +112,11 @@ void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_
 	}
 
 	bullet->spawn(p_type, p_position, p_direction);
+	VS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), 0);
 	live_bullets.insert(0, bullet);
 }
 
-void BulletServer::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_shots) {
+void BulletServer::spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_shots) {
 	for (int i = 0; i < p_shots.size(); i++) {
 		Dictionary shot = p_shots[i];
 		spawn_bullet(p_type, p_position + shot["offset"], shot["direction"]);
@@ -125,7 +140,7 @@ void BulletServer::set_bullet_pool_size(int p_size) {
 			bullet = live_bullets.get(live_bullets.size() - 1);
 			live_bullets.remove(live_bullets.size() - 1);
 		}
-		remove_child(bullet);
+		VS::get_singleton()->free(bullet->get_ci_rid());
 		memdelete(bullet);
 	}
 }
