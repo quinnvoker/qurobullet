@@ -14,6 +14,9 @@ void BulletSpawner::_notification(int p_what) {
         break;
 
         case NOTIFICATION_TRANSFORM_CHANGED: {
+            if (aim_mode == TARGET && get_global_transform().get_origin() != _previous_transform.get_origin()) {
+                shots_update_required = true;
+            }
             if (get_global_transform().get_rotation() != _previous_transform.get_rotation()){
                 set_global_rotation(0);
                 if (inherit_rotation){
@@ -84,7 +87,7 @@ Array BulletSpawner::get_shots() {
 }
 
 Array BulletSpawner::get_scattered_shots() {
-    if (scatter_range <= 0.0){
+    if (scatter_type == NONE || scatter_range <= 0.0){
         return get_shots();
     } 
 
@@ -118,6 +121,10 @@ Array BulletSpawner::get_scattered_shots() {
 }
 
 //private functions
+
+// PLEASE REFACTOR THIS MESS! 
+//                  |
+//                  V
 void BulletSpawner::_update_cached_shots() {
     Array new_shots;
 
@@ -151,7 +158,22 @@ void BulletSpawner::_update_cached_shots() {
                 Vector2 shot_position = _get_spawn_offset(shot_direction);
                 Dictionary shot_info;
                 shot_info["offset"] = shot_position;
-                shot_info["direction"] = shot_direction.rotated(get_adjusted_global_rotation());
+                switch (aim_mode){
+                case RADIAL:
+                    shot_info["direction"] = shot_direction.rotated(get_adjusted_global_rotation());
+                    break;
+                
+                case UNIFORM:
+                    shot_info["direction"] = Vector2(1,0).rotated(spawn_angle + get_adjusted_global_rotation());
+                    break;
+                
+                case TARGET:
+                    shot_info["direction"] = (target_position - shot_position).normalized();
+                    break;
+
+                default:
+                    break;
+                }
                 new_shots.push_back(shot_info);
             }
         }
@@ -219,6 +241,25 @@ void BulletSpawner::set_spawn_angle_degrees(float p_degrees) {
 
 float BulletSpawner::get_spawn_angle_degrees() const {
     return spawn_angle * 180.0/M_PI;
+}
+
+void BulletSpawner::set_aim_mode(AimMode p_mode){
+    aim_mode = p_mode;
+    shots_update_required = true;
+    _change_notify();
+}
+
+BulletSpawner::AimMode BulletSpawner::get_aim_mode() const{
+    return aim_mode;
+}
+
+void BulletSpawner::set_target_position(const Vector2 &p_position) {
+    target_position = p_position;
+    shots_update_required = true;
+}
+
+Vector2 BulletSpawner::get_target_position() const {
+    return target_position;
 }
 
 void BulletSpawner::set_bullet_count(int p_count) {
@@ -382,6 +423,10 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
     if (property.name == "scatter_range_degrees" && scatter_type == NONE){
         property.usage = 0;
     }
+
+    if (property.name == "target_position" && aim_mode != TARGET){
+        property.usage = PROPERTY_USAGE_NOEDITOR;
+    }
 }
 
 //godot binds
@@ -404,6 +449,12 @@ void BulletSpawner::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("set_spawn_angle", "radians"), &BulletSpawner::set_spawn_angle);
     ClassDB::bind_method(D_METHOD("get_spawn_angle"), &BulletSpawner::get_spawn_angle);
+
+    ClassDB::bind_method(D_METHOD("set_aim_mode", "mode"), &BulletSpawner::set_aim_mode);
+    ClassDB::bind_method(D_METHOD("get_aim_mode"), &BulletSpawner::get_aim_mode);
+
+    ClassDB::bind_method(D_METHOD("set_target_position", "mode"), &BulletSpawner::set_target_position);
+    ClassDB::bind_method(D_METHOD("get_target_position"), &BulletSpawner::get_target_position);
 
     ClassDB::bind_method(D_METHOD("set_spawn_angle_degrees", "degrees"), &BulletSpawner::set_spawn_angle_degrees);
     ClassDB::bind_method(D_METHOD("get_spawn_angle_degrees"), &BulletSpawner::get_spawn_angle_degrees);
@@ -455,11 +506,13 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_data", PROPERTY_HINT_RESOURCE_TYPE, "BulletData"), "set_bullet_data", "get_bullet_data");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_spawn_radius", "get_spawn_radius");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "aim_mode", PROPERTY_HINT_ENUM, "Radial,Uniform,Target"), "set_aim_mode", "get_aim_mode");
+    ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "target_position"), "set_target_position", "get_target_position");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_bullet_count", "get_bullet_count");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_spread", "get_spread");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spread_degrees", "get_spread_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "volley_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_volley_offset", "get_volley_offset");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "NONE, BULLET, VOLLEY"), "set_scatter_type", "get_scatter_type");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "None,Bullet,Volley"), "set_scatter_type", "get_scatter_type");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_scatter_range", "get_scatter_range");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
     ADD_GROUP("Transform Modifiers", "");
@@ -471,6 +524,9 @@ void BulletSpawner::_bind_methods() {
 
     ADD_SIGNAL(MethodInfo("bullet_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::VECTOR2, "direction")));
     ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::ARRAY, "shots")));
+
+    BIND_ENUM_CONSTANT(RADIAL);
+    BIND_ENUM_CONSTANT(UNIFORM);
 
     BIND_ENUM_CONSTANT(NONE);
     BIND_ENUM_CONSTANT(BULLET);
