@@ -5,12 +5,17 @@
 #include "scene/2d/node_2d.h"
 #include "bullet_data.h"
 #include "bullet_server_relay.h"
-#include <map>
 
 class BulletSpawner : public Node2D{
     GDCLASS(BulletSpawner, Node2D);
 
 public:
+    enum AimMode {
+        RADIAL,
+        UNIFORM,
+        TARGET,
+    };
+
     enum ScatterType {
         NONE,
         BULLET,
@@ -29,6 +34,9 @@ private:
 
     float spawn_radius;
     float spawn_angle;
+
+    AimMode aim_mode;
+    Vector2 target_position;
 
     int bullet_count;
 
@@ -85,6 +93,12 @@ public:
     void set_spawn_angle(float p_radians);
     float get_spawn_angle() const;
 
+    void set_aim_mode(AimMode p_mode);
+    AimMode get_aim_mode() const;
+
+    void set_target_position(const Vector2 &p_position);
+    Vector2 get_target_position() const;
+
     void set_spawn_angle_degrees(float p_degrees);
     float get_spawn_angle_degrees() const;
 
@@ -134,6 +148,7 @@ public:
     ~BulletSpawner();
 };
 
+VARIANT_ENUM_CAST(BulletSpawner::AimMode)
 VARIANT_ENUM_CAST(BulletSpawner::ScatterType)
 
 #endif
