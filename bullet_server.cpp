@@ -124,6 +124,12 @@ void BulletServer::spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_
 	}
 }
 
+void BulletServer::clear_bullets(){
+	for (int i = 0; i < live_bullets.size(); i++){
+		live_bullets[i]->pop();
+	}
+}
+
 void BulletServer::set_bullet_pool_size(int p_size) {
 	if (p_size > -1)
 		bullet_pool_size = p_size;
@@ -171,6 +177,8 @@ bool BulletServer::get_auto_pop() const {
 void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
 	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "shots"), &BulletServer::spawn_volley);
+	ClassDB::bind_method(D_METHOD("clear_bullets"), &BulletServer::clear_bullets);
+
 
 	ClassDB::bind_method(D_METHOD("set_bullet_pool_size", "size"), &BulletServer::set_bullet_pool_size);
 	ClassDB::bind_method(D_METHOD("get_bullet_pool_size"), &BulletServer::get_bullet_pool_size);
