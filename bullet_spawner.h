@@ -10,6 +10,14 @@
 class BulletSpawner : public Node2D{
     GDCLASS(BulletSpawner, Node2D);
 
+public:
+    enum ScatterType {
+        NONE,
+        BULLET,
+        VOLLEY,
+    };
+
+private:
     bool autofire;
     float _autofire_time;
     int interval_frames;
@@ -27,7 +35,7 @@ class BulletSpawner : public Node2D{
     float spread;
     float volley_offset;
 
-    int scatter_type;
+    ScatterType scatter_type;
     float scatter_range;
 
     bool inherit_rotation;
@@ -54,16 +62,9 @@ class BulletSpawner : public Node2D{
 protected:
     static void _bind_methods();
     void _notification(int p_what);
+    void _validate_property(PropertyInfo &property) const;
 
 public:
-    BulletSpawner();
-    ~BulletSpawner();
-
-    enum ScatterType {
-        VOLLEY,
-        BULLET,
-    };
-
     void fire();
 
     Array get_shots();
@@ -99,8 +100,8 @@ public:
     void set_volley_offset(float p_offset);
     float get_volley_offset() const;
 
-    void set_scatter_type(int p_type);
-    int get_scatter_type() const;
+    void set_scatter_type(ScatterType p_type);
+    ScatterType get_scatter_type() const;
 
     void set_scatter_range(float p_radians);
     float get_scatter_range() const;
@@ -128,7 +129,11 @@ public:
 
     void set_adjusted_global_scale(const Vector2 &p_scale);
     Vector2 get_adjusted_global_scale() const;
+
+    BulletSpawner();
+    ~BulletSpawner();
 };
 
+VARIANT_ENUM_CAST(BulletSpawner::ScatterType)
 
 #endif

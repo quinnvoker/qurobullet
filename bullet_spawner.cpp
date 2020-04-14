@@ -93,18 +93,18 @@ Array BulletSpawner::get_scattered_shots() {
 
     switch (scatter_type)
     {
-    case VOLLEY:
-        rand_offset = Math::randf() * scatter_range - scatter_range / 2;
+    case BULLET:
         for (int i = 0; i < s_shots.size(); i++){
+            rand_offset = Math::randf() * scatter_range - scatter_range / 2;
             Dictionary shot_info = s_shots[i];
             Vector2 shot_dir = shot_info["direction"];
             shot_info["direction"] = shot_dir.rotated(rand_offset);
         }
         break;
     
-    case BULLET:
+    case VOLLEY:
+        rand_offset = Math::randf() * scatter_range - scatter_range / 2;
         for (int i = 0; i < s_shots.size(); i++){
-            rand_offset = Math::randf() * scatter_range - scatter_range / 2;
             Dictionary shot_info = s_shots[i];
             Vector2 shot_dir = shot_info["direction"];
             shot_info["direction"] = shot_dir.rotated(rand_offset);
@@ -257,11 +257,12 @@ float BulletSpawner::get_volley_offset() const {
     return volley_offset;
 }
 
-void BulletSpawner::set_scatter_type(int p_type) {
+void BulletSpawner::set_scatter_type(ScatterType p_type) {
     scatter_type = p_type;
+    _change_notify();
 }
 
-int BulletSpawner::get_scatter_type() const {
+BulletSpawner::ScatterType BulletSpawner::get_scatter_type() const {
     return scatter_type;
 }
 
@@ -377,6 +378,12 @@ void BulletSpawner::_draw_adjusted_arc(float p_inner_rad, float p_outer_rad, con
     
 }
 
+void BulletSpawner::_validate_property(PropertyInfo &property) const{
+    if (property.name == "scatter_range_degrees" && scatter_type == NONE){
+        property.usage = 0;
+    }
+}
+
 //godot binds
 void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("fire"), &BulletSpawner::fire);
@@ -452,7 +459,7 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_spread", "get_spread");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spread_degrees", "get_spread_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "volley_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_volley_offset", "get_volley_offset");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "VOLLEY, BULLET"), "set_scatter_type", "get_scatter_type");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_type", PROPERTY_HINT_ENUM, "NONE, BULLET, VOLLEY"), "set_scatter_type", "get_scatter_type");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_scatter_range", "get_scatter_range");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
     ADD_GROUP("Transform Modifiers", "");
@@ -464,6 +471,10 @@ void BulletSpawner::_bind_methods() {
 
     ADD_SIGNAL(MethodInfo("bullet_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::VECTOR2, "direction")));
     ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::ARRAY, "shots")));
+
+    BIND_ENUM_CONSTANT(NONE);
+    BIND_ENUM_CONSTANT(BULLET);
+    BIND_ENUM_CONSTANT(VOLLEY);
 }
 
 //initialiser/terminator
@@ -475,7 +486,7 @@ BulletSpawner::BulletSpawner() {
     bullet_count = 1;
     spread = 0.0;
     volley_offset = 0.0;
-    scatter_type = 0;
+    scatter_type = NONE;
     scatter_range = 0.0;
     inherit_rotation = true;
     self_rotation = 0.0;
