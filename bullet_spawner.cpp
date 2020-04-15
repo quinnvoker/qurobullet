@@ -14,7 +14,7 @@ void BulletSpawner::_notification(int p_what) {
         break;
 
         case NOTIFICATION_TRANSFORM_CHANGED: {
-            if (aim_mode == TARGET && get_global_transform().get_origin() != _previous_transform.get_origin()) {
+            if (aim_mode == TARGET_GLOBAL && get_global_transform().get_origin() != _previous_transform.get_origin()) {
                 shots_update_required = true;
             }
             if (get_global_transform().get_rotation() != _previous_transform.get_rotation()){
@@ -121,69 +121,71 @@ Array BulletSpawner::get_scattered_shots() {
 }
 
 //private functions
-
-// PLEASE REFACTOR THIS MESS! 
-//                  |
-//                  V
 void BulletSpawner::_update_cached_shots() {
-    Array new_shots;
-
-    if (bullet_count == 1 || spread == 0.0){
-        Vector2 dir = Vector2(1,0).rotated(spawn_angle + volley_offset * spread / 2);
-        Dictionary shot_info;
-        shot_info["offset"] = (dir * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
-        shot_info["direction"] = dir.rotated(get_adjusted_global_rotation());
-        new_shots.push_back(shot_info);
-    } else {
-        Vector2 arc_start = Vector2(1,0).rotated(-spread / 2);
-        Vector2 arc_end = arc_start.rotated(spread);
-        float spacing = spread / (bullet_count - 1);
-        bool spacing_maxed = false;
-
-        Vector2 volley_start = arc_start;
-        if (spacing > 2 * M_PI / bullet_count){
-            spacing = 2 * M_PI / bullet_count;
-            volley_start = Vector2(-1,0).rotated(spacing / 2);
-            spacing_maxed = true;
-        }
-        
-        for (int i = 0; i < bullet_count; i++){
-            float shot_angle = spacing * i + volley_offset * spread / 2;
-            if (!spacing_maxed){
-                shot_angle = Math::wrapf(shot_angle, 0 - spacing / 2, spread + spacing / 2);
-            }
-            Vector2 shot_direction = volley_start.rotated(shot_angle);
-            if (spread > 2 * M_PI || Math::abs(shot_direction.angle()) <= arc_end.angle() + 0.001){
-                shot_direction = shot_direction.rotated(spawn_angle);
-                Vector2 shot_position = _get_spawn_offset(shot_direction);
-                Dictionary shot_info;
-                shot_info["offset"] = shot_position;
-                switch (aim_mode){
-                case RADIAL:
-                    shot_info["direction"] = shot_direction.rotated(get_adjusted_global_rotation());
-                    break;
-                
-                case UNIFORM:
-                    shot_info["direction"] = Vector2(1,0).rotated(spawn_angle + get_adjusted_global_rotation());
-                    break;
-                
-                case TARGET:
-                    shot_info["direction"] = (target_position - shot_position).normalized();
-                    break;
-
-                default:
-                    break;
-                }
-                new_shots.push_back(shot_info);
-            }
-        }
-    }
-    cached_shots = new_shots;
+    Array new_volley = _create_volley();
+    cached_shots = new_volley;
     shots_update_required = false;
 }
 
-Vector2 BulletSpawner::_get_spawn_offset(const Vector2 &p_shot_dir) {
-    return (p_shot_dir * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
+Array BulletSpawner::_create_volley() const {
+    Array volley;
+    if (bullet_count == 1 || (spread == 0.0 && !(scatter_type == BULLET && spawn_radius > 0))){
+        Vector2 dir = Vector2(1,0).rotated(spawn_angle + get_adjusted_global_rotation());
+        Dictionary shot;
+        shot["direction"] = dir;
+        shot["offset"] = dir * spawn_radius;
+        volley.push_back(shot);
+        return volley;
+    }
+
+    float arc_start = -spread / 2;
+    float arc_end = spread / 2;
+    float spacing = spread / (bullet_count - 1);
+    bool spacing_maxed = false;
+
+    float volley_start = arc_start;
+    if (spacing > 2 * M_PI / bullet_count){
+        spacing = 2 * M_PI / bullet_count;
+        volley_start = M_PI + spacing / 2;
+        spacing_maxed = true;
+    }
+
+    for (int i = 0; i < bullet_count; i++){
+        float shot_angle = spacing * i + (volley_offset * spread / 2);
+        if (!spacing_maxed){
+            shot_angle = Math::wrapf(shot_angle, 0 - spacing / 2, spread + spacing / 2);
+        }
+        shot_angle += volley_start;
+        if (spread > 2 * M_PI || Math::abs(shot_angle) <= arc_end + 0.001){
+            Dictionary shot;
+            Vector2 shot_normal = Vector2(1,0).rotated(shot_angle + spawn_angle);
+            shot["offset"] = (shot_normal * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
+            switch (aim_mode){
+                case RADIAL:
+                    shot["direction"] = shot_normal.rotated(get_adjusted_global_rotation());
+                    break;
+
+                case UNIFORM:
+                    shot["direction"] = Vector2(1,0).rotated(get_adjusted_global_rotation());
+                    break;
+                
+                case TARGET_LOCAL:
+                    shot["direction"] = (target_position - shot["offset"]).normalized();
+                    break;
+
+                case TARGET_GLOBAL:
+                    shot["direction"] = (target_position - (get_global_position() + shot["offset"])).normalized();
+                    break;
+
+                default:
+                    //non-moving bullets will let you know something has gone horribly wrong
+                    shot["direction"] = Vector2();
+                    break;
+            }
+            volley.push_back(shot);
+        }
+    }
+    return volley;
 }
 
 //setters/getters
@@ -424,7 +426,7 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
         property.usage = 0;
     }
 
-    if (property.name == "target_position" && aim_mode != TARGET){
+    if (property.name == "target_position" && aim_mode != TARGET_LOCAL && aim_mode != TARGET_GLOBAL){
         property.usage = PROPERTY_USAGE_NOEDITOR;
     }
 }
@@ -506,7 +508,7 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_data", PROPERTY_HINT_RESOURCE_TYPE, "BulletData"), "set_bullet_data", "get_bullet_data");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_spawn_radius", "get_spawn_radius");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "aim_mode", PROPERTY_HINT_ENUM, "Radial,Uniform,Target"), "set_aim_mode", "get_aim_mode");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "aim_mode", PROPERTY_HINT_ENUM, "Radial,Uniform,Local Target,Global Target"), "set_aim_mode", "get_aim_mode");
     ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "target_position"), "set_target_position", "get_target_position");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_bullet_count", "get_bullet_count");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_spread", "get_spread");
@@ -539,6 +541,7 @@ BulletSpawner::BulletSpawner() {
     interval_frames = 10;
     spawn_radius = 0.0;
     spawn_angle = 0.0;
+    aim_mode = RADIAL;
     bullet_count = 1;
     spread = 0.0;
     volley_offset = 0.0;
