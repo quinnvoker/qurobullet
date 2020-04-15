@@ -34,10 +34,11 @@ private:
     bool shots_update_required;
 
     float spawn_radius;
-    float spawn_angle;
+    float spawn_point_rotation;
 
     AimMode aim_mode;
     Vector2 target_position;
+    float aim_angle;
 
     int bullet_count;
 
@@ -92,17 +93,23 @@ public:
     void set_spawn_radius(float p_radius);
     float get_spawn_radius() const;
 
-    void set_spawn_angle(float p_radians);
-    float get_spawn_angle() const;
+    void set_spawn_point_rotation(float p_radians);
+    float get_spawn_point_rotation() const;
+
+    void set_spawn_point_rotation_degrees(float p_degrees);
+    float get_spawn_point_rotation_degrees() const;
 
     void set_aim_mode(AimMode p_mode);
     AimMode get_aim_mode() const;
 
+    void set_aim_angle(float p_radians);
+    float get_aim_angle() const;
+
+    void set_aim_angle_degrees(float p_degrees);
+    float get_aim_angle_degrees() const;
+
     void set_target_position(const Vector2 &p_position);
     Vector2 get_target_position() const;
-
-    void set_spawn_angle_degrees(float p_degrees);
-    float get_spawn_angle_degrees() const;
 
     void set_bullet_count(int p_count);
     int get_bullet_count() const;

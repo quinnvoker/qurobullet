@@ -130,7 +130,7 @@ void BulletSpawner::_update_cached_shots() {
 Array BulletSpawner::_create_volley() const {
     Array volley;
     if (bullet_count == 1 || (spread == 0.0 && !(scatter_type == BULLET && spawn_radius > 0))){
-        Vector2 dir = Vector2(1,0).rotated(spawn_angle + get_adjusted_global_rotation());
+        Vector2 dir = Vector2(1,0).rotated(spawn_point_rotation + get_adjusted_global_rotation());
         Dictionary shot;
         shot["direction"] = dir;
         shot["offset"] = dir * spawn_radius;
@@ -146,7 +146,7 @@ Array BulletSpawner::_create_volley() const {
     float volley_start = arc_start;
     if (spacing > 2 * M_PI / bullet_count){
         spacing = 2 * M_PI / bullet_count;
-        volley_start = M_PI + spacing / 2;
+        volley_start = -M_PI + spacing / 2;
         spacing_maxed = true;
     }
 
@@ -158,7 +158,7 @@ Array BulletSpawner::_create_volley() const {
         shot_angle += volley_start;
         if (spread > 2 * M_PI || Math::abs(shot_angle) <= arc_end + 0.001){
             Dictionary shot;
-            Vector2 shot_normal = Vector2(1,0).rotated(shot_angle + spawn_angle);
+            Vector2 shot_normal = Vector2(1,0).rotated(shot_angle + spawn_point_rotation);
             shot["offset"] = (shot_normal * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
             switch (aim_mode){
                 case RADIAL:
@@ -166,7 +166,7 @@ Array BulletSpawner::_create_volley() const {
                     break;
 
                 case UNIFORM:
-                    shot["direction"] = Vector2(1,0).rotated(get_adjusted_global_rotation());
+                    shot["direction"] = Vector2(1,0).rotated(aim_angle + get_adjusted_global_rotation());
                     break;
                 
                 case TARGET_LOCAL:
@@ -227,22 +227,22 @@ float BulletSpawner::get_spawn_radius() const {
     return spawn_radius;
 }
 
-void BulletSpawner::set_spawn_angle(float p_radians) {
-    spawn_angle = p_radians;
+void BulletSpawner::set_spawn_point_rotation(float p_radians) {
+    spawn_point_rotation = p_radians;
     shots_update_required = true;
 }
 
-float BulletSpawner::get_spawn_angle() const {
-    return spawn_angle;
+float BulletSpawner::get_spawn_point_rotation() const {
+    return spawn_point_rotation;
 }
 
-void BulletSpawner::set_spawn_angle_degrees(float p_degrees) {
-    spawn_angle = p_degrees * M_PI/180.0;
+void BulletSpawner::set_spawn_point_rotation_degrees(float p_degrees) {
+    spawn_point_rotation = p_degrees * M_PI/180.0;
     shots_update_required = true;
 }
 
-float BulletSpawner::get_spawn_angle_degrees() const {
-    return spawn_angle * 180.0/M_PI;
+float BulletSpawner::get_spawn_point_rotation_degrees() const {
+    return spawn_point_rotation * 180.0/M_PI;
 }
 
 void BulletSpawner::set_aim_mode(AimMode p_mode){
@@ -257,11 +257,32 @@ BulletSpawner::AimMode BulletSpawner::get_aim_mode() const{
 
 void BulletSpawner::set_target_position(const Vector2 &p_position) {
     target_position = p_position;
-    shots_update_required = true;
+    if (aim_mode == TARGET_LOCAL || aim_mode == TARGET_GLOBAL) {
+        shots_update_required = true;
+    }
 }
 
 Vector2 BulletSpawner::get_target_position() const {
     return target_position;
+}
+
+void BulletSpawner::set_aim_angle(float p_radians){
+    aim_angle = p_radians;
+    if (aim_mode == UNIFORM){
+        shots_update_required = true;
+    }
+}
+
+float BulletSpawner::get_aim_angle() const {
+    return aim_angle;
+}
+
+void BulletSpawner::set_aim_angle_degrees(float p_degrees) {
+    set_aim_angle(Math::deg2rad(p_degrees));
+}
+
+float BulletSpawner::get_aim_angle_degrees() const {
+    return Math::rad2deg(aim_angle);
 }
 
 void BulletSpawner::set_bullet_count(int p_count) {
@@ -429,6 +450,10 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
     if (property.name == "target_position" && aim_mode != TARGET_LOCAL && aim_mode != TARGET_GLOBAL){
         property.usage = PROPERTY_USAGE_NOEDITOR;
     }
+
+    if (property.name == "aim_angle_degrees" && aim_mode != UNIFORM){
+        property.usage = PROPERTY_USAGE_NOEDITOR;
+    }
 }
 
 //godot binds
@@ -449,8 +474,11 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_spawn_radius", "radius"), &BulletSpawner::set_spawn_radius);
     ClassDB::bind_method(D_METHOD("get_spawn_radius"), &BulletSpawner::get_spawn_radius);
 
-    ClassDB::bind_method(D_METHOD("set_spawn_angle", "radians"), &BulletSpawner::set_spawn_angle);
-    ClassDB::bind_method(D_METHOD("get_spawn_angle"), &BulletSpawner::get_spawn_angle);
+    ClassDB::bind_method(D_METHOD("set_spawn_point_rotation", "radians"), &BulletSpawner::set_spawn_point_rotation);
+    ClassDB::bind_method(D_METHOD("get_spawn_point_rotation"), &BulletSpawner::get_spawn_point_rotation);
+
+    ClassDB::bind_method(D_METHOD("set_spawn_point_rotation_degrees", "degrees"), &BulletSpawner::set_spawn_point_rotation_degrees);
+    ClassDB::bind_method(D_METHOD("get_spawn_point_rotation_degrees"), &BulletSpawner::get_spawn_point_rotation_degrees);
 
     ClassDB::bind_method(D_METHOD("set_aim_mode", "mode"), &BulletSpawner::set_aim_mode);
     ClassDB::bind_method(D_METHOD("get_aim_mode"), &BulletSpawner::get_aim_mode);
@@ -458,8 +486,11 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_target_position", "mode"), &BulletSpawner::set_target_position);
     ClassDB::bind_method(D_METHOD("get_target_position"), &BulletSpawner::get_target_position);
 
-    ClassDB::bind_method(D_METHOD("set_spawn_angle_degrees", "degrees"), &BulletSpawner::set_spawn_angle_degrees);
-    ClassDB::bind_method(D_METHOD("get_spawn_angle_degrees"), &BulletSpawner::get_spawn_angle_degrees);
+    ClassDB::bind_method(D_METHOD("set_aim_angle", "radians"), &BulletSpawner::set_aim_angle);
+    ClassDB::bind_method(D_METHOD("get_aim_angle"), &BulletSpawner::get_aim_angle);
+
+    ClassDB::bind_method(D_METHOD("set_aim_angle_degrees", "degrees"), &BulletSpawner::set_aim_angle_degrees);
+    ClassDB::bind_method(D_METHOD("get_aim_angle_degrees"), &BulletSpawner::get_aim_angle_degrees);
 
     ClassDB::bind_method(D_METHOD("set_bullet_count", "count"), &BulletSpawner::set_bullet_count);
     ClassDB::bind_method(D_METHOD("get_bullet_count"), &BulletSpawner::get_bullet_count);
@@ -507,9 +538,12 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_data", PROPERTY_HINT_RESOURCE_TYPE, "BulletData"), "set_bullet_data", "get_bullet_data");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_spawn_radius", "get_spawn_radius");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spawn_angle_degrees", "get_spawn_angle_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_point_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_spawn_point_rotation", "get_spawn_point_rotation");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "spawn_point_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spawn_point_rotation_degrees", "get_spawn_point_rotation_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "aim_mode", PROPERTY_HINT_ENUM, "Radial,Uniform,Local Target,Global Target"), "set_aim_mode", "get_aim_mode");
     ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "target_position"), "set_target_position", "get_target_position");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "aim_angle", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_aim_angle", "get_aim_angle");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "aim_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_aim_angle_degrees", "get_aim_angle_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_bullet_count", "get_bullet_count");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_spread", "get_spread");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "spread_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_spread_degrees", "get_spread_degrees");
@@ -540,8 +574,9 @@ BulletSpawner::BulletSpawner() {
     autofire = false;
     interval_frames = 10;
     spawn_radius = 0.0;
-    spawn_angle = 0.0;
+    spawn_point_rotation = 0.0;
     aim_mode = RADIAL;
+    aim_angle = 0.0;
     bullet_count = 1;
     spread = 0.0;
     volley_offset = 0.0;
