@@ -13,7 +13,8 @@ public:
     enum AimMode {
         RADIAL,
         UNIFORM,
-        TARGET,
+        TARGET_LOCAL,
+        TARGET_GLOBAL,
     };
 
     enum ScatterType {
@@ -62,7 +63,8 @@ private:
     void _physics_process(float delta);
 
     void _update_cached_shots();
-    Vector2 _get_spawn_offset(const Vector2 &p_shot_dir);
+
+    Array _create_volley() const;
 
     void _draw_shot_preview(const Color &p_border_col, const Color &p_shot_col);
     void _draw_adjusted_arc(float p_inner_rad, float p_outer_rad, const Vector2 &p_arc_start, int p_point_count, const Color &p_color);
