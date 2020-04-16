@@ -162,7 +162,7 @@ Array BulletSpawner::_create_volley() const {
             shot["offset"] = (shot_normal * spawn_radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
             switch (aim_mode){
                 case RADIAL:
-                    shot["direction"] = shot_normal.rotated(get_adjusted_global_rotation());
+                    shot["direction"] = shot_normal.rotated(aim_angle + get_adjusted_global_rotation());
                     break;
 
                 case UNIFORM:
@@ -268,7 +268,7 @@ Vector2 BulletSpawner::get_target_position() const {
 
 void BulletSpawner::set_aim_angle(float p_radians){
     aim_angle = p_radians;
-    if (aim_mode == UNIFORM){
+    if (aim_mode == RADIAL || aim_mode == UNIFORM){
         shots_update_required = true;
     }
 }
@@ -447,11 +447,11 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
         property.usage = 0;
     }
 
-    if (property.name == "target_position" && aim_mode != TARGET_LOCAL && aim_mode != TARGET_GLOBAL){
+    if (property.name == "target_position" && !(aim_mode == TARGET_LOCAL || aim_mode == TARGET_GLOBAL)){
         property.usage = PROPERTY_USAGE_NOEDITOR;
     }
 
-    if (property.name == "aim_angle_degrees" && aim_mode != UNIFORM){
+    if (property.name == "aim_angle_degrees" && !(aim_mode == RADIAL || aim_mode == UNIFORM)){
         property.usage = PROPERTY_USAGE_NOEDITOR;
     }
 }
