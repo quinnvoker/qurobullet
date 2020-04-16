@@ -138,12 +138,11 @@ Array BulletSpawner::_create_volley() const {
         return volley;
     }
 
-    float arc_start = -spread / 2;
     float arc_end = spread / 2;
     float spacing = spread / (bullet_count - 1);
     bool spacing_maxed = false;
 
-    float volley_start = arc_start;
+    float volley_start = -arc_end;
     if (spacing > 2 * M_PI / bullet_count){
         spacing = 2 * M_PI / bullet_count;
         volley_start = -M_PI + spacing / 2;
