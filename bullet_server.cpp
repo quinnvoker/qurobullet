@@ -61,7 +61,10 @@ void BulletServer::_physics_process_internal(float delta) {
 		if (bullet->is_popped()){
 			bullet_indices_to_clear.push_back(i);
 		} else if (play_area.has_point(bullet->get_position())) {
-			bullet->update_position(delta);
+			bullet->update(delta);
+			if (!bullet->can_collide()){
+				continue;
+			}
 			Ref<BulletData> b_data = bullet->get_data();
 			int collisions = space_state->intersect_shape(b_data->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_data->get_collision_mask(), true, true);
 			if (collisions > 0){
