@@ -28,22 +28,17 @@ private:
     float _autofire_time;
     int interval_frames;
 
+    int bullet_count;
     Ref<BulletData> bullet_type;
 
-    Array cached_shots;
-    bool shots_update_required;
-
-    float spawn_radius;
-    float spawn_point_rotation;
+    float radius;
+    float spread;
+    float arc_rotation;
+    float arc_offset;
 
     AimMode aim_mode;
-    Vector2 target_position;
     float aim_angle;
-
-    int bullet_count;
-
-    float spread;
-    float volley_offset;
+    Vector2 target_position;
 
     ScatterType scatter_type;
     float scatter_range;
@@ -57,11 +52,14 @@ private:
     bool in_game_preview;
     Color preview_color;
 
+    Array _cached_shots;
+    bool _cache_update_required;
+
     Transform2D _previous_transform;
 
     void _ready();
-    void _process(float delta);
-    void _physics_process(float delta);
+    void _process_internal(float delta);
+    void _physics_process_internal(float delta);
 
     void _update_cached_shots();
 
@@ -87,17 +85,29 @@ public:
     void set_interval_frames(int p_interval);
     int get_interval_frames() const;
 
+    void set_bullet_count(int p_count);
+    int get_bullet_count() const;
+
     void set_bullet_data(const Ref<BulletData> &p_type);
     Ref<BulletData> get_bullet_data() const;
 
-    void set_spawn_radius(float p_radius);
-    float get_spawn_radius() const;
+    void set_radius(float p_radius);
+    float get_radius() const;
 
-    void set_spawn_point_rotation(float p_radians);
-    float get_spawn_point_rotation() const;
+    void set_spread(float p_radians);
+    float get_spread() const;
 
-    void set_spawn_point_rotation_degrees(float p_degrees);
-    float get_spawn_point_rotation_degrees() const;
+    void set_spread_degrees(float p_degrees);
+    float get_spread_degrees() const;
+
+    void set_arc_rotation(float p_radians);
+    float get_arc_rotation() const;
+
+    void set_arc_rotation_degrees(float p_degrees);
+    float get_arc_rotation_degrees() const;
+
+    void set_arc_offset(float p_offset);
+    float get_arc_offset() const;
 
     void set_aim_mode(AimMode p_mode);
     AimMode get_aim_mode() const;
@@ -110,18 +120,6 @@ public:
 
     void set_target_position(const Vector2 &p_position);
     Vector2 get_target_position() const;
-
-    void set_bullet_count(int p_count);
-    int get_bullet_count() const;
-
-    void set_spread(float p_radians);
-    float get_spread() const;
-
-    void set_spread_degrees(float p_degrees);
-    float get_spread_degrees() const;
-
-    void set_volley_offset(float p_offset);
-    float get_volley_offset() const;
 
     void set_scatter_type(ScatterType p_type);
     ScatterType get_scatter_type() const;

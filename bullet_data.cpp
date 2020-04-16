@@ -130,10 +130,6 @@ bool BulletData::get_face_direction() const {
 	return face_direction;
 }
 
-void BulletData::set_scale(Vector2 p_scale) {
-	scale = p_scale;
-}
-
 void BulletData::set_rotation(float p_radians){
 	rotation = p_radians;
 }
@@ -148,6 +144,10 @@ void BulletData::set_rotation_degrees(float p_degrees) {
 
 float BulletData::get_rotation_degrees() const {
 	return Math::rad2deg(rotation);
+}
+
+void BulletData::set_scale(Vector2 p_scale) {
+	scale = p_scale;
 }
 
 Vector2 BulletData::get_scale() const {
@@ -241,10 +241,10 @@ void BulletData::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "v_wave_type", PROPERTY_HINT_ENUM, "None,Sin,Cos"), "set_v_wave_type", "get_v_wave_type");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "v_wave_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_v_wave_amplitude", "get_v_wave_amplitude");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "v_wave_frequency", PROPERTY_HINT_RANGE, "0,5,0.001,or_greater"), "set_v_wave_frequency", "get_v_wave_frequency");
-	ADD_GROUP("Transform Modifiers", "");
+	ADD_GROUP("Transform", "");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_rotation", "get_rotation");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
 
 	BIND_ENUM_CONSTANT(NONE);
