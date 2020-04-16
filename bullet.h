@@ -20,9 +20,11 @@ class Bullet : public Object {
 	Vector2 direction;
 	Vector2 position;
 	float rotation;
-	Vector2 _perp_offset;
+	Vector2 _offset;
 
 	RID ci_rid;
+
+	void _update_offset();
 
 	protected:
 		static void _bind_methods();
@@ -30,10 +32,12 @@ class Bullet : public Object {
 	public:
 		void spawn(const Ref<BulletData> &p_data, const Vector2 &p_position, const Vector2 &p_direction);
 		
-		void update_position(float delta);
+		void update(float delta);
 
 		void pop();
 		bool is_popped();
+
+		bool can_collide();
 
 		void set_time(float p_time);
 		float get_time() const;
