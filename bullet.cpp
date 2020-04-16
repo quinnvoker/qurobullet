@@ -17,7 +17,7 @@ void Bullet::update(float delta) {
 	position += direction * current_speed * delta;
 	_update_offset();
 	time += delta;
-	if (data->get_lifetime() > 0 && time > data->get_lifetime()){
+	if (data->get_lifetime() >= 0.001 && time > data->get_lifetime()){
 		pop();
 	}
 }

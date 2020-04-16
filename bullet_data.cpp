@@ -223,7 +223,7 @@ void BulletData::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "speed", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_speed", "get_speed");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lifetime", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_lifetime", "get_lifetime");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lifetime", PROPERTY_HINT_RANGE, "0,30,0.01,or_greater"), "set_lifetime", "get_lifetime");
 	ADD_GROUP("Drawing", "");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
@@ -243,7 +243,7 @@ void BulletData::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "v_wave_frequency", PROPERTY_HINT_RANGE, "0,5,0.001,or_greater"), "set_v_wave_frequency", "get_v_wave_frequency");
 	ADD_GROUP("Transform Modifiers", "");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_rotation", "get_rotation");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
 
@@ -253,6 +253,7 @@ void BulletData::_bind_methods() {
 }
 
 BulletData::BulletData() {
+	lifetime = 0.0;
 	texture = Ref<Texture>();
 	material = Ref<Material>();
 	face_direction = false;
