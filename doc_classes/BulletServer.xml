@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BulletServer" inherits="Node2D" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="clear_bullets">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="spawn_bullet">
+			<return type="void">
+			</return>
+			<argument index="0" name="type" type="BulletData">
+			</argument>
+			<argument index="1" name="position" type="Vector2">
+			</argument>
+			<argument index="2" name="direction" type="Vector2">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="spawn_volley">
+			<return type="void">
+			</return>
+			<argument index="0" name="type" type="BulletData">
+			</argument>
+			<argument index="1" name="position" type="Vector2">
+			</argument>
+			<argument index="2" name="shots" type="Array">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="bullet_pool_size" type="int" setter="set_bullet_pool_size" getter="get_bullet_pool_size" default="1500">
+		</member>
+		<member name="max_lifetime" type="float" setter="set_max_lifetime" getter="get_max_lifetime" default="1.0">
+		</member>
+		<member name="play_area_margin" type="float" setter="set_play_area_margin" getter="get_play_area_margin" default="0.0">
+		</member>
+		<member name="pop_on_collide" type="bool" setter="set_pop_on_collide" getter="get_pop_on_collide" default="true">
+		</member>
+	</members>
+	<signals>
+		<signal name="collision_detected">
+			<argument index="0" name="bullet" type="Bullet">
+			</argument>
+			<argument index="1" name="Colliders" type="Array">
+			</argument>
+			<description>
+			</description>
+		</signal>
+	</signals>
+	<constants>
+	</constants>
+</class>
