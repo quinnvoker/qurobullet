@@ -64,6 +64,7 @@ private:
     void _update_cached_shots();
 
     Array _create_volley() const;
+    Vector2 _get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const;
 
     void _draw_shot_preview(const Color &p_border_col, const Color &p_shot_col);
     void _draw_adjusted_arc(float p_inner_rad, float p_outer_rad, const Vector2 &p_arc_start, int p_point_count, const Color &p_color);
