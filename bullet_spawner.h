@@ -44,10 +44,10 @@ private:
     float scatter_range;
 
     bool inherit_rotation;
-    float self_rotation;
+    float rotation_mod;
 
     bool inherit_scale;
-    Vector2 self_scale;
+    Vector2 scale_mod;
 
     bool in_game_preview;
     Color preview_color;
@@ -134,11 +134,11 @@ public:
     void set_inherit_rotation(bool p_enabled);
     bool get_inherit_rotation() const;
 
-    void set_self_rotation(float p_radians);
-    float get_self_rotation() const;
+    void set_rotation_mod(float p_radians);
+    float get_rotation_mod() const;
 
-    void set_self_rotation_degrees(float p_degrees);
-    float get_self_rotation_degrees() const;
+    void set_rotation_mod_degrees(float p_degrees);
+    float get_rotation_mod_degrees() const;
 
     void set_adjusted_global_rotation(float p_radians);
     float get_adjusted_global_rotation() const;
@@ -146,8 +146,8 @@ public:
     void set_inherit_scale(bool p_enabled);
     bool get_inherit_scale() const;
 
-    void set_self_scale(const Vector2 &p_scale);
-    Vector2 get_self_scale() const;
+    void set_scale_mod(const Vector2 &p_scale);
+    Vector2 get_scale_mod() const;
 
     void set_adjusted_global_scale(const Vector2 &p_scale);
     Vector2 get_adjusted_global_scale() const;
