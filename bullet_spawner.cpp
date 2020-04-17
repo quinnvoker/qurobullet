@@ -136,7 +136,7 @@ Array BulletSpawner::_create_volley() const {
     if (bullet_count == 1 || (arc_width == 0.0 && !(scatter_type == BULLET && radius > 0))){
         Vector2 dir = Vector2(1,0).rotated(arc_rotation + get_adjusted_global_rotation());
         Dictionary shot;
-        shot["offset"] = dir * radius;
+        shot["position"] = dir * radius;
         shot["direction"] = _get_shot_direction(dir * radius, dir);
         volley.push_back(shot);
         return volley;
@@ -162,14 +162,16 @@ Array BulletSpawner::_create_volley() const {
         if (arc_width >= 2 * M_PI || Math::abs(Math::fmod(shot_angle, float(M_PI))) <= arc_extent + 0.001){
             Dictionary shot;
             Vector2 shot_normal = Vector2(1,0).rotated(shot_angle + arc_rotation);
-            shot["offset"] = (shot_normal * radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
-            shot["direction"] = _get_shot_direction(shot["offset"], shot_normal);
+            shot["position"] = _get_shot_position(shot_normal);
+            shot["direction"] = _get_shot_direction(shot["position"], shot_normal);
             volley.push_back(shot);
         }
-        else 
-            print_line(Variant(shot_angle));
     }
     return volley;
+}
+
+Vector2 BulletSpawner::_get_shot_position(const Vector2 &p_normal) const{
+    return (p_normal * radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
 }
 
 Vector2 BulletSpawner::_get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const{
