@@ -122,7 +122,7 @@ void BulletServer::spawn_bullet(const Ref<BulletData> &p_type, const Vector2 &p_
 void BulletServer::spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_shots) {
 	for (int i = 0; i < p_shots.size(); i++) {
 		Dictionary shot = p_shots[i];
-		spawn_bullet(p_type, p_position + shot["offset"], shot["direction"]);
+		spawn_bullet(p_type, p_position + shot["position"], shot["direction"]);
 		shot.empty();
 	}
 }

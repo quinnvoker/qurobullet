@@ -64,6 +64,7 @@ private:
     void _update_cached_shots();
 
     Array _create_volley() const;
+    Vector2 _get_shot_position(const Vector2 &p_normal) const;
     Vector2 _get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const;
 
     void _draw_shot_preview(const Color &p_border_col, const Color &p_shot_col);
