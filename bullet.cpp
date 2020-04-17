@@ -4,22 +4,22 @@ void Bullet::spawn(const Ref<BulletData> &p_data, const Vector2 &p_position, con
 	time = 0.0;
 	rotation = 0.0;
     _popped = false;
-	_perp_offset = Vector2(0, 0);
+	_offset = Vector2(0, 0);
     set_data(p_data);
     set_position(p_position);
     set_direction(p_direction);
 	VS::get_singleton()->canvas_item_set_visible(ci_rid, true);
 }
 
-void Bullet::update_position(float delta) {
+void Bullet::update(float delta) {
     float current_speed = data->get_speed() + data->get_linear_acceleration() * time;
-	set_direction(direction.rotated(data->get_curve_rate() * delta * Math_PI / 180));
-	Vector2 perpendicular = direction.rotated(90 * Math_PI / 180);
-	float sin_point = sin(time * 2 * M_PI * data->get_sin_frequency());
-	Vector2 new_perp_offset = perpendicular * sin_point * data->get_sin_amplitude();
-	position = position - _perp_offset + direction * current_speed * delta + new_perp_offset;
-	_perp_offset = new_perp_offset;
+	set_direction(direction.rotated(Math::deg2rad(data->get_curve_rate()) * delta));
+	position += direction * current_speed * delta;
+	_update_offset();
 	time += delta;
+	if (data->get_lifetime() >= 0.001 && time > data->get_lifetime()){
+		pop();
+	}
 }
 
 void Bullet::pop() {
@@ -29,6 +29,48 @@ void Bullet::pop() {
 
 bool Bullet::is_popped() {
     return _popped;
+}
+
+bool Bullet::can_collide() {
+	return !data.is_null() && (!data->get_collision_shape().is_null() && data->get_collision_mask() != 0);
+}
+
+void Bullet::_update_offset(){
+	position -= _offset;
+	Vector2 h_offset;
+	Vector2 v_offset;
+	Vector2 perpendicular = direction.rotated(M_PI_2);
+	
+	switch (data->get_h_wave_type()){
+		case BulletData::WaveType::SIN:
+			h_offset = direction * data->get_h_wave_amplitude() * sin(time * 2 * M_PI * data->get_h_wave_frequency());
+			break;
+		
+		case BulletData::WaveType::COS:
+			h_offset = direction * data->get_h_wave_amplitude() * (cos(time * 2 * M_PI * data->get_h_wave_frequency()) - 1);
+			break;
+
+		default:
+			h_offset = Vector2();
+			break;
+	}
+
+	switch (data->get_v_wave_type()){
+		case BulletData::WaveType::SIN:
+			v_offset = perpendicular * data->get_v_wave_amplitude() * sin(time * 2 * M_PI * data->get_v_wave_frequency());
+			break;
+		
+		case BulletData::WaveType::COS:
+			v_offset = perpendicular * data->get_v_wave_amplitude() * (cos(time * 2 * M_PI * data->get_v_wave_frequency()) - 1);
+			break;
+
+		default:
+			v_offset = Vector2();
+			break;
+	}
+
+	_offset = h_offset + v_offset;
+	position += _offset;
 }
 
 void Bullet::set_time(float p_time) {
@@ -91,7 +133,7 @@ Transform2D Bullet::get_transform(){
 	if (data.is_null()){
 		t.set_rotation_and_scale(rotation, Vector2(1,1));
 	} else {
-		t.set_rotation_and_scale(rotation, data->get_scale());
+		t.set_rotation_and_scale(rotation + data->get_rotation(), data->get_scale());
 	}
 	return t;
 }
@@ -122,8 +164,12 @@ void Bullet::ci_draw_texture(const Ref<Texture> &p_texture){
 void Bullet::_bind_methods(){
 	ClassDB::bind_method(D_METHOD("spawn", "data", "position", "direction"), &Bullet::spawn);
 
+	ClassDB::bind_method(D_METHOD("update", "delta"), &Bullet::update);
+
 	ClassDB::bind_method(D_METHOD("pop"), &Bullet::pop);
 	ClassDB::bind_method(D_METHOD("is_popped"), &Bullet::is_popped);
+
+	ClassDB::bind_method(D_METHOD("can_collide"), &Bullet::can_collide);
 
 	ClassDB::bind_method(D_METHOD("set_time", "time"), &Bullet::set_time);
 	ClassDB::bind_method(D_METHOD("get_time"), &Bullet::get_time);

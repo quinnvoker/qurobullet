@@ -5,48 +5,67 @@
 #include "scene/2d/node_2d.h"
 #include "bullet_data.h"
 #include "bullet_server_relay.h"
-#include <map>
 
 class BulletSpawner : public Node2D{
     GDCLASS(BulletSpawner, Node2D);
 
+public:
+    enum AimMode {
+        RADIAL,
+        UNIFORM,
+        TARGET_LOCAL,
+        TARGET_GLOBAL,
+    };
+
+    enum ScatterType {
+        NONE,
+        BULLET,
+        VOLLEY,
+    };
+
+private:
     bool autofire;
     float _autofire_time;
     int interval_frames;
 
+    int bullet_count;
     Ref<BulletData> bullet_type;
 
-    Array cached_shots;
-    bool shots_update_required;
+    float radius;
+    float arc_width;
+    float arc_rotation;
+    float arc_offset;
 
-    float spawn_radius;
-    float spawn_angle;
+    AimMode aim_mode;
+    float aim_angle;
+    Vector2 aim_target_position;
 
-    int bullet_count;
-
-    float spread;
-    float volley_offset;
-
-    int scatter_type;
+    ScatterType scatter_type;
     float scatter_range;
 
     bool inherit_rotation;
-    float self_rotation;
+    float rotation_modifier;
 
     bool inherit_scale;
-    Vector2 self_scale;
+    Vector2 scale_mod;
 
     bool in_game_preview;
     Color preview_color;
 
+    Array _cached_shots;
+    bool _cache_update_required;
+
     Transform2D _previous_transform;
 
     void _ready();
-    void _process(float delta);
-    void _physics_process(float delta);
+    void _process_internal(float delta);
+    void _physics_process_internal(float delta);
 
     void _update_cached_shots();
-    Vector2 _get_spawn_offset(const Vector2 &p_shot_dir);
+
+    Array _create_volley() const;
+    Vector2 _get_shot_position(const Vector2 &p_normal) const;
+    Vector2 _get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const;
 
     void _draw_shot_preview(const Color &p_border_col, const Color &p_shot_col);
     void _draw_adjusted_arc(float p_inner_rad, float p_outer_rad, const Vector2 &p_arc_start, int p_point_count, const Color &p_color);
@@ -54,16 +73,9 @@ class BulletSpawner : public Node2D{
 protected:
     static void _bind_methods();
     void _notification(int p_what);
+    void _validate_property(PropertyInfo &property) const;
 
 public:
-    BulletSpawner();
-    ~BulletSpawner();
-
-    enum ScatterType {
-        VOLLEY,
-        BULLET,
-    };
-
     void fire();
 
     Array get_shots();
@@ -75,32 +87,44 @@ public:
     void set_interval_frames(int p_interval);
     int get_interval_frames() const;
 
-    void set_bullet_data(const Ref<BulletData> &p_type);
-    Ref<BulletData> get_bullet_data() const;
-
-    void set_spawn_radius(float p_radius);
-    float get_spawn_radius() const;
-
-    void set_spawn_angle(float p_radians);
-    float get_spawn_angle() const;
-
-    void set_spawn_angle_degrees(float p_degrees);
-    float get_spawn_angle_degrees() const;
-
     void set_bullet_count(int p_count);
     int get_bullet_count() const;
 
-    void set_spread(float p_radians);
-    float get_spread() const;
+    void set_bullet_data(const Ref<BulletData> &p_type);
+    Ref<BulletData> get_bullet_data() const;
 
-    void set_spread_degrees(float p_degrees);
-    float get_spread_degrees() const;
+    void set_radius(float p_radius);
+    float get_radius() const;
 
-    void set_volley_offset(float p_offset);
-    float get_volley_offset() const;
+    void set_arc_width(float p_radians);
+    float get_arc_width() const;
 
-    void set_scatter_type(int p_type);
-    int get_scatter_type() const;
+    void set_arc_width_degrees(float p_degrees);
+    float get_arc_width_degrees() const;
+
+    void set_arc_rotation(float p_radians);
+    float get_arc_rotation() const;
+
+    void set_arc_rotation_degrees(float p_degrees);
+    float get_arc_rotation_degrees() const;
+
+    void set_arc_offset(float p_offset);
+    float get_arc_offset() const;
+
+    void set_aim_mode(AimMode p_mode);
+    AimMode get_aim_mode() const;
+
+    void set_aim_angle(float p_radians);
+    float get_aim_angle() const;
+
+    void set_aim_angle_degrees(float p_degrees);
+    float get_aim_angle_degrees() const;
+
+    void set_aim_target_position(const Vector2 &p_position);
+    Vector2 get_aim_target_position() const;
+
+    void set_scatter_type(ScatterType p_type);
+    ScatterType get_scatter_type() const;
 
     void set_scatter_range(float p_radians);
     float get_scatter_range() const;
@@ -111,11 +135,11 @@ public:
     void set_inherit_rotation(bool p_enabled);
     bool get_inherit_rotation() const;
 
-    void set_self_rotation(float p_radians);
-    float get_self_rotation() const;
+    void set_rotation_modifier(float p_radians);
+    float get_rotation_modifier() const;
 
-    void set_self_rotation_degrees(float p_degrees);
-    float get_self_rotation_degrees() const;
+    void set_rotation_modifier_degrees(float p_degrees);
+    float get_rotation_modifier_degrees() const;
 
     void set_adjusted_global_rotation(float p_radians);
     float get_adjusted_global_rotation() const;
@@ -123,12 +147,17 @@ public:
     void set_inherit_scale(bool p_enabled);
     bool get_inherit_scale() const;
 
-    void set_self_scale(const Vector2 &p_scale);
-    Vector2 get_self_scale() const;
+    void set_scale_mod(const Vector2 &p_scale);
+    Vector2 get_scale_mod() const;
 
     void set_adjusted_global_scale(const Vector2 &p_scale);
     Vector2 get_adjusted_global_scale() const;
+
+    BulletSpawner();
+    ~BulletSpawner();
 };
 
+VARIANT_ENUM_CAST(BulletSpawner::AimMode)
+VARIANT_ENUM_CAST(BulletSpawner::ScatterType)
 
 #endif

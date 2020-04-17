@@ -14,7 +14,8 @@ class BulletServer : public Node2D {
 	Rect2 play_area;
 	float play_area_margin;
 
-	bool auto_pop;
+	bool pop_on_collide;
+	float max_lifetime;
 
 	Vector<Bullet *> live_bullets;
 	Vector<Bullet *> dead_bullets;
@@ -38,14 +39,19 @@ public:
 	void spawn_bullet(const Ref<BulletData> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
 	void spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_shots);
 
+	void clear_bullets();
+
 	void set_bullet_pool_size(int p_size);
 	int get_bullet_pool_size() const;
 
 	void set_play_area_margin(float p_margin);
 	float get_play_area_margin() const;
 
-	void set_auto_pop(bool p_enabled);
-	bool get_auto_pop() const;
+	void set_pop_on_collide(bool p_enabled);
+	bool get_pop_on_collide() const;
+
+	void set_max_lifetime(float p_time);
+	float get_max_lifetime() const;
 };
 
 #endif
