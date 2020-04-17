@@ -136,17 +136,17 @@ Array BulletSpawner::_create_volley() const {
     if (bullet_count == 1 || (spread == 0.0 && !(scatter_type == BULLET && radius > 0))){
         Vector2 dir = Vector2(1,0).rotated(arc_rotation + get_adjusted_global_rotation());
         Dictionary shot;
-        shot["direction"] = dir;
         shot["offset"] = dir * radius;
+        shot["direction"] = _get_shot_direction(dir * radius, dir);
         volley.push_back(shot);
         return volley;
     }
 
-    float arc_end = spread / 2;
+    float arc_extent = spread / 2;
     float spacing = spread / (bullet_count - 1);
     bool spacing_maxed = false;
 
-    float volley_start = -arc_end;
+    float volley_start = -arc_extent;
     if (spacing > 2 * M_PI / bullet_count){
         spacing = 2 * M_PI / bullet_count;
         volley_start = -M_PI + spacing / 2;
@@ -159,36 +159,36 @@ Array BulletSpawner::_create_volley() const {
             shot_angle = Math::wrapf(shot_angle, 0 - spacing / 2, spread + spacing / 2);
         }
         shot_angle += volley_start;
-        if (spread > 2 * M_PI || Math::abs(shot_angle) <= arc_end + 0.001){
+        if (spread >= 2 * M_PI || Math::abs(Math::fmod(shot_angle, float(M_PI))) <= arc_extent + 0.001){
             Dictionary shot;
             Vector2 shot_normal = Vector2(1,0).rotated(shot_angle + arc_rotation);
             shot["offset"] = (shot_normal * radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
-            switch (aim_mode){
-                case RADIAL:
-                    shot["direction"] = shot_normal.rotated(aim_angle + get_adjusted_global_rotation());
-                    break;
-
-                case UNIFORM:
-                    shot["direction"] = Vector2(1,0).rotated(aim_angle + get_adjusted_global_rotation());
-                    break;
-                
-                case TARGET_LOCAL:
-                    shot["direction"] = (target_position - shot["offset"]).normalized();
-                    break;
-
-                case TARGET_GLOBAL:
-                    shot["direction"] = (target_position - (get_global_position() + shot["offset"])).normalized();
-                    break;
-
-                default:
-                    //non-moving bullets will let you know something has gone horribly wrong
-                    shot["direction"] = Vector2();
-                    break;
-            }
+            shot["direction"] = _get_shot_direction(shot["offset"], shot_normal);
             volley.push_back(shot);
         }
+        else 
+            print_line(Variant(shot_angle));
     }
     return volley;
+}
+
+Vector2 BulletSpawner::_get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const{
+    switch (aim_mode){
+        case RADIAL:
+            return p_normal.rotated(aim_angle + get_adjusted_global_rotation());
+
+        case UNIFORM:
+            return Vector2(1,0).rotated(aim_angle + get_adjusted_global_rotation());
+        
+        case TARGET_LOCAL:
+            return (target_position - p_position).normalized();
+
+        case TARGET_GLOBAL:
+            return (target_position - (get_global_position() + p_position)).normalized();
+
+        default:
+            return Vector2();
+    }
 }
 
 //setters/getters
