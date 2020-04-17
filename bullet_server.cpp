@@ -60,8 +60,13 @@ void BulletServer::_physics_process_internal(float delta) {
 
 		if (bullet->is_popped()){
 			bullet_indices_to_clear.push_back(i);
+		} else if (max_lifetime >= 0.001 && bullet->get_time() > max_lifetime){
+			bullet->pop();
 		} else if (play_area.has_point(bullet->get_position())) {
-			bullet->update_position(delta);
+			bullet->update(delta);
+			if (!bullet->can_collide()){
+				continue;
+			}
 			Ref<BulletData> b_data = bullet->get_data();
 			int collisions = space_state->intersect_shape(b_data->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_data->get_collision_mask(), true, true);
 			if (collisions > 0){
@@ -71,7 +76,7 @@ void BulletServer::_physics_process_internal(float delta) {
 					colliders[c] = results[c].collider;
 				}
 				emit_signal("collision_detected", bullet, colliders);
-				if(auto_pop){
+				if(pop_on_collide){
 					bullet->pop();
 				}
 			}
@@ -119,8 +124,14 @@ void BulletServer::spawn_bullet(const Ref<BulletData> &p_type, const Vector2 &p_
 void BulletServer::spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_shots) {
 	for (int i = 0; i < p_shots.size(); i++) {
 		Dictionary shot = p_shots[i];
-		spawn_bullet(p_type, p_position + shot["offset"], shot["direction"]);
+		spawn_bullet(p_type, p_position + shot["position"], shot["direction"]);
 		shot.empty();
+	}
+}
+
+void BulletServer::clear_bullets(){
+	for (int i = 0; i < live_bullets.size(); i++){
+		live_bullets[i]->pop();
 	}
 }
 
@@ -160,17 +171,28 @@ float BulletServer::get_play_area_margin() const {
 	return play_area_margin;
 }
 
-void BulletServer::set_auto_pop(bool p_enabled){
-	auto_pop = p_enabled;
+
+void BulletServer::set_max_lifetime(float p_time) {
+	max_lifetime = p_time;
 }
 
-bool BulletServer::get_auto_pop() const {
-	return auto_pop;
+float BulletServer::get_max_lifetime() const {
+	return max_lifetime;
+}
+
+void BulletServer::set_pop_on_collide(bool p_enabled){
+	pop_on_collide = p_enabled;
+}
+
+bool BulletServer::get_pop_on_collide() const {
+	return pop_on_collide;
 }
 
 void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
 	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "shots"), &BulletServer::spawn_volley);
+	ClassDB::bind_method(D_METHOD("clear_bullets"), &BulletServer::clear_bullets);
+
 
 	ClassDB::bind_method(D_METHOD("set_bullet_pool_size", "size"), &BulletServer::set_bullet_pool_size);
 	ClassDB::bind_method(D_METHOD("get_bullet_pool_size"), &BulletServer::get_bullet_pool_size);
@@ -178,12 +200,16 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_play_area_margin", "margin"), &BulletServer::set_play_area_margin);
 	ClassDB::bind_method(D_METHOD("get_play_area_margin"), &BulletServer::get_play_area_margin);
 
-	ClassDB::bind_method(D_METHOD("set_auto_pop", "enabled"), &BulletServer::set_auto_pop);
-	ClassDB::bind_method(D_METHOD("get_auto_pop"), &BulletServer::get_auto_pop);
+	ClassDB::bind_method(D_METHOD("set_pop_on_collide", "enabled"), &BulletServer::set_pop_on_collide);
+	ClassDB::bind_method(D_METHOD("get_pop_on_collide"), &BulletServer::get_pop_on_collide);
+
+	ClassDB::bind_method(D_METHOD("set_max_lifetime", "time"), &BulletServer::set_max_lifetime);
+	ClassDB::bind_method(D_METHOD("get_max_lifetime"), &BulletServer::get_max_lifetime);
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size", PROPERTY_HINT_RANGE, "1,5000,1,or_greater"), "set_bullet_pool_size", "get_bullet_pool_size");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "auto_pop"), "set_auto_pop", "get_auto_pop");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "max_lifetime", PROPERTY_HINT_RANGE, "0,300,0.01,or_greater"), "set_max_lifetime", "get_max_lifetime");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pop_on_collide"), "set_pop_on_collide", "get_pop_on_collide");
 
 	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "Colliders")));
 }
@@ -192,7 +218,7 @@ BulletServer::BulletServer() {
 	set_physics_process(true);
 	bullet_pool_size = 1500;
 	play_area_margin = 0;
-	auto_pop = true;
+	pop_on_collide = true;
 }
 
 BulletServer::~BulletServer() {
