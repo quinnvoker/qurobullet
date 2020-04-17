@@ -32,7 +32,7 @@ private:
     Ref<BulletData> bullet_type;
 
     float radius;
-    float spread;
+    float arc_width;
     float arc_rotation;
     float arc_offset;
 
@@ -95,11 +95,11 @@ public:
     void set_radius(float p_radius);
     float get_radius() const;
 
-    void set_spread(float p_radians);
-    float get_spread() const;
+    void set_arc_width(float p_radians);
+    float get_arc_width() const;
 
-    void set_spread_degrees(float p_degrees);
-    float get_spread_degrees() const;
+    void set_arc_width_degrees(float p_degrees);
+    float get_arc_width_degrees() const;
 
     void set_arc_rotation(float p_radians);
     float get_arc_rotation() const;

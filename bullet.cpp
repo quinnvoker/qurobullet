@@ -47,7 +47,7 @@ void Bullet::_update_offset(){
 			break;
 		
 		case BulletData::WaveType::COS:
-			h_offset = direction * data->get_h_wave_amplitude() * cos(time * 2 * M_PI * data->get_h_wave_frequency());
+			h_offset = direction * data->get_h_wave_amplitude() * (cos(time * 2 * M_PI * data->get_h_wave_frequency()) - 1);
 			break;
 
 		default:
@@ -61,7 +61,7 @@ void Bullet::_update_offset(){
 			break;
 		
 		case BulletData::WaveType::COS:
-			v_offset = perpendicular * data->get_v_wave_amplitude() * cos(time * 2 * M_PI * data->get_v_wave_frequency());
+			v_offset = perpendicular * data->get_v_wave_amplitude() * (cos(time * 2 * M_PI * data->get_v_wave_frequency()) - 1);
 			break;
 
 		default:
