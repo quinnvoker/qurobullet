@@ -154,6 +154,14 @@ Vector2 BulletData::get_scale() const {
 	return scale;
 }
 
+void BulletData::set_custom_data(const Dictionary &p_data){
+	custom_data = p_data;
+}
+
+Dictionary BulletData::get_custom_data() const {
+	return custom_data;
+}
+
 void BulletData::_validate_property(PropertyInfo &property) const {
 	if ((property.name == "h_wave_amplitude" || property.name == "h_wave_frequency") && h_wave_type == NONE){
 		property.usage = PROPERTY_USAGE_STORAGE;
@@ -221,6 +229,9 @@ void BulletData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_scale", "scale"), &BulletData::set_scale);
 	ClassDB::bind_method(D_METHOD("get_scale"), &BulletData::get_scale);
 
+	ClassDB::bind_method(D_METHOD("set_custom_data", "custom_data"), &BulletData::set_custom_data);
+	ClassDB::bind_method(D_METHOD("get_custom_data"), &BulletData::get_custom_data);
+
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "speed", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_speed", "get_speed");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lifetime", PROPERTY_HINT_RANGE, "0,30,0.01,or_greater"), "set_lifetime", "get_lifetime");
@@ -246,6 +257,8 @@ void BulletData::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_rotation", "get_rotation");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
+	ADD_GROUP("Custom Data", "");
+	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "custom_data"), "set_custom_data", "get_custom_data");
 
 	BIND_ENUM_CONSTANT(NONE);
     BIND_ENUM_CONSTANT(SIN);

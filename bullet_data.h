@@ -35,6 +35,7 @@ private:
 	bool face_direction;
 	float rotation;
 	Vector2 scale;
+	Dictionary custom_data;
 
 protected:
 	static void _bind_methods();
@@ -97,6 +98,9 @@ public:
 
 	void set_scale(Vector2 p_scale);
 	Vector2 get_scale() const;
+
+	void set_custom_data(const Dictionary &p_data);
+	Dictionary get_custom_data() const;
 
 	BulletData();
 	~BulletData();
