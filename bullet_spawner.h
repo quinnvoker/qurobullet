@@ -38,13 +38,13 @@ private:
 
     AimMode aim_mode;
     float aim_angle;
-    Vector2 target_position;
+    Vector2 aim_target_position;
 
     ScatterType scatter_type;
     float scatter_range;
 
     bool inherit_rotation;
-    float rotation_mod;
+    float rotation_modifier;
 
     bool inherit_scale;
     Vector2 scale_mod;
@@ -120,8 +120,8 @@ public:
     void set_aim_angle_degrees(float p_degrees);
     float get_aim_angle_degrees() const;
 
-    void set_target_position(const Vector2 &p_position);
-    Vector2 get_target_position() const;
+    void set_aim_target_position(const Vector2 &p_position);
+    Vector2 get_aim_target_position() const;
 
     void set_scatter_type(ScatterType p_type);
     ScatterType get_scatter_type() const;
@@ -135,11 +135,11 @@ public:
     void set_inherit_rotation(bool p_enabled);
     bool get_inherit_rotation() const;
 
-    void set_rotation_mod(float p_radians);
-    float get_rotation_mod() const;
+    void set_rotation_modifier(float p_radians);
+    float get_rotation_modifier() const;
 
-    void set_rotation_mod_degrees(float p_degrees);
-    float get_rotation_mod_degrees() const;
+    void set_rotation_modifier_degrees(float p_degrees);
+    float get_rotation_modifier_degrees() const;
 
     void set_adjusted_global_rotation(float p_radians);
     float get_adjusted_global_rotation() const;
