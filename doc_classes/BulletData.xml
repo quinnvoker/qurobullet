@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BulletData" inherits="Resource" version="3.2">
+	<brief_description>
+		Resource containing [Bullet] appearance and behaviour data.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="collision_mask" type="int" setter="set_collision_mask" getter="get_collision_mask" default="0">
+			The physics layers to scan for determining collision detection.
+		</member>
+		<member name="collision_shape" type="Shape2D" setter="set_collision_shape" getter="get_collision_shape">
+			Shape to be used for determining collision detection.
+		</member>
+		<member name="curve_rate" type="float" setter="set_curve_rate" getter="get_curve_rate" default="0.0">
+			Rate at which a bullet will curve as it flies, in degrees per second.
+		</member>
+		<member name="custom_data" type="Dictionary" setter="set_custom_data" getter="get_custom_data" default="{}">
+			Generic container for any extra data needed by game-specific logic.
+		</member>
+		<member name="damage" type="float" setter="set_damage" getter="get_damage" default="0.0">
+			Amount of damage applied by a bullet.
+		</member>
+		<member name="face_direction" type="bool" setter="set_face_direction" getter="get_face_direction" default="false">
+			If [code]true[/code], a bullet will rotate to face the direction in which it is travelling.
+		</member>
+		<member name="h_wave_amplitude" type="float" setter="set_h_wave_amplitude" getter="get_h_wave_amplitude" default="1.0">
+		</member>
+		<member name="h_wave_frequency" type="float" setter="set_h_wave_frequency" getter="get_h_wave_frequency" default="0.0">
+		</member>
+		<member name="h_wave_type" type="int" setter="set_h_wave_type" getter="get_h_wave_type" enum="BulletData.WaveType" default="0">
+		</member>
+		<member name="lifetime" type="float" setter="set_lifetime" getter="get_lifetime" default="0.0">
+		</member>
+		<member name="linear_acceleration" type="float" setter="set_linear_acceleration" getter="get_linear_acceleration" default="0.0">
+		</member>
+		<member name="material" type="Material" setter="set_material" getter="get_material">
+		</member>
+		<member name="rotation" type="float" setter="set_rotation" getter="get_rotation" default="0.0">
+		</member>
+		<member name="rotation_degrees" type="float" setter="set_rotation_degrees" getter="get_rotation_degrees" default="0.0">
+		</member>
+		<member name="scale" type="Vector2" setter="set_scale" getter="get_scale" default="Vector2( 1, 1 )">
+		</member>
+		<member name="speed" type="float" setter="set_speed" getter="get_speed" default="100.0">
+		</member>
+		<member name="texture" type="Texture" setter="set_texture" getter="get_texture">
+		</member>
+		<member name="v_wave_amplitude" type="float" setter="set_v_wave_amplitude" getter="get_v_wave_amplitude" default="0.0">
+		</member>
+		<member name="v_wave_frequency" type="float" setter="set_v_wave_frequency" getter="get_v_wave_frequency" default="0.0">
+		</member>
+		<member name="v_wave_type" type="int" setter="set_v_wave_type" getter="get_v_wave_type" enum="BulletData.WaveType" default="0">
+		</member>
+	</members>
+	<constants>
+		<constant name="NONE" value="0" enum="WaveType">
+		</constant>
+		<constant name="SIN" value="1" enum="WaveType">
+		</constant>
+		<constant name="COS" value="2" enum="WaveType">
+		</constant>
+	</constants>
+</class>

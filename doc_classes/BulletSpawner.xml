@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BulletSpawner" inherits="Node2D" version="3.2">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="fire">
+			<return type="void">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_adjusted_global_rotation" qualifiers="const">
+			<return type="float">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_adjusted_global_scale" qualifiers="const">
+			<return type="Vector2">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_scattered_shots">
+			<return type="Array">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="get_shots">
+			<return type="Array">
+			</return>
+			<description>
+			</description>
+		</method>
+		<method name="set_adjusted_global_rotation">
+			<return type="void">
+			</return>
+			<argument index="0" name="radians" type="float">
+			</argument>
+			<description>
+			</description>
+		</method>
+		<method name="set_adjusted_global_scale">
+			<return type="void">
+			</return>
+			<argument index="0" name="scale" type="Vector2">
+			</argument>
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="aim_angle" type="float" setter="set_aim_angle" getter="get_aim_angle" default="0.0">
+		</member>
+		<member name="aim_angle_degrees" type="float" setter="set_aim_angle_degrees" getter="get_aim_angle_degrees" default="0.0">
+		</member>
+		<member name="aim_mode" type="int" setter="set_aim_mode" getter="get_aim_mode" enum="BulletSpawner.AimMode" default="0">
+		</member>
+		<member name="aim_target_position" type="Vector2" setter="set_aim_target_position" getter="get_aim_target_position" default="Vector2( 0, 0 )">
+		</member>
+		<member name="arc_offset" type="float" setter="set_arc_offset" getter="get_arc_offset" default="0.0">
+		</member>
+		<member name="arc_rotation" type="float" setter="set_arc_rotation" getter="get_arc_rotation" default="0.0">
+		</member>
+		<member name="arc_rotation_degrees" type="float" setter="set_arc_rotation_degrees" getter="get_arc_rotation_degrees" default="0.0">
+		</member>
+		<member name="arc_width" type="float" setter="set_arc_width" getter="get_arc_width" default="0.0">
+		</member>
+		<member name="arc_width_degrees" type="float" setter="set_arc_width_degrees" getter="get_arc_width_degrees" default="0.0">
+		</member>
+		<member name="autofire" type="bool" setter="set_autofire" getter="get_autofire" default="false">
+		</member>
+		<member name="bullet_count" type="int" setter="set_bullet_count" getter="get_bullet_count" default="1">
+		</member>
+		<member name="bullet_data" type="BulletData" setter="set_bullet_data" getter="get_bullet_data">
+		</member>
+		<member name="inherit_rotation" type="bool" setter="set_inherit_rotation" getter="get_inherit_rotation" default="true">
+		</member>
+		<member name="inherit_scale" type="bool" setter="set_inherit_scale" getter="get_inherit_scale" default="true">
+		</member>
+		<member name="interval_frames" type="int" setter="set_interval_frames" getter="get_interval_frames" default="10">
+		</member>
+		<member name="radius" type="float" setter="set_radius" getter="get_radius" default="0.0">
+		</member>
+		<member name="rotation_modifier" type="float" setter="set_rotation_modifier" getter="get_rotation_modifier" default="0.0">
+		</member>
+		<member name="rotation_modifier_degrees" type="float" setter="set_rotation_modifier_degrees" getter="get_rotation_modifier_degrees" default="0.0">
+		</member>
+		<member name="scale_mod" type="Vector2" setter="set_scale_mod" getter="get_scale_mod" default="Vector2( 1, 1 )">
+		</member>
+		<member name="scatter_range" type="float" setter="set_scatter_range" getter="get_scatter_range" default="0.0">
+		</member>
+		<member name="scatter_range_degrees" type="float" setter="set_scatter_range_degrees" getter="get_scatter_range_degrees">
+		</member>
+		<member name="scatter_type" type="int" setter="set_scatter_type" getter="get_scatter_type" enum="BulletSpawner.ScatterType" default="0">
+		</member>
+	</members>
+	<signals>
+		<signal name="bullet_fired">
+			<argument index="0" name="type" type="BulletType">
+			</argument>
+			<argument index="1" name="position" type="Vector2">
+			</argument>
+			<argument index="2" name="direction" type="Vector2">
+			</argument>
+			<description>
+			</description>
+		</signal>
+		<signal name="volley_fired">
+			<argument index="0" name="type" type="BulletType">
+			</argument>
+			<argument index="1" name="position" type="Vector2">
+			</argument>
+			<argument index="2" name="shots" type="Array">
+			</argument>
+			<description>
+			</description>
+		</signal>
+	</signals>
+	<constants>
+		<constant name="RADIAL" value="0" enum="AimMode">
+		</constant>
+		<constant name="UNIFORM" value="1" enum="AimMode">
+		</constant>
+		<constant name="NONE" value="0" enum="ScatterType">
+		</constant>
+		<constant name="BULLET" value="1" enum="ScatterType">
+		</constant>
+		<constant name="VOLLEY" value="2" enum="ScatterType">
+		</constant>
+	</constants>
+</class>

@@ -170,8 +170,7 @@ void Bullet::_bind_methods(){
 	ClassDB::bind_method(D_METHOD("is_popped"), &Bullet::is_popped);
 
 	ClassDB::bind_method(D_METHOD("can_collide"), &Bullet::can_collide);
-
-	ClassDB::bind_method(D_METHOD("set_time", "time"), &Bullet::set_time);
+	
 	ClassDB::bind_method(D_METHOD("get_time"), &Bullet::get_time);
 
 	ClassDB::bind_method(D_METHOD("set_data", "data"), &Bullet::set_data);
@@ -188,7 +187,6 @@ void Bullet::_bind_methods(){
 
 	ClassDB::bind_method(D_METHOD("get_transform"), &Bullet::get_transform);
 
-	ClassDB::bind_method(D_METHOD("set_ci_rid", "canvas_item_rid"), &Bullet::set_ci_rid);
 	ClassDB::bind_method(D_METHOD("get_ci_rid"), &Bullet::get_ci_rid);
 }
 

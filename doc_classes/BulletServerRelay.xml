@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BulletServerRelay" inherits="Object" version="3.2">
 	<brief_description>
-		Singleton object for communication between BulletServers and spawners.
 	</brief_description>
 	<description>
-		Singleton object for communication between [BulletServer]s and spawners. Simply houses signals which can be used to send spawn messages to [BulletServer]s.
-		This is used instead of directly attaching the signals from spawner to server so that servers can be added to and configured within a scene, without needing to keep track of node paths.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -13,27 +10,25 @@
 		<method name="on_bullet_fired">
 			<return type="void">
 			</return>
-			<argument index="0" name="type" type="BulletType">
+			<argument index="0" name="type" type="BulletData">
 			</argument>
 			<argument index="1" name="position" type="Vector2">
 			</argument>
 			<argument index="2" name="direction" type="Vector2">
 			</argument>
 			<description>
-				Emits [code]bullet_spawn_requested[/code]. Connect spawners' individual bullet spawn request signals here.
 			</description>
 		</method>
 		<method name="on_volley_fired">
 			<return type="void">
 			</return>
-			<argument index="0" name="type" type="BulletType">
+			<argument index="0" name="type" type="BulletData">
 			</argument>
 			<argument index="1" name="position" type="Vector2">
 			</argument>
 			<argument index="2" name="shots" type="Array">
 			</argument>
 			<description>
-				Emits [code]volley_spawn_requested[/code]. Connect spawners' volley spawn request signals here.
 			</description>
 		</method>
 	</methods>
@@ -46,7 +41,6 @@
 			<argument index="2" name="direction" type="Vector2">
 			</argument>
 			<description>
-				Signal to be passed to bullet spawners to request a single bullet spawn.
 			</description>
 		</signal>
 		<signal name="volley_spawn_requested">
@@ -57,7 +51,6 @@
 			<argument index="2" name="shots" type="Array">
 			</argument>
 			<description>
-				Signal to be passed to bullet spawners to request a single bullet spawn.
 			</description>
 		</signal>
 	</signals>
