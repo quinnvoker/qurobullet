@@ -104,8 +104,7 @@ Array BulletSpawner::get_scattered_shots() {
         for (int i = 0; i < s_shots.size(); i++){
             rand_offset = Math::randf() * scatter_range - scatter_range / 2;
             Dictionary shot_info = s_shots[i];
-            Vector2 shot_dir = shot_info["direction"];
-            shot_info["direction"] = shot_dir.rotated(rand_offset);
+            shot_info["direction"] = Vector2(shot_info["direction"]).rotated(rand_offset);
         }
         break;
     
@@ -113,8 +112,7 @@ Array BulletSpawner::get_scattered_shots() {
         rand_offset = Math::randf() * scatter_range - scatter_range / 2;
         for (int i = 0; i < s_shots.size(); i++){
             Dictionary shot_info = s_shots[i];
-            Vector2 shot_dir = shot_info["direction"];
-            shot_info["direction"] = shot_dir.rotated(rand_offset);
+            shot_info["direction"] = Vector2(shot_info["direction"]).rotated(rand_offset);
         }
         break;
 
