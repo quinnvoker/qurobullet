@@ -3,7 +3,7 @@
 
 #include "core/engine.h"
 #include "scene/2d/node_2d.h"
-#include "bullet_data.h"
+#include "bullet_type.h"
 #include "bullet_server_relay.h"
 
 class BulletSpawner : public Node2D{
@@ -17,7 +17,7 @@ public:
         TARGET_GLOBAL,
     };
 
-    enum ScatterType {
+    enum ScatterMode {
         NONE,
         BULLET,
         VOLLEY,
@@ -29,7 +29,7 @@ private:
     int interval_frames;
 
     int bullet_count;
-    Ref<BulletData> bullet_type;
+    Ref<BulletType> bullet_type;
 
     float radius;
     float arc_width;
@@ -40,19 +40,19 @@ private:
     float aim_angle;
     Vector2 aim_target_position;
 
-    ScatterType scatter_type;
+    ScatterMode scatter_mode;
     float scatter_range;
 
     bool inherit_rotation;
     float rotation_modifier;
 
     bool inherit_scale;
-    Vector2 scale_mod;
+    Vector2 scale_modifier;
 
     bool in_game_preview;
     Color preview_color;
 
-    Array _cached_shots;
+    Array _cached_volley;
     bool _cache_update_required;
 
     Transform2D _previous_transform;
@@ -61,7 +61,7 @@ private:
     void _process_internal(float delta);
     void _physics_process_internal(float delta);
 
-    void _update_cached_shots();
+    void _update_cached_volley();
 
     Array _create_volley() const;
     Vector2 _get_shot_position(const Vector2 &p_normal) const;
@@ -78,8 +78,8 @@ protected:
 public:
     void fire();
 
-    Array get_shots();
-    Array get_scattered_shots();
+    Array get_volley();
+    Array get_scattered_volley();
 
     void set_autofire(bool p_enabled);
     bool get_autofire() const;
@@ -90,8 +90,8 @@ public:
     void set_bullet_count(int p_count);
     int get_bullet_count() const;
 
-    void set_bullet_data(const Ref<BulletData> &p_type);
-    Ref<BulletData> get_bullet_data() const;
+    void set_bullet_type(const Ref<BulletType> &p_type);
+    Ref<BulletType> get_bullet_type() const;
 
     void set_radius(float p_radius);
     float get_radius() const;
@@ -123,8 +123,8 @@ public:
     void set_aim_target_position(const Vector2 &p_position);
     Vector2 get_aim_target_position() const;
 
-    void set_scatter_type(ScatterType p_type);
-    ScatterType get_scatter_type() const;
+    void set_scatter_mode(ScatterMode p_type);
+    ScatterMode get_scatter_mode() const;
 
     void set_scatter_range(float p_radians);
     float get_scatter_range() const;
@@ -158,6 +158,6 @@ public:
 };
 
 VARIANT_ENUM_CAST(BulletSpawner::AimMode)
-VARIANT_ENUM_CAST(BulletSpawner::ScatterType)
+VARIANT_ENUM_CAST(BulletSpawner::ScatterMode)
 
 #endif

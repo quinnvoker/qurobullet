@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Bullet" inherits="Object" version="3.2">
+	<brief_description>
+		Representation of a controllable bullet.
+	</brief_description>
+	<description>
+		Representation of a controllable bullet.
+		A [Bullet] is a minimal representation of a simulated projectile. It does not perform any automatic processing or colliding of its own, instead relying on a [BulletServer] or other external script to drive it.
+		It contains simple state information, a [CanvasItem] [RID] to draw to, and a [BulletType] resource which defines its appearance, collision information, and behaviour.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="can_collide">
+			<return type="bool">
+			</return>
+			<description>
+				Returns [code]true[/code] if this [Bullet]'s type contains a collision shape and an active collsion mask.
+			</description>
+		</method>
+		<method name="get_ci_rid" qualifiers="const">
+			<return type="RID">
+			</return>
+			<description>
+				Returns the [RID] of the [CanvasItem] associated with this [Bullet].
+			</description>
+		</method>
+		<method name="get_type" qualifiers="const">
+			<return type="BulletType">
+			</return>
+			<description>
+				Returns the [BulletType] currently held by this [Bullet].
+			</description>
+		</method>
+		<method name="get_direction" qualifiers="const">
+			<return type="Vector2">
+			</return>
+			<description>
+				Returns a [Vector2] reprenting this [Bullet]'s current direction of travel.
+			</description>
+		</method>
+		<method name="get_position" qualifiers="const">
+			<return type="Vector2">
+			</return>
+			<description>
+				Returns the current position of this [Bullet].
+			</description>
+		</method>
+		<method name="get_rotation" qualifiers="const">
+			<return type="float">
+			</return>
+			<description>
+				Returns the current rotation of this [Bullet].
+			</description>
+		</method>
+		<method name="get_time" qualifiers="const">
+			<return type="float">
+			</return>
+			<description>
+				Returns the amount of time this [Bullet] has been active since spawning, in seconds.
+			</description>
+		</method>
+		<method name="get_transform">
+			<return type="Transform2D">
+			</return>
+			<description>
+				Returns a transform representing this [Bullet]'s position, rotation, and the scale set by its [BulletType]. 
+			</description>
+		</method>
+		<method name="is_popped">
+			<return type="bool">
+			</return>
+			<description>
+				Returns [code]true[/code] if this [Bullet] has popped and is awaiting cleanup. 
+			</description>
+		</method>
+		<method name="pop">
+			<return type="void">
+			</return>
+			<description>
+				Marks this [Bullet] as inactive and ready to be cleaned up by the server, and disables its visibility.
+			</description>
+		</method>
+		<method name="set_type">
+			<return type="void">
+			</return>
+			<argument index="0" name="type" type="BulletType">
+			</argument>
+			<description>
+				Sets the [BulletType] that will be used to define this [Bullet]'s appearance and behaviour.
+				Causes the [CanvasItem] to update to reflect texture or material changes.
+			</description>
+		</method>
+		<method name="set_direction">
+			<return type="void">
+			</return>
+			<argument index="0" name="direction" type="Vector2">
+			</argument>
+			<description>
+				Sets the [Vector2] that defines the direction in which this [Bullet] will travel.
+			</description>
+		</method>
+		<method name="set_position">
+			<return type="void">
+			</return>
+			<argument index="0" name="position" type="Vector2">
+			</argument>
+			<description>
+				Sets the position of this [Bullet].
+			</description>
+		</method>
+		<method name="set_rotation">
+			<return type="void">
+			</return>
+			<argument index="0" name="rotation" type="float">
+			</argument>
+			<description>
+				Sets the rotation of this [Bullet].
+			</description>
+		</method>
+		<method name="spawn">
+			<return type="void">
+			</return>
+			<argument index="0" name="type" type="BulletType">
+			</argument>
+			<argument index="1" name="position" type="Vector2">
+			</argument>
+			<argument index="2" name="direction" type="Vector2">
+			</argument>
+			<description>
+				Resets this [Bullet]'s age and state, then deploys it at the given [code]position[/code], in [code]direction[/code], with the traits of [code]type[/code].
+			</description>
+		</method>
+		<method name="update">
+			<return type="void">
+			</return>
+			<argument index="0" name="delta" type="float">
+			</argument>
+			<description>
+				Updates this [Bullet]'s age and position, using its currently loaded [BulletType].
+				Will automatically pop if the type has a lifetime limit set and this bullet's live time exceeds it.
+			</description>
+		</method>
+	</methods>
+	<constants>
+	</constants>
+</class>
