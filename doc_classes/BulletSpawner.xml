@@ -72,10 +72,12 @@
 	</methods>
 	<members>
 		<member name="aim_angle" type="float" setter="set_aim_angle" getter="get_aim_angle" default="0.0">
-			The offset by which each shot in the volley have its firing direction rotated, in radians. For RADIAL and UNIFORM aim modes.
+			In RADIAL aim mode, the offset applied to all spawned bullet's initial direction, in radians.
+			In UNIFORM aim mode, the global angle along which all spawned bullets will travel, in radians.
 		</member>
 		<member name="aim_angle_degrees" type="float" setter="set_aim_angle_degrees" getter="get_aim_angle_degrees" default="0.0">
-			The offset by which each shot in the volley have its firing direction rotated, in degrees. For RADIAL and UNIFORM aim modes.
+			In RADIAL aim mode, the offset applied to all spawned bullet's initial direction, in degrees.
+			In UNIFORM aim mode, the global angle along which all spawned bullets will travel, in degrees.
 		</member>
 		<member name="aim_mode" type="int" setter="set_aim_mode" getter="get_aim_mode" enum="BulletSpawner.AimMode" default="0">
 			The mode used by this spawner to calculate the direction each bullet is fired in.
@@ -111,8 +113,8 @@
 		<member name="autofire" type="bool" setter="set_autofire" getter="get_autofire" default="false">
 			If [code]true[/code], this spawner will automatically fire a volley every [code]interval_frames[/code]
 		</member>
-		<member name="bullet_count" type="int" setter="set_bullet_count" getter="get_bullet_count" default="1">
-			The number of bullets spawned per volley.
+		<member name="shot_count" type="int" setter="set_shot_count" getter="get_shot_count" default="1">
+			The number of spawn points controlled by this spawner. They may be fired collectively or individually.
 		</member>
 		<member name="bullet_type" type="BulletType" setter="set_bullet_type" getter="get_bullet_type">
 			The appearance and behavioural information used by bullets spawned by this spawner.

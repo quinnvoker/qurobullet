@@ -10,6 +10,11 @@ class BulletSpawner : public Node2D{
     GDCLASS(BulletSpawner, Node2D);
 
 public:
+    enum PatternMode {
+        ALL,
+        MANUAL,
+    };
+
     enum AimMode {
         RADIAL,
         UNIFORM,
@@ -28,7 +33,8 @@ private:
     float _autofire_time;
     int interval_frames;
 
-    int bullet_count;
+    int shot_count;
+
     Ref<BulletType> bullet_type;
 
     float radius;
@@ -42,6 +48,9 @@ private:
 
     ScatterMode scatter_mode;
     float scatter_range;
+
+    PatternMode pattern_mode;
+    PoolIntArray active_shots;
 
     bool inherit_rotation;
     float rotation_modifier;
@@ -77,6 +86,7 @@ protected:
 
 public:
     void fire();
+    void fire_points(const PoolIntArray &p_shot_indices);
 
     Array get_volley();
     Array get_scattered_volley();
@@ -87,8 +97,8 @@ public:
     void set_interval_frames(int p_interval);
     int get_interval_frames() const;
 
-    void set_bullet_count(int p_count);
-    int get_bullet_count() const;
+    void set_shot_count(int p_count);
+    int get_shot_count() const;
 
     void set_bullet_type(const Ref<BulletType> &p_type);
     Ref<BulletType> get_bullet_type() const;
@@ -132,6 +142,12 @@ public:
     void set_scatter_range_degrees(float p_degrees);
     float get_scatter_range_degrees() const;
 
+    void set_pattern_mode(PatternMode p_mode);
+    PatternMode get_pattern_mode() const;
+
+    void set_active_shots(const PoolIntArray &p_points);
+    PoolIntArray get_active_shots() const;
+
     void set_inherit_rotation(bool p_enabled);
     bool get_inherit_rotation() const;
 
@@ -157,6 +173,7 @@ public:
     ~BulletSpawner();
 };
 
+VARIANT_ENUM_CAST(BulletSpawner::PatternMode)
 VARIANT_ENUM_CAST(BulletSpawner::AimMode)
 VARIANT_ENUM_CAST(BulletSpawner::ScatterMode)
 
