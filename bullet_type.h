@@ -1,13 +1,13 @@
-#ifndef BULLETDATA_H
-#define BULLETDATA_H
+#ifndef BULLETTYPE_H
+#define BULLETTYPE_H
 
 #include "core/resource.h"
 #include "scene/resources/material.h"
 #include "scene/resources/shape_2d.h"
 #include "scene/resources/texture.h"
 
-class BulletData : public Resource {
-	GDCLASS(BulletData, Resource);
+class BulletType : public Resource {
+	GDCLASS(BulletType, Resource);
 
 public:
 	enum WaveType {
@@ -102,10 +102,10 @@ public:
 	void set_custom_data(const Dictionary &p_data);
 	Dictionary get_custom_data() const;
 
-	BulletData();
-	~BulletData();
+	BulletType();
+	~BulletType();
 };
 
-VARIANT_ENUM_CAST(BulletData::WaveType)
+VARIANT_ENUM_CAST(BulletType::WaveType)
 
 #endif

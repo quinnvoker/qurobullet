@@ -3,7 +3,7 @@
 #include "register_types.h"
 
 #include "bullet.h"
-#include "bullet_data.h"
+#include "bullet_type.h"
 #include "bullet_server.h"
 #include "bullet_server_relay.h"
 #include "bullet_spawner.h"
@@ -11,7 +11,7 @@
 #include "core/engine.h"
 
 void register_qurobullet_types() {
-	ClassDB::register_class<BulletData>();
+	ClassDB::register_class<BulletType>();
 	ClassDB::register_class<Bullet>();
 	ClassDB::register_class<BulletServer>();
 	ClassDB::register_class<BulletServerRelay>();

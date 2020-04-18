@@ -6,7 +6,7 @@
 	<description>
 		Representation of a controllable bullet.
 		A [Bullet] is a minimal representation of a simulated projectile. It does not perform any automatic processing or colliding of its own, instead relying on a [BulletServer] or other external script to drive it.
-		It contains simple state information, a [CanvasItem] [RID] to draw to, and a [BulletData] resource which defines its appearance, collision information, and behaviour.
+		It contains simple state information, a [CanvasItem] [RID] to draw to, and a [BulletType] resource which defines its appearance, collision information, and behaviour.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -15,7 +15,7 @@
 			<return type="bool">
 			</return>
 			<description>
-				Returns [code]true[/code] if this [Bullet]'s data contains a collision shape and an active collsion mask.
+				Returns [code]true[/code] if this [Bullet]'s type contains a collision shape and an active collsion mask.
 			</description>
 		</method>
 		<method name="get_ci_rid" qualifiers="const">
@@ -25,11 +25,11 @@
 				Returns the [RID] of the [CanvasItem] associated with this [Bullet].
 			</description>
 		</method>
-		<method name="get_data" qualifiers="const">
-			<return type="BulletData">
+		<method name="get_type" qualifiers="const">
+			<return type="BulletType">
 			</return>
 			<description>
-				Returns the [BulletData] currently held by this [Bullet].
+				Returns the [BulletType] currently held by this [Bullet].
 			</description>
 		</method>
 		<method name="get_direction" qualifiers="const">
@@ -64,7 +64,7 @@
 			<return type="Transform2D">
 			</return>
 			<description>
-				Returns a transform representing this [Bullet]'s position, rotation, and the scale set by its [BulletData]. 
+				Returns a transform representing this [Bullet]'s position, rotation, and the scale set by its [BulletType]. 
 			</description>
 		</method>
 		<method name="is_popped">
@@ -81,13 +81,13 @@
 				Marks this [Bullet] as inactive and ready to be cleaned up by the server, and disables its visibility.
 			</description>
 		</method>
-		<method name="set_data">
+		<method name="set_type">
 			<return type="void">
 			</return>
-			<argument index="0" name="data" type="BulletData">
+			<argument index="0" name="type" type="BulletType">
 			</argument>
 			<description>
-				Sets the [BulletData] that will be used to define this [Bullet]'s appearance and behaviour.
+				Sets the [BulletType] that will be used to define this [Bullet]'s appearance and behaviour.
 				Causes the [CanvasItem] to update to reflect texture or material changes.
 			</description>
 		</method>
@@ -121,14 +121,14 @@
 		<method name="spawn">
 			<return type="void">
 			</return>
-			<argument index="0" name="data" type="BulletData">
+			<argument index="0" name="type" type="BulletType">
 			</argument>
 			<argument index="1" name="position" type="Vector2">
 			</argument>
 			<argument index="2" name="direction" type="Vector2">
 			</argument>
 			<description>
-				Resets this [Bullet]'s age and state, then deploys it at the given [code]position[/code], in [code]direction[/code], with the traits of [code]data[/code].
+				Resets this [Bullet]'s age and state, then deploys it at the given [code]position[/code], in [code]direction[/code], with the traits of [code]type[/code].
 			</description>
 		</method>
 		<method name="update">
@@ -137,8 +137,8 @@
 			<argument index="0" name="delta" type="float">
 			</argument>
 			<description>
-				Updates this [Bullet]'s age and position, using its currently loaded [BulletData].
-				Will automatically pop if the data has a lifetime limit set and this bullet's live time exceeds it.
+				Updates this [Bullet]'s age and position, using its currently loaded [BulletType].
+				Will automatically pop if the type has a lifetime limit set and this bullet's live time exceeds it.
 			</description>
 		</method>
 	</methods>

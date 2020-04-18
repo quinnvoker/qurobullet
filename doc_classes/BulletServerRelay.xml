@@ -13,7 +13,7 @@
 		<method name="on_bullet_fired">
 			<return type="void">
 			</return>
-			<argument index="0" name="type" type="BulletData">
+			<argument index="0" name="type" type="BulletType">
 			</argument>
 			<argument index="1" name="position" type="Vector2">
 			</argument>
@@ -27,7 +27,7 @@
 		<method name="on_volley_fired">
 			<return type="void">
 			</return>
-			<argument index="0" name="type" type="BulletData">
+			<argument index="0" name="type" type="BulletType">
 			</argument>
 			<argument index="1" name="position" type="Vector2">
 			</argument>

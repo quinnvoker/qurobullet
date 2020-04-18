@@ -18,7 +18,7 @@
 			<description>
 				Fires a volley of bullets from the current position, with the current type setting, in the current pattern.
 				Emits the "volley_fired" signal with current parameters, to be connected to a bullet server for spawning the bullets appropiately.
-				Passes duplicate of [code]bullet_data[/code] instead of referencing the property directly, so active bullets' data will not be modified by changes made in this spawner.
+				Passes duplicate of [code]bullet_type[/code] instead of referencing the property directly, so active bullets' type will not be modified by changes made in this spawner.
 			</description>
 		</method>
 		<method name="get_adjusted_global_rotation" qualifiers="const">
@@ -101,11 +101,11 @@
 			Used change the origin of spawn points around this spawner, and can create interesting effects with uneven scales.  With a 1:1 ratio scale, its visible effect is indistinguishable from [code]rotation_modifier[/code].
 		</member>
 		<member name="arc_width" type="float" setter="set_arc_width" getter="get_arc_width" default="0.0">
-			The width of the arc in which bullets will be fired, in radians. Bullets in the volley are spaced evenly within this arc.
+			The width of the arc in which bullets will be spawned, in radians. Bullets in the volley are spaced evenly within this arc.
 			Commonly used for setting a volley's "spread".
 		</member>
 		<member name="arc_width_degrees" type="float" setter="set_arc_width_degrees" getter="get_arc_width_degrees" default="0.0">
-			The width of the arc in which bullets will be fired, in degrees. Bullets in the volley are spaced evenly within this arc.
+			The width of the arc in which bullets will be spawned, in degrees. Bullets in the volley are spaced evenly within this arc.
 			Commonly used for setting a volley's "spread".
 		</member>
 		<member name="autofire" type="bool" setter="set_autofire" getter="get_autofire" default="false">
@@ -114,9 +114,9 @@
 		<member name="bullet_count" type="int" setter="set_bullet_count" getter="get_bullet_count" default="1">
 			The number of bullets spawned per volley.
 		</member>
-		<member name="bullet_data" type="BulletData" setter="set_bullet_data" getter="get_bullet_data">
+		<member name="bullet_type" type="BulletType" setter="set_bullet_type" getter="get_bullet_type">
 			The appearance and behavioural information used by bullets spawned by this spawner.
-			Data is duplicated before being passed to bullets, so changes in this spawner's data will not retroactively affect active bullets.
+			Type is duplicated before being passed to bullets, so changes in this spawner's bullet type will not retroactively affect active bullets.
 		</member>
 		<member name="inherit_rotation" type="bool" setter="set_inherit_rotation" getter="get_inherit_rotation" default="true">
 			If [code]true[/code], this spawner's global rotation will be inherited from its parent.
