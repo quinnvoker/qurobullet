@@ -221,12 +221,12 @@ int BulletSpawner::get_bullet_count() const {
     return bullet_count;
 }
 
-void BulletSpawner::set_bullet_data(const Ref<BulletData> &p_type) {
+void BulletSpawner::set_bullet_type(const Ref<BulletType> &p_type) {
     bullet_type = p_type;
     _cache_update_required = true;
 }
 
-Ref<BulletData> BulletSpawner::get_bullet_data() const {
+Ref<BulletType> BulletSpawner::get_bullet_type() const {
     return bullet_type;
 }
 
@@ -474,8 +474,8 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_bullet_count", "count"), &BulletSpawner::set_bullet_count);
     ClassDB::bind_method(D_METHOD("get_bullet_count"), &BulletSpawner::get_bullet_count);
 
-    ClassDB::bind_method(D_METHOD("set_bullet_data", "data"), &BulletSpawner::set_bullet_data);
-    ClassDB::bind_method(D_METHOD("get_bullet_data"), &BulletSpawner::get_bullet_data);
+    ClassDB::bind_method(D_METHOD("set_bullet_type", "type"), &BulletSpawner::set_bullet_type);
+    ClassDB::bind_method(D_METHOD("get_bullet_type"), &BulletSpawner::get_bullet_type);
 
     ClassDB::bind_method(D_METHOD("set_radius", "radius"), &BulletSpawner::set_radius);
     ClassDB::bind_method(D_METHOD("get_radius"), &BulletSpawner::get_radius);
@@ -540,7 +540,7 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_count", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_bullet_count", "get_bullet_count");
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_data", PROPERTY_HINT_RESOURCE_TYPE, "BulletData"), "set_bullet_data", "get_bullet_data");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_radius", "get_radius");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_width", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_width", "get_arc_width");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_width_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_width_degrees", "get_arc_width_degrees");

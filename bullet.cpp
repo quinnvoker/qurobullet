@@ -1,23 +1,23 @@
 #include "bullet.h"
 
-void Bullet::spawn(const Ref<BulletData> &p_data, const Vector2 &p_position, const Vector2 &p_direction) {
+void Bullet::spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
 	time = 0.0;
 	rotation = 0.0;
     _popped = false;
 	_offset = Vector2(0, 0);
-    set_data(p_data);
+    set_type(p_type);
     set_position(p_position);
     set_direction(p_direction);
 	VS::get_singleton()->canvas_item_set_visible(ci_rid, true);
 }
 
 void Bullet::update(float delta) {
-    float current_speed = data->get_speed() + data->get_linear_acceleration() * time;
-	set_direction(direction.rotated(Math::deg2rad(data->get_curve_rate()) * delta));
+    float current_speed = type->get_speed() + type->get_linear_acceleration() * time;
+	set_direction(direction.rotated(Math::deg2rad(type->get_curve_rate()) * delta));
 	position += direction * current_speed * delta;
 	_update_offset();
 	time += delta;
-	if (data->get_lifetime() >= 0.001 && time > data->get_lifetime()){
+	if (type->get_lifetime() >= 0.001 && time > type->get_lifetime()){
 		pop();
 	}
 }
@@ -32,7 +32,7 @@ bool Bullet::is_popped() {
 }
 
 bool Bullet::can_collide() {
-	return !data.is_null() && (!data->get_collision_shape().is_null() && data->get_collision_mask() != 0);
+	return !type.is_null() && (!type->get_collision_shape().is_null() && type->get_collision_mask() != 0);
 }
 
 void Bullet::_update_offset(){
@@ -41,13 +41,13 @@ void Bullet::_update_offset(){
 	Vector2 v_offset;
 	Vector2 perpendicular = direction.rotated(M_PI_2);
 	
-	switch (data->get_h_wave_type()){
-		case BulletData::WaveType::SIN:
-			h_offset = direction * data->get_h_wave_amplitude() * sin(time * 2 * M_PI * data->get_h_wave_frequency());
+	switch (type->get_h_wave_type()){
+		case BulletType::WaveType::SIN:
+			h_offset = direction * type->get_h_wave_amplitude() * sin(time * 2 * M_PI * type->get_h_wave_frequency());
 			break;
 		
-		case BulletData::WaveType::COS:
-			h_offset = direction * data->get_h_wave_amplitude() * (cos(time * 2 * M_PI * data->get_h_wave_frequency()) - 1);
+		case BulletType::WaveType::COS:
+			h_offset = direction * type->get_h_wave_amplitude() * (cos(time * 2 * M_PI * type->get_h_wave_frequency()) - 1);
 			break;
 
 		default:
@@ -55,13 +55,13 @@ void Bullet::_update_offset(){
 			break;
 	}
 
-	switch (data->get_v_wave_type()){
-		case BulletData::WaveType::SIN:
-			v_offset = perpendicular * data->get_v_wave_amplitude() * sin(time * 2 * M_PI * data->get_v_wave_frequency());
+	switch (type->get_v_wave_type()){
+		case BulletType::WaveType::SIN:
+			v_offset = perpendicular * type->get_v_wave_amplitude() * sin(time * 2 * M_PI * type->get_v_wave_frequency());
 			break;
 		
-		case BulletData::WaveType::COS:
-			v_offset = perpendicular * data->get_v_wave_amplitude() * (cos(time * 2 * M_PI * data->get_v_wave_frequency()) - 1);
+		case BulletType::WaveType::COS:
+			v_offset = perpendicular * type->get_v_wave_amplitude() * (cos(time * 2 * M_PI * type->get_v_wave_frequency()) - 1);
 			break;
 
 		default:
@@ -81,28 +81,28 @@ float Bullet::get_time() const {
     return time;
 }
 
-void Bullet::set_data(const Ref<BulletData> &p_data) {
-	if (!data.is_null()){
-		if (p_data->get_material() != data->get_material()){
-			ci_set_material(p_data->get_material());
+void Bullet::set_type(const Ref<BulletType> &p_type) {
+	if (!type.is_null()){
+		if (p_type->get_material() != type->get_material()){
+			ci_set_material(p_type->get_material());
 		}
-		if (p_data->get_texture() != data->get_texture()){
-			ci_draw_texture(p_data->get_texture());
+		if (p_type->get_texture() != type->get_texture()){
+			ci_draw_texture(p_type->get_texture());
 		}
 	} else {
-		ci_set_material(p_data->get_material());
-		ci_draw_texture(p_data->get_texture());
+		ci_set_material(p_type->get_material());
+		ci_draw_texture(p_type->get_texture());
 	}
-    data = p_data;
+    type = p_type;
 }
 
-Ref<BulletData> Bullet::get_data() const {
-    return data;
+Ref<BulletType> Bullet::get_type() const {
+    return type;
 }
 
 void Bullet::set_direction(const Vector2 &p_direction) {
     direction = p_direction;
-	if (!data.is_null() && data->get_face_direction()){
+	if (!type.is_null() && type->get_face_direction()){
 		rotation = p_direction.angle();
 	}
 }
@@ -130,10 +130,10 @@ float Bullet::get_rotation() const {
 Transform2D Bullet::get_transform(){
 	Transform2D t;
 	t.set_origin(position);
-	if (data.is_null()){
+	if (type.is_null()){
 		t.set_rotation_and_scale(rotation, Vector2(1,1));
 	} else {
-		t.set_rotation_and_scale(rotation + data->get_rotation(), data->get_scale());
+		t.set_rotation_and_scale(rotation + type->get_rotation(), type->get_scale());
 	}
 	return t;
 }
@@ -162,7 +162,7 @@ void Bullet::ci_draw_texture(const Ref<Texture> &p_texture){
 }
 
 void Bullet::_bind_methods(){
-	ClassDB::bind_method(D_METHOD("spawn", "data", "position", "direction"), &Bullet::spawn);
+	ClassDB::bind_method(D_METHOD("spawn", "type", "position", "direction"), &Bullet::spawn);
 
 	ClassDB::bind_method(D_METHOD("update", "delta"), &Bullet::update);
 
@@ -173,8 +173,8 @@ void Bullet::_bind_methods(){
 	
 	ClassDB::bind_method(D_METHOD("get_time"), &Bullet::get_time);
 
-	ClassDB::bind_method(D_METHOD("set_data", "data"), &Bullet::set_data);
-	ClassDB::bind_method(D_METHOD("get_data"), &Bullet::get_data);
+	ClassDB::bind_method(D_METHOD("set_type", "type"), &Bullet::set_type);
+	ClassDB::bind_method(D_METHOD("get_type"), &Bullet::get_type);
 
 	ClassDB::bind_method(D_METHOD("set_direction", "direction"), &Bullet::set_direction);
 	ClassDB::bind_method(D_METHOD("get_direction"), &Bullet::get_direction);

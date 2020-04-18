@@ -9,7 +9,7 @@ def configure(env):
 def get_doc_classes():
     return [
         "Bullet",
-        "BulletData",
+        "BulletType",
         "BulletSpawner",
         "BulletServer",
         "BulletServerRelay"

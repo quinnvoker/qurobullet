@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BulletData" inherits="Resource" version="3.2">
+<class name="BulletType" inherits="Resource" version="3.2">
 	<brief_description>
 		Resource containing [Bullet] appearance and behaviour data.
 	</brief_description>
@@ -39,7 +39,7 @@
 			The frequency of this type of bullet's parallel offset wave.
 			Measured in Hz, and determines how many times per second the parallel offset wave will repeat.
 		</member>
-		<member name="h_wave_type" type="int" setter="set_h_wave_type" getter="get_h_wave_type" enum="BulletData.WaveType" default="0">
+		<member name="h_wave_type" type="int" setter="set_h_wave_type" getter="get_h_wave_type" enum="BulletType.WaveType" default="0">
 			The wave type applied to this type of bullet's parallel offset.
 		</member>
 		<member name="lifetime" type="float" setter="set_lifetime" getter="get_lifetime" default="0.0">
@@ -75,7 +75,7 @@
 			The frequency of this type of bullet's perpendicular offset wave.
 			Measured in Hz, and determines how many times per second the perpendicular offset wave will repeat.
 		</member>
-		<member name="v_wave_type" type="int" setter="set_v_wave_type" getter="get_v_wave_type" enum="BulletData.WaveType" default="0">
+		<member name="v_wave_type" type="int" setter="set_v_wave_type" getter="get_v_wave_type" enum="BulletType.WaveType" default="0">
 			The wave type applied to this type of bullet's perpendicular offset.
 		</member>
 	</members>
