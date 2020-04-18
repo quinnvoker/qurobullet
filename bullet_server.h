@@ -37,7 +37,7 @@ public:
 	~BulletServer();
 
 	void spawn_bullet(const Ref<BulletData> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
-	void spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_shots);
+	void spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_volley);
 
 	void clear_bullets();
 
