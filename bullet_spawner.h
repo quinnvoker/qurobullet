@@ -123,7 +123,7 @@ public:
     void set_aim_target_position(const Vector2 &p_position);
     Vector2 get_aim_target_position() const;
 
-    void set_scatter_mode(ScatterMode p_type);
+    void set_scatter_mode(ScatterMode p_mode);
     ScatterMode get_scatter_mode() const;
 
     void set_scatter_range(float p_radians);
