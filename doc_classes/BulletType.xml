@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BulletType" inherits="Resource" version="3.2">
+	<brief_description>
+		Resource containing [Bullet] appearance and behaviour data.
+	</brief_description>
+	<description>
+		Resource containing [Bullet] appearance and behaviour data.
+		Serves as a means of applying various "types" to bullets without having to reinstantiate them, for compatibility with [BulletServer]'s fixed bullet pool model.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="collision_mask" type="int" setter="set_collision_mask" getter="get_collision_mask" default="0">
+			The physics layers to scan for determining collision detection with this bullet.
+		</member>
+		<member name="collision_shape" type="Shape2D" setter="set_collision_shape" getter="get_collision_shape">
+			Shape to be used for determining collision detection with this bullet.
+		</member>
+		<member name="curve_rate" type="float" setter="set_curve_rate" getter="get_curve_rate" default="0.0">
+			Rate at which this type of bullet will curve as it flies, in degrees per second.
+		</member>
+		<member name="custom_data" type="Dictionary" setter="set_custom_data" getter="get_custom_data" default="{}">
+			Generic container for any extra data needed by game-specific logic.
+		</member>
+		<member name="damage" type="float" setter="set_damage" getter="get_damage" default="0.0">
+			Amount of damage applied by this type of bullet.
+		</member>
+		<member name="face_direction" type="bool" setter="set_face_direction" getter="get_face_direction" default="false">
+			If [code]true[/code], this type of bullet will automatically rotate to face the direction in which it is travelling.
+			The rotation effect applied by this stacks with [code]rotation[/code].
+		</member>
+		<member name="h_wave_amplitude" type="float" setter="set_h_wave_amplitude" getter="get_h_wave_amplitude" default="1.0">
+			The amplitude of this type of bullet's parallel offset wave.
+			Measured in pixels, and determines the maximum distance this type of bullet will be displaced along its trajectory by the parallel offset wave.
+		</member>
+		<member name="h_wave_frequency" type="float" setter="set_h_wave_frequency" getter="get_h_wave_frequency" default="0.0">
+			The frequency of this type of bullet's parallel offset wave.
+			Measured in Hz, and determines how many times per second the parallel offset wave will repeat.
+		</member>
+		<member name="h_wave_type" type="int" setter="set_h_wave_type" getter="get_h_wave_type" enum="BulletType.WaveType" default="0">
+			The wave type applied to this type of bullet's parallel offset.
+		</member>
+		<member name="lifetime" type="float" setter="set_lifetime" getter="get_lifetime" default="0.0">
+			Maximum lifetime of this type of bullet. Bullets that are active beyond this period are automatically popped.
+			If the current [BulletServer] has an active [code]max_lifetime[/code] as well, the shorter of the two will be applied.
+		</member>
+		<member name="linear_acceleration" type="float" setter="set_linear_acceleration" getter="get_linear_acceleration" default="0.0">
+			The acceleration of this type of bullet along its trajectory. Measured in pixels/sec/sec.
+		</member>
+		<member name="material" type="Material" setter="set_material" getter="get_material">
+			The material applied to this type of bullet's [CanvasItem].
+		</member>
+		<member name="rotation" type="float" setter="set_rotation" getter="get_rotation" default="0.0">
+			The base rotation of this type of bullet, in radians.
+		</member>
+		<member name="rotation_degrees" type="float" setter="set_rotation_degrees" getter="get_rotation_degrees" default="0.0">
+			The base rotation of this type of bullet, in degrees.
+		</member>
+		<member name="scale" type="Vector2" setter="set_scale" getter="get_scale" default="Vector2( 1, 1 )">
+			The scale applied to this type of bullet.
+		</member>
+		<member name="speed" type="float" setter="set_speed" getter="get_speed" default="100.0">
+			The initial speed of this type of bullet, in pixels/sec.
+		</member>
+		<member name="texture" type="Texture" setter="set_texture" getter="get_texture">
+			The texture to be drawn to this type of bullet's [CanvasItem].
+		</member>
+		<member name="v_wave_amplitude" type="float" setter="set_v_wave_amplitude" getter="get_v_wave_amplitude" default="0.0">
+			The amplitude of this type of bullet's perpendicular offset wave.
+			Measured in pixels, and determines the maximum distance this type of bullet will be displaced perpendicularly to its trajectory by the perpendicular offset wave.
+		</member>
+		<member name="v_wave_frequency" type="float" setter="set_v_wave_frequency" getter="get_v_wave_frequency" default="0.0">
+			The frequency of this type of bullet's perpendicular offset wave.
+			Measured in Hz, and determines how many times per second the perpendicular offset wave will repeat.
+		</member>
+		<member name="v_wave_type" type="int" setter="set_v_wave_type" getter="get_v_wave_type" enum="BulletType.WaveType" default="0">
+			The wave type applied to this type of bullet's perpendicular offset.
+		</member>
+	</members>
+	<constants>
+		<constant name="NONE" value="0" enum="WaveType">
+		</constant>
+		<constant name="SIN" value="1" enum="WaveType">
+		</constant>
+		<constant name="COS" value="2" enum="WaveType">
+		</constant>
+	</constants>
+</class>

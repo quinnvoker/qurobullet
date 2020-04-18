@@ -3,7 +3,7 @@
 
 #include "scene/2d/node_2d.h"
 #include "bullet.h"
-#include "bullet_data.h"
+#include "bullet_type.h"
 #include "core/os/os.h"
 #include <vector>
 
@@ -36,8 +36,8 @@ public:
 	BulletServer();
 	~BulletServer();
 
-	void spawn_bullet(const Ref<BulletData> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
-	void spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_shots);
+	void spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
+	void spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_volley);
 
 	void clear_bullets();
 

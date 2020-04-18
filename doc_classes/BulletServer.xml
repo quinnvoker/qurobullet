@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BulletServer" inherits="Node2D" version="3.2">
+	<brief_description>
+		Node2D which controls a set pool of [Bullet]s and reports their collisions.
+	</brief_description>
+	<description>
+		Node2D which controls a set pool of [Bullet]s and reports their collisions.
+		A [BulletServer] in a scene will automatically connect to the [BulletServerRelay] singleton on ready, to receive spawning signals any active [BulletSpawner] nodes.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="clear_bullets">
+			<return type="void">
+			</return>
+			<description>
+				Pops all active bullets. Used to clear the board.
+			</description>
+		</method>
+		<method name="spawn_bullet">
+			<return type="void">
+			</return>
+			<argument index="0" name="type" type="BulletType">
+			</argument>
+			<argument index="1" name="position" type="Vector2">
+			</argument>
+			<argument index="2" name="direction" type="Vector2">
+			</argument>
+			<description>
+				Spawns a [Bullet] of [code]type[/code] at [code]position[/code], firing in [code]direction[/code].
+				If every bullet in the bullet pool is currently active, the oldest active bullet is recycled and spawned instead.
+			</description>
+		</method>
+		<method name="spawn_volley">
+			<return type="void">
+			</return>
+			<argument index="0" name="type" type="BulletType">
+			</argument>
+			<argument index="1" name="position" type="Vector2">
+			</argument>
+			<argument index="2" name="volley" type="Array">
+			</argument>
+			<description>
+				Spawns a volley of [Bullet]s of [code]type[/code], originating at [code]position[/code], with their relative spawn positions and directions determined by Spawns a [Bullet] of [code]type[/code] at [code]position[/code] from the bullet pool, firing in [code]volley[/code].
+				[code]volley[/code] is simply an [Array] of [Dictionary] items, each containing a "position" and "direction". You can build your own if you wish to spawn custom volleys.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="bullet_pool_size" type="int" setter="set_bullet_pool_size" getter="get_bullet_pool_size" default="1500">
+			The total number of bullets managed by this server.
+			A [BulletServer] generates all bullets on ready, and adds/removes them from play by cycling them between active and inactive groups. Spawning bullets pulls them from the inactive group and makes them active, and recycles the oldest active bullet if no inactive bullets are available.
+		</member>
+		<member name="max_lifetime" type="float" setter="set_max_lifetime" getter="get_max_lifetime" default="1.0">
+			The maximium lifetime of any [Bullet] managed by the server. Bullets older than this are automatically popped.
+		</member>
+		<member name="play_area_margin" type="float" setter="set_play_area_margin" getter="get_play_area_margin" default="0.0">
+			The distance bullets controlled by this server can travel outside the the current [Viewport] before being popped.
+		</member>
+		<member name="pop_on_collide" type="bool" setter="set_pop_on_collide" getter="get_pop_on_collide" default="true">
+			If [code]true[/code], bullets will be popped automatically if the server determines they have collided.
+			Disable if you're implementing more nuanced bullet behaviour on collision, like reflection.
+		</member>
+	</members>
+	<signals>
+		<signal name="collision_detected">
+			<argument index="0" name="bullet" type="Bullet">
+			</argument>
+			<argument index="1" name="colliders" type="Array">
+			</argument>
+			<description>
+				Emitted when a bullet has collided with an area or body. Contains the [Bullet] which collided and an [Array] of the collision objects it collided with.
+				Note that [BulletServer] will report collisions even with unmonitorable collision objects, so long as they're on the same layer. If you need a target to be "hidden" from bullets, it must be 
+			</description>
+		</signal>
+	</signals>
+	<constants>
+	</constants>
+</class>
