@@ -121,9 +121,9 @@ void BulletServer::spawn_bullet(const Ref<BulletData> &p_type, const Vector2 &p_
 	live_bullets.insert(0, bullet);
 }
 
-void BulletServer::spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_shots) {
-	for (int i = 0; i < p_shots.size(); i++) {
-		Dictionary shot = p_shots[i];
+void BulletServer::spawn_volley(const Ref<BulletData> &p_type, const Vector2 &p_position, const Array &p_volley) {
+	for (int i = 0; i < p_volley.size(); i++) {
+		Dictionary shot = p_volley[i];
 		spawn_bullet(p_type, p_position + shot["position"], shot["direction"]);
 		shot.empty();
 	}
@@ -190,7 +190,7 @@ bool BulletServer::get_pop_on_collide() const {
 
 void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
-	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "shots"), &BulletServer::spawn_volley);
+	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "volley"), &BulletServer::spawn_volley);
 	ClassDB::bind_method(D_METHOD("clear_bullets"), &BulletServer::clear_bullets);
 
 
@@ -211,7 +211,7 @@ void BulletServer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "max_lifetime", PROPERTY_HINT_RANGE, "0,300,0.01,or_greater"), "set_max_lifetime", "get_max_lifetime");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pop_on_collide"), "set_pop_on_collide", "get_pop_on_collide");
 
-	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "Colliders")));
+	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders")));
 }
 
 BulletServer::BulletServer() {

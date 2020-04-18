@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BulletSpawner" inherits="Node2D" version="3.2">
 	<brief_description>
+		Dynamic spawner node for [Bullet] objects.
 	</brief_description>
 	<description>
+		Dynamic spawner node for [Bullet] objects.
+		Consists of firing controls, an associated bullet type, pattern controls, and transform modifiers.
+		[BulletSpawner] nodes have the option to set their own "global" rotation and scale independently of their parent node. Implementing this involved hijacking the [code]rotation[/code] and [code]scale[/code] properties inherited from [Node2D]. If basic rotation and scale changes are needed, use the transform modifier properties instead.
+		A [BulletSpawner] in a scene will automatically connect to the [BulletServerRelay] singleton on ready, to send spawning signals to any active [BulletServer] nodes.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -11,30 +16,39 @@
 			<return type="void">
 			</return>
 			<description>
+				Fires a volley of bullets from the current position, with the current type setting, in the current pattern.
+				Emits the "volley_fired" signal with current parameters, to be connected to a bullet server for spawning the bullets appropiately.
+				Passes duplicate of [code]bullet_data[/code] instead of referencing the property directly, so active bullets' data will not be modified by changes made in this spawner.
 			</description>
 		</method>
 		<method name="get_adjusted_global_rotation" qualifiers="const">
 			<return type="float">
 			</return>
 			<description>
+				Returns the global rotation of this spawner with respect to its inheritance options and rotation modifier.
 			</description>
 		</method>
 		<method name="get_adjusted_global_scale" qualifiers="const">
 			<return type="Vector2">
 			</return>
 			<description>
+				Returns the global scale of this spawner with respect to its inheritance options and scale modifier.
 			</description>
 		</method>
-		<method name="get_scattered_shots">
+		<method name="get_scattered_volley">
 			<return type="Array">
 			</return>
 			<description>
+				Returns the volley defined by this spawner's properties, with shot directions adjusted for scatter.
+				The [Array] returned contains of [Dictionary] elements consisting of a [Vector2] "position" (bullet's spawn point relative to spawner) and a [Vector2] "direction" (bullet's global direction vector). 
 			</description>
 		</method>
-		<method name="get_shots">
+		<method name="get_volley">
 			<return type="Array">
 			</return>
 			<description>
+				Returns the volley defined by this spawner's properties.
+				The [Array] returned contains of [Dictionary] elements consisting of a [Vector2] "position" (bullet's spawn point relative to spawner) and a [Vector2] "direction" (bullet's global direction vector).
 			</description>
 		</method>
 		<method name="set_adjusted_global_rotation">
@@ -43,6 +57,7 @@
 			<argument index="0" name="radians" type="float">
 			</argument>
 			<description>
+				Sets the global rotation of this spawner, with respect to its inheritance options and rotation modifier.
 			</description>
 		</method>
 		<method name="set_adjusted_global_scale">
@@ -51,53 +66,91 @@
 			<argument index="0" name="scale" type="Vector2">
 			</argument>
 			<description>
+				Sets the global scale of this spawner, with respect to its inheritance options and scale modifier.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="aim_angle" type="float" setter="set_aim_angle" getter="get_aim_angle" default="0.0">
+			The offset by which each shot in the volley have its firing direction rotated, in radians. For RADIAL and UNIFORM aim modes.
 		</member>
 		<member name="aim_angle_degrees" type="float" setter="set_aim_angle_degrees" getter="get_aim_angle_degrees" default="0.0">
+			The offset by which each shot in the volley have its firing direction rotated, in degrees. For RADIAL and UNIFORM aim modes.
 		</member>
 		<member name="aim_mode" type="int" setter="set_aim_mode" getter="get_aim_mode" enum="BulletSpawner.AimMode" default="0">
+			The mode used by this spawner to calculate the direction each bullet is fired in.
+			RADIAL causes bullets' directions to be determined by their position along this spawner's circumference, radiating outwards. Can be rotated with [code]aim_angle[/code].
+			UNIFORM causes all bullets to share the same direction vector. Defaults to a vector of (1,0), and rotated with [code]aim_angle[/code].
+			TARGET_LOCAL causes all bullets' directions to point towards [code]aim_target_position[/code], in space local to this spawner.
+			TARGET_GLOBAL causes all bullet's directions to point towards [code]aim_target_position[/code], in global space.
 		</member>
 		<member name="aim_target_position" type="Vector2" setter="set_aim_target_position" getter="get_aim_target_position" default="Vector2( 0, 0 )">
+			The point all bullets fired by this spawner will be directed towards. For TARGET_LOCAL and TARGET_GLOBAL aim modes.
 		</member>
 		<member name="arc_offset" type="float" setter="set_arc_offset" getter="get_arc_offset" default="0.0">
+			The rotational of the volley's spawn points within the defined arc.
+			At 0, the spawn points are unchanged, at -1, the volley is rotated to the counterclockwise extent of the arc, and at 1, the volley is rotated to the clockwise extent.
+			Used to simulate arc rotation without affecting the bounds within which bullets are fired. With an arc width of 360 degrees, its visible effect is indistinguishable from [code]arc_rotation[/code].
 		</member>
 		<member name="arc_rotation" type="float" setter="set_arc_rotation" getter="get_arc_rotation" default="0.0">
+			The rotation of the firing arc around this spawner's circumference, with respect to any scaling applied to this spawner. Measured in radians.
+			Used change the origin of spawn points around this spawner, and can create interesting effects with uneven scales.  With a 1:1 ratio scale, its visible effect is indistinguishable from [code]rotation_modifier[/code].
 		</member>
 		<member name="arc_rotation_degrees" type="float" setter="set_arc_rotation_degrees" getter="get_arc_rotation_degrees" default="0.0">
+			The rotation of the firing arc around this spawner's circumference, with respect to any scaling applied to this spawner. Measured in degrees.
+			Used change the origin of spawn points around this spawner, and can create interesting effects with uneven scales.  With a 1:1 ratio scale, its visible effect is indistinguishable from [code]rotation_modifier[/code].
 		</member>
 		<member name="arc_width" type="float" setter="set_arc_width" getter="get_arc_width" default="0.0">
+			The width of the arc in which bullets will be fired, in radians. Bullets in the volley are spaced evenly within this arc.
+			Commonly used for setting a volley's "spread".
 		</member>
 		<member name="arc_width_degrees" type="float" setter="set_arc_width_degrees" getter="get_arc_width_degrees" default="0.0">
+			The width of the arc in which bullets will be fired, in degrees. Bullets in the volley are spaced evenly within this arc.
+			Commonly used for setting a volley's "spread".
 		</member>
 		<member name="autofire" type="bool" setter="set_autofire" getter="get_autofire" default="false">
+			If [code]true[/code], this spawner will automatically fire a volley every [code]interval_frames[/code]
 		</member>
 		<member name="bullet_count" type="int" setter="set_bullet_count" getter="get_bullet_count" default="1">
+			The number of bullets spawned per volley.
 		</member>
 		<member name="bullet_data" type="BulletData" setter="set_bullet_data" getter="get_bullet_data">
+			The appearance and behavioural information used by bullets spawned by this spawner.
+			Data is duplicated before being passed to bullets, so changes in this spawner's data will not retroactively affect active bullets.
 		</member>
 		<member name="inherit_rotation" type="bool" setter="set_inherit_rotation" getter="get_inherit_rotation" default="true">
+			If [code]true[/code], this spawner's global rotation will be inherited from its parent.
+			If [code]false[/code], this spawner's global rotation will be determined only by its [code]rotation_modifier[/code].
 		</member>
 		<member name="inherit_scale" type="bool" setter="set_inherit_scale" getter="get_inherit_scale" default="true">
+			If [code]true[/code], this spawner's global scale will be inherited from its parent.
+			If [code]false[/code], this spawner's global scale will be determined only by its [code]scale_modifier[/code].
 		</member>
 		<member name="interval_frames" type="int" setter="set_interval_frames" getter="get_interval_frames" default="10">
+			The frequency of fire cycles when autofiring, in frames. An interval of 1 means this spawner will fire every frame, 2 means every other frame, etc.
 		</member>
 		<member name="radius" type="float" setter="set_radius" getter="get_radius" default="0.0">
+			The radius of the spawning circle. All bullets originate at some position on this circle, as determined by the arc settings.
 		</member>
 		<member name="rotation_modifier" type="float" setter="set_rotation_modifier" getter="get_rotation_modifier" default="0.0">
+			The local rotation of this spawner, in radians. Identical in function to Node2D's rotation, which has been hijacked for allowing optional global rotation inheritance.
 		</member>
 		<member name="rotation_modifier_degrees" type="float" setter="set_rotation_modifier_degrees" getter="get_rotation_modifier_degrees" default="0.0">
+			The local rotation of this spawner, in degrees. Identical in function to Node2D's rotation_degrees, which has been hijacked for allowing optional global rotation inheritance.
 		</member>
-		<member name="scale_mod" type="Vector2" setter="set_scale_mod" getter="get_scale_mod" default="Vector2( 1, 1 )">
+		<member name="scale_modifier" type="Vector2" setter="set_scale_mod" getter="get_scale_mod" default="Vector2( 1, 1 )">
+			The local scale of this spawner. Identical in function to Node2D's scale, which has been hijacked for allowing optional global scale inheritance.
 		</member>
 		<member name="scatter_range" type="float" setter="set_scatter_range" getter="get_scatter_range" default="0.0">
+			The range, in radians, in which bullets or volleys will randomly have their initial direction offset by when scattering.
 		</member>
 		<member name="scatter_range_degrees" type="float" setter="set_scatter_range_degrees" getter="get_scatter_range_degrees">
+			The range, in degrees, in which bullets or volleys will randomly have their initial direction offset by when scattering.
 		</member>
-		<member name="scatter_type" type="int" setter="set_scatter_type" getter="get_scatter_type" enum="BulletSpawner.ScatterType" default="0">
+		<member name="scatter_mode" type="int" setter="set_scatter_mode" getter="get_scatter_mode" enum="BulletSpawner.ScatterMode" default="0">
+			The mode used to scatter bullets when firing.
+			BULLET causes each bullet's initial direction to be offset by individually randomised amounts.
+			VOLLEY causes every bullet's initial direction to be offset by she same randomised amount.
 		</member>
 	</members>
 	<signals>
@@ -109,6 +162,7 @@
 			<argument index="2" name="direction" type="Vector2">
 			</argument>
 			<description>
+				Emitted when a single bullet is fired. To be passed to a server for spawning the required bullet.
 			</description>
 		</signal>
 		<signal name="volley_fired">
@@ -116,9 +170,10 @@
 			</argument>
 			<argument index="1" name="position" type="Vector2">
 			</argument>
-			<argument index="2" name="shots" type="Array">
+			<argument index="2" name="volley" type="Array">
 			</argument>
 			<description>
+				Emitted when a volley of bullets is fired. To be passed to a server for spawning the required volley.
 			</description>
 		</signal>
 	</signals>
@@ -127,11 +182,15 @@
 		</constant>
 		<constant name="UNIFORM" value="1" enum="AimMode">
 		</constant>
-		<constant name="NONE" value="0" enum="ScatterType">
+		<constant name="TARGET_LOCAL" value="2" enum="AimMode">
 		</constant>
-		<constant name="BULLET" value="1" enum="ScatterType">
+		<constant name="TARGET_GLOBAL" value="3" enum="AimMode">
 		</constant>
-		<constant name="VOLLEY" value="2" enum="ScatterType">
+		<constant name="NONE" value="0" enum="ScatterMode">
+		</constant>
+		<constant name="BULLET" value="1" enum="ScatterMode">
+		</constant>
+		<constant name="VOLLEY" value="2" enum="ScatterMode">
 		</constant>
 	</constants>
 </class>
