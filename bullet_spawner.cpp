@@ -324,8 +324,8 @@ Vector2 BulletSpawner::get_aim_target_position() const {
     return aim_target_position;
 }
 
-void BulletSpawner::set_scatter_mode(ScatterMode p_type) {
-    scatter_mode = p_type;
+void BulletSpawner::set_scatter_mode(ScatterMode p_mode) {
+    scatter_mode = p_mode;
     _change_notify();
 }
 
