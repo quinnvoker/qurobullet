@@ -11,8 +11,8 @@
 #include "core/engine.h"
 
 void register_qurobullet_types() {
-	ClassDB::register_class<BulletType>();
 	ClassDB::register_class<Bullet>();
+	ClassDB::register_class<BulletType>();
 	ClassDB::register_class<BulletServer>();
 	ClassDB::register_class<BulletServerRelay>();
 	ClassDB::register_class<BulletSpawner>();
