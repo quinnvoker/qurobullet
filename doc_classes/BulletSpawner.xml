@@ -16,7 +16,6 @@
 			<return type="void">
 			</return>
 			<description>
-				Fires a volley of bullets from the current position, with the current type setting, in the current pattern.
 				Emits the "volley_fired" signal with current parameters, to be connected to a bullet server for spawning the bullets appropiately.
 				Passes duplicate of [code]bullet_type[/code] instead of referencing the property directly, so active bullets' type will not be modified by changes made in this spawner.
 			</description>
