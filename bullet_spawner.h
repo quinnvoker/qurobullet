@@ -50,7 +50,7 @@ private:
     float scatter_range;
 
     PatternMode pattern_mode;
-    PoolIntArray active_shots;
+    PoolIntArray active_shot_indices;
 
     bool inherit_rotation;
     float rotation_modifier;
@@ -70,6 +70,8 @@ private:
     void _process_internal(float delta);
     void _physics_process_internal(float delta);
 
+    Array _get_active_shots(const Array &p_volley, const PoolIntArray &p_shot_indices);
+
     void _update_cached_volley();
 
     Array _create_volley() const;
@@ -86,7 +88,7 @@ protected:
 
 public:
     void fire();
-    void fire_points(const PoolIntArray &p_shot_indices);
+    void fire_shots(const PoolIntArray &p_shot_indices);
 
     Array get_volley();
     Array get_scattered_volley();
@@ -145,8 +147,8 @@ public:
     void set_pattern_mode(PatternMode p_mode);
     PatternMode get_pattern_mode() const;
 
-    void set_active_shots(const PoolIntArray &p_points);
-    PoolIntArray get_active_shots() const;
+    void set_active_shot_indices(const PoolIntArray &p_points);
+    PoolIntArray get_active_shot_indices() const;
 
     void set_inherit_rotation(bool p_enabled);
     bool get_inherit_rotation() const;

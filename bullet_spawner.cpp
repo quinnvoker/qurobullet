@@ -67,19 +67,7 @@ void BulletSpawner::_physics_process_internal(float delta){
     if (autofire){
         _autofire_time += delta;
         if (_autofire_time >= interval_frames / ProjectSettings::get_singleton()->get("physics/common/physics_fps").operator float()){
-            switch (pattern_mode)
-            {
-            case ALL:
-                fire();
-                break;
-
-            case MANUAL:
-                fire_points(active_shots);
-                break;
-
-            default:
-                break;
-            }
+            fire();
             _autofire_time = 0;
         }
     }
@@ -90,24 +78,26 @@ void BulletSpawner::fire() {
     if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint()){
         return;
     }
-    emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), get_scattered_volley());
+    switch (pattern_mode)
+    {
+    case ALL:
+        emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), get_scattered_volley());
+        break;
+
+    case MANUAL:
+        emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), _get_active_shots(get_scattered_volley(), active_shot_indices));
+        break;
+
+    default:
+        break;
+    }
 }
 
-void BulletSpawner::fire_points(const PoolIntArray &p_shot_indices) {
+void BulletSpawner::fire_shots(const PoolIntArray &p_shot_indices) {
     if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint()){
         return;
     }
-    Array all_shots = get_scattered_volley();
-    Array active_shots;
-    for (int i = 0; i < p_shot_indices.size(); i++){
-        int spawn_index = p_shot_indices[i];
-        if (spawn_index > -1 && spawn_index < all_shots.size()){
-            active_shots.append(all_shots[spawn_index]);
-        }
-    }
-    if (active_shots.size() >= 1){
-        emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), active_shots);
-    }
+    emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), _get_active_shots(get_scattered_volley(), p_shot_indices));
 }
 
 Array BulletSpawner::get_volley() {
@@ -150,6 +140,17 @@ Array BulletSpawner::get_scattered_volley() {
 }
 
 //private functions
+Array BulletSpawner::_get_active_shots(const Array &p_volley, const PoolIntArray &p_shot_indices){
+    Array active_shots;
+    for (int i = 0; i < p_shot_indices.size(); i++){
+        int shot_index = p_shot_indices[i];
+        if (shot_index > -1 && shot_index < p_volley.size()){
+            active_shots.append(p_volley[shot_index]);
+        }
+    }
+    return active_shots;
+}
+
 void BulletSpawner::_update_cached_volley() {
     Array new_volley = _create_volley();
     _cached_volley = new_volley;
@@ -386,12 +387,12 @@ BulletSpawner::PatternMode BulletSpawner::get_pattern_mode() const {
     return pattern_mode;
 }
 
-void BulletSpawner::set_active_shots(const PoolIntArray &p_points) {
-    active_shots = p_points;
+void BulletSpawner::set_active_shot_indices(const PoolIntArray &p_points) {
+    active_shot_indices = p_points;
 }
 
-PoolIntArray BulletSpawner::get_active_shots() const{
-    return active_shots;
+PoolIntArray BulletSpawner::get_active_shot_indices() const{
+    return active_shot_indices;
 }
 void BulletSpawner::set_inherit_rotation(bool p_enabled){
     inherit_rotation = p_enabled;
@@ -502,7 +503,7 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
         property.usage = PROPERTY_USAGE_NOEDITOR;
     }
 
-    if (property.name == "active_shots" && pattern_mode != MANUAL){
+    if (property.name == "active_shot_indices" && pattern_mode != MANUAL){
         property.usage = PROPERTY_USAGE_NOEDITOR;
     }
 }
@@ -510,6 +511,8 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
 //godot binds
 void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("fire"), &BulletSpawner::fire);
+    ClassDB::bind_method(D_METHOD("fire_shots", "shot_indices"), &BulletSpawner::fire_shots);
+
     ClassDB::bind_method(D_METHOD("get_volley"), &BulletSpawner::get_volley);
     ClassDB::bind_method(D_METHOD("get_scattered_volley"), &BulletSpawner::get_scattered_volley);
 
@@ -567,8 +570,8 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_pattern_mode", "mode"), &BulletSpawner::set_pattern_mode);
     ClassDB::bind_method(D_METHOD("get_pattern_mode"), &BulletSpawner::get_pattern_mode);
 
-    ClassDB::bind_method(D_METHOD("set_active_shots", "mode"), &BulletSpawner::set_active_shots);
-    ClassDB::bind_method(D_METHOD("get_active_shots"), &BulletSpawner::get_active_shots);
+    ClassDB::bind_method(D_METHOD("set_active_shot_indices", "mode"), &BulletSpawner::set_active_shot_indices);
+    ClassDB::bind_method(D_METHOD("get_active_shot_indices"), &BulletSpawner::get_active_shot_indices);
 
     ClassDB::bind_method(D_METHOD("set_inherit_rotation", "enabled"), &BulletSpawner::set_inherit_rotation);
     ClassDB::bind_method(D_METHOD("get_inherit_rotation"), &BulletSpawner::get_inherit_rotation);
@@ -612,7 +615,7 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
     ADD_GROUP("Pattern", "");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "pattern_mode", PROPERTY_HINT_ENUM, "All,Manual"), "set_pattern_mode", "get_pattern_mode");
-    ADD_PROPERTY(PropertyInfo(Variant::POOL_INT_ARRAY, "active_shots"), "set_active_shots", "get_active_shots");
+    ADD_PROPERTY(PropertyInfo(Variant::POOL_INT_ARRAY, "active_shot_indices"), "set_active_shot_indices", "get_active_shot_indices");
     ADD_GROUP("Transform Modifiers", "");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_rotation"), "set_inherit_rotation", "get_inherit_rotation");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_modifier", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_rotation_modifier", "get_rotation_modifier");
