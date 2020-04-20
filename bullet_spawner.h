@@ -33,9 +33,9 @@ private:
     float _autofire_time;
     int interval_frames;
 
-    int shot_count;
-
     Ref<BulletType> bullet_type;
+
+    int shot_count;
 
     float radius;
     float arc_width;
@@ -99,11 +99,11 @@ public:
     void set_interval_frames(int p_interval);
     int get_interval_frames() const;
 
-    void set_shot_count(int p_count);
-    int get_shot_count() const;
-
     void set_bullet_type(const Ref<BulletType> &p_type);
     Ref<BulletType> get_bullet_type() const;
+
+    void set_shot_count(int p_count);
+    int get_shot_count() const;
 
     void set_radius(float p_radius);
     float get_radius() const;
