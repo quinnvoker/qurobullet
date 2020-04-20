@@ -16,9 +16,16 @@
 			<return type="void">
 			</return>
 			<description>
-				Fires a volley of bullets from the current position, with the current type setting, in the current pattern.
 				Emits the "volley_fired" signal with current parameters, to be connected to a bullet server for spawning the bullets appropiately.
 				Passes duplicate of [code]bullet_type[/code] instead of referencing the property directly, so active bullets' type will not be modified by changes made in this spawner.
+			</description>
+		</method>
+		<method name="fire_shots">
+			<return type="void"> </return>
+			<argument index="0" name="shot_indices" type="PoolIntArray"> </argument>
+			<description>
+				Functionally similar to [code]fire[/code], but takes an array of integers and fires only the shots whose indices are included.
+				Ignores [code]pattern_mode[/code] and [code]active_shot_indices[/code].
 			</description>
 		</method>
 		<method name="get_adjusted_global_rotation" qualifiers="const">
@@ -71,11 +78,17 @@
 		</method>
 	</methods>
 	<members>
+		<member name="active_shot_indices" type="PoolIntArray" setter="set_active_shot_indices" getter="get_active_shot_indices" default="PoolIntArray( )">
+			The array defining the indices of the active shots in the current volley.  Only active shots will be fired in MANUAL pattern mode.
+			Values entered here can be animated/tweened to make "sweeps", progressively activating and deactivating shots along the arc.
+		</member>
 		<member name="aim_angle" type="float" setter="set_aim_angle" getter="get_aim_angle" default="0.0">
-			The offset by which each shot in the volley have its firing direction rotated, in radians. For RADIAL and UNIFORM aim modes.
+			In RADIAL aim mode, the offset applied to all spawned bullet's initial direction, in radians.
+			In UNIFORM aim mode, the global angle along which all spawned bullets will travel, in radians.
 		</member>
 		<member name="aim_angle_degrees" type="float" setter="set_aim_angle_degrees" getter="get_aim_angle_degrees" default="0.0">
-			The offset by which each shot in the volley have its firing direction rotated, in degrees. For RADIAL and UNIFORM aim modes.
+			In RADIAL aim mode, the offset applied to all spawned bullet's initial direction, in degrees.
+			In UNIFORM aim mode, the global angle along which all spawned bullets will travel, in degrees.
 		</member>
 		<member name="aim_mode" type="int" setter="set_aim_mode" getter="get_aim_mode" enum="BulletSpawner.AimMode" default="0">
 			The mode used by this spawner to calculate the direction each bullet is fired in.
@@ -88,20 +101,20 @@
 			The point all bullets fired by this spawner will be directed towards. For TARGET_LOCAL and TARGET_GLOBAL aim modes.
 		</member>
 		<member name="arc_offset" type="float" setter="set_arc_offset" getter="get_arc_offset" default="0.0">
-			The rotational of the volley's spawn points within the defined arc.
-			At 0, the spawn points are unchanged, at -1, the volley is rotated to the counterclockwise extent of the arc, and at 1, the volley is rotated to the clockwise extent.
+			The rotational offset of the volley's shot positions within the defined arc.
+			At 0, the shot positions are unchanged. At -1, the volley is rotated to the counterclockwise extent of the arc, and at 1, the volley is rotated to the clockwise extent.
 			Used to simulate arc rotation without affecting the bounds within which bullets are fired. With an arc width of 360 degrees, its visible effect is indistinguishable from [code]arc_rotation[/code].
 		</member>
 		<member name="arc_rotation" type="float" setter="set_arc_rotation" getter="get_arc_rotation" default="0.0">
 			The rotation of the firing arc around this spawner's circumference, with respect to any scaling applied to this spawner. Measured in radians.
-			Used change the origin of spawn points around this spawner, and can create interesting effects with uneven scales.  With a 1:1 ratio scale, its visible effect is indistinguishable from [code]rotation_modifier[/code].
+			Used rotate the positions of shots around this spawner, and can create interesting effects with uneven scales.  With a 1:1 ratio scale, its visible effect is indistinguishable from [code]rotation_modifier[/code].
 		</member>
 		<member name="arc_rotation_degrees" type="float" setter="set_arc_rotation_degrees" getter="get_arc_rotation_degrees" default="0.0">
 			The rotation of the firing arc around this spawner's circumference, with respect to any scaling applied to this spawner. Measured in degrees.
-			Used change the origin of spawn points around this spawner, and can create interesting effects with uneven scales.  With a 1:1 ratio scale, its visible effect is indistinguishable from [code]rotation_modifier[/code].
+			Used rotate the positions of shots around this spawner, and can create interesting effects with uneven scales.  With a 1:1 ratio scale, its visible effect is indistinguishable from [code]rotation_modifier[/code].
 		</member>
 		<member name="arc_width" type="float" setter="set_arc_width" getter="get_arc_width" default="0.0">
-			The width of the arc in which bullets will be spawned, in radians. Bullets in the volley are spaced evenly within this arc.
+			The width of the arc in which bullets will be spawned, in radians. Shots in the volley are spaced evenly within this arc.
 			Commonly used for setting a volley's "spread".
 		</member>
 		<member name="arc_width_degrees" type="float" setter="set_arc_width_degrees" getter="get_arc_width_degrees" default="0.0">
@@ -111,8 +124,10 @@
 		<member name="autofire" type="bool" setter="set_autofire" getter="get_autofire" default="false">
 			If [code]true[/code], this spawner will automatically fire a volley every [code]interval_frames[/code]
 		</member>
-		<member name="bullet_count" type="int" setter="set_bullet_count" getter="get_bullet_count" default="1">
-			The number of bullets spawned per volley.
+		<member name="shot_count" type="int" setter="set_shot_count" getter="get_shot_count" default="1">
+			The number of shots in the current volley. 
+			Each shot represents a spawn point for a bullet, and has its own position and direction values that are passed to the bullet when fired.
+			Shots can be fired collectively or individually. See [code]pattern_mode[/code] for more info.
 		</member>
 		<member name="bullet_type" type="BulletType" setter="set_bullet_type" getter="get_bullet_type">
 			The appearance and behavioural information used by bullets spawned by this spawner.
@@ -128,6 +143,11 @@
 		</member>
 		<member name="interval_frames" type="int" setter="set_interval_frames" getter="get_interval_frames" default="10">
 			The frequency of fire cycles when autofiring, in frames. An interval of 1 means this spawner will fire every frame, 2 means every other frame, etc.
+		</member>
+		<member name="pattern_mode" type="int" setter="set_pattern_mode" getter="get_pattern_mode" enum="BulletSpawner.PatternMode" default="0">
+			The method used to determine which shots will fire in the current volley.
+			ALL means all shots will fire, with no user configuration.
+			MANUAL means that the indices of shots to fire must be manually defined in [code]active_shot_indices[/code].
 		</member>
 		<member name="radius" type="float" setter="set_radius" getter="get_radius" default="0.0">
 			The radius of the spawning circle. All bullets originate at some position on this circle, as determined by the arc settings.
@@ -178,6 +198,10 @@
 		</signal>
 	</signals>
 	<constants>
+		<constant name="ALL" value="0" enum="PatternMode"> 
+		</constant>
+		<constant name="MANUAL" value="1" enum="PatternMode"> 
+		</constant>
 		<constant name="RADIAL" value="0" enum="AimMode">
 		</constant>
 		<constant name="UNIFORM" value="1" enum="AimMode">
