@@ -52,12 +52,6 @@ private:
     PatternMode pattern_mode;
     PoolIntArray active_shot_indices;
 
-    bool inherit_rotation;
-    float rotation_modifier;
-
-    bool inherit_scale;
-    Vector2 scale_modifier;
-
     bool in_game_preview;
     Color preview_color;
 
@@ -145,27 +139,6 @@ public:
 
     void set_active_shot_indices(const PoolIntArray &p_points);
     PoolIntArray get_active_shot_indices() const;
-
-    void set_inherit_rotation(bool p_enabled);
-    bool get_inherit_rotation() const;
-
-    void set_rotation_modifier(float p_radians);
-    float get_rotation_modifier() const;
-
-    void set_rotation_modifier_degrees(float p_degrees);
-    float get_rotation_modifier_degrees() const;
-
-    void set_adjusted_global_rotation(float p_radians);
-    float get_adjusted_global_rotation() const;
-
-    void set_inherit_scale(bool p_enabled);
-    bool get_inherit_scale() const;
-
-    void set_scale_mod(const Vector2 &p_scale);
-    Vector2 get_scale_mod() const;
-
-    void set_adjusted_global_scale(const Vector2 &p_scale);
-    Vector2 get_adjusted_global_scale() const;
 
     BulletSpawner();
     ~BulletSpawner();

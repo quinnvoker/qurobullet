@@ -38,18 +38,10 @@ void BulletSpawner::_notification(int p_what) {
         case NOTIFICATION_TRANSFORM_CHANGED: {
             if (aim_mode == TARGET_GLOBAL && get_global_transform().get_origin() != _previous_transform.get_origin()) {
                 _cache_update_required = true;
-            }
-            if (get_global_transform().get_rotation() != _previous_transform.get_rotation()){
-                set_global_rotation(0);
-                if (inherit_rotation){
-                    _cache_update_required = true;
-                }
-            }
-            if (get_global_transform().get_scale() != _previous_transform.get_scale()){
-                set_global_scale(Vector2(1,1));
-                if (inherit_scale){
-                    _cache_update_required = true;
-                }
+            } else if (get_global_transform().get_rotation() != _previous_transform.get_rotation()){
+                _cache_update_required = true;
+            } else if (get_global_transform().get_scale() != _previous_transform.get_scale()){
+                _cache_update_required = true;
             }
             _previous_transform = get_global_transform();
         } break;
@@ -150,7 +142,7 @@ void BulletSpawner::_update_cached_volley() {
 Array BulletSpawner::_create_volley() const {
     Array volley;
     if (shot_count == 1 || (arc_width == 0.0 && !(scatter_mode == BULLET && radius > 0))){
-        Vector2 dir = Vector2(1,0).rotated(arc_rotation + get_adjusted_global_rotation());
+        Vector2 dir = Vector2(1,0).rotated(arc_rotation + get_global_rotation());
         Dictionary shot;
         shot["position"] = dir * radius;
         shot["direction"] = _get_shot_direction(dir * radius, dir);
@@ -187,16 +179,16 @@ Array BulletSpawner::_create_volley() const {
 }
 
 Vector2 BulletSpawner::_get_shot_position(const Vector2 &p_normal) const{
-    return (p_normal * radius * get_adjusted_global_scale()).rotated(get_adjusted_global_rotation());
+    return (p_normal * radius * get_global_scale()).rotated(get_global_rotation());
 }
 
 Vector2 BulletSpawner::_get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const{
     switch (aim_mode){
         case RADIAL:
-            return p_normal.rotated(aim_angle + get_adjusted_global_rotation());
+            return p_normal.rotated(aim_angle + get_global_rotation());
 
         case UNIFORM:
-            return Vector2(1,0).rotated(aim_angle + get_adjusted_global_rotation());
+            return Vector2(1,0).rotated(aim_angle + get_global_rotation());
         
         case TARGET_LOCAL:
             return (aim_target_position - p_position).normalized();
@@ -384,97 +376,19 @@ void BulletSpawner::set_active_shot_indices(const PoolIntArray &p_points) {
 PoolIntArray BulletSpawner::get_active_shot_indices() const{
     return active_shot_indices;
 }
-void BulletSpawner::set_inherit_rotation(bool p_enabled){
-    inherit_rotation = p_enabled;
-    _cache_update_required = true;
-}
-
-bool BulletSpawner::get_inherit_rotation() const {
-    return inherit_rotation;
-}
-
-void BulletSpawner::set_rotation_modifier(float p_radians) {
-    rotation_modifier = p_radians;
-    _cache_update_required = true;
-}
-
-float BulletSpawner::get_rotation_modifier() const {
-    return rotation_modifier;
-}
-
-void BulletSpawner::set_rotation_modifier_degrees(float p_degrees) {
-    rotation_modifier = Math::deg2rad(p_degrees);
-    _cache_update_required = true;
-}
-
-float BulletSpawner::get_rotation_modifier_degrees() const {
-    return Math::rad2deg(rotation_modifier);
-}
-
-void BulletSpawner::set_adjusted_global_rotation(float p_radians) {
-    Node *parent = get_parent();
-    Node2D *parent_2D = Object::cast_to<Node2D>(parent);
-    if (inherit_rotation && parent_2D != NULL){
-        rotation_modifier = p_radians - parent_2D->get_global_rotation();
-    } else {
-        rotation_modifier = p_radians;
-    }
-    _cache_update_required = true;
-}
-
-float BulletSpawner::get_adjusted_global_rotation() const {
-    Node *parent = get_parent();
-    Node2D *parent_2D = Object::cast_to<Node2D>(parent);
-    if (inherit_rotation && parent_2D != NULL){
-        return rotation_modifier + parent_2D->get_global_rotation();
-    } else {
-        return rotation_modifier;
-    }
-}
-
-void BulletSpawner::set_inherit_scale(bool p_enabled){
-    inherit_scale = p_enabled;
-    _cache_update_required = true;
-}
-
-bool BulletSpawner::get_inherit_scale() const {
-    return inherit_scale;
-}
-
-void BulletSpawner::set_scale_mod(const Vector2 &p_scale) {
-    scale_modifier = p_scale;
-    _cache_update_required = true;
-}
-
-Vector2 BulletSpawner::get_scale_mod() const {
-    return scale_modifier;    
-}
-
-void BulletSpawner::set_adjusted_global_scale(const Vector2 &p_scale) {
-    Node *parent = get_parent();
-    Node2D *parent_2D = Object::cast_to<Node2D>(parent);
-    if (inherit_scale && parent_2D != NULL){
-        scale_modifier = p_scale / parent_2D->get_global_scale();
-    } else {
-        scale_modifier = p_scale;
-    }
-    _cache_update_required = true;
-}
-
-Vector2 BulletSpawner::get_adjusted_global_scale() const {
-    Node *parent = get_parent();
-    Node2D *parent_2D = Object::cast_to<Node2D>(parent);
-    if (inherit_scale && parent_2D != NULL){
-        return scale_modifier * parent_2D->get_global_scale();
-    } else {
-        return scale_modifier;
-    }
-}
 
 //drawing functions
 void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p_shot_col) {
+    Color bg = Color(p_shot_col.r, p_shot_col.g, p_shot_col.b, 0.25);
+    Vector<Vector2> arc_points;
+    arc_points.resize(128);
+    for(int i = 0; i < arc_points.size(); i++){
+        Vector2 current_point = Vector2(cos(2 * M_PI / arc_points.size() * i), sin(2 * M_PI / arc_points.size() * i));
+        arc_points.set(i, current_point * radius + (current_point.normalized() * 50) / get_global_scale());
+    }
+    draw_colored_polygon(arc_points, bg);
     draw_circle(Vector2(), radius, p_border_col);
-    draw_line(Vector2(), Vector2(1 * radius, 0).rotated(arc_rotation + get_adjusted_global_rotation()), p_shot_col);
+    draw_line(Vector2(), Vector2(1 * radius, 0).rotated(arc_rotation), p_shot_col);
 }
 
 void BulletSpawner::_draw_adjusted_arc(float p_inner_rad, float p_outer_rad, const Vector2 &p_volley_start, int p_point_count, const Color &p_color) {
@@ -564,27 +478,6 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_active_shot_indices", "mode"), &BulletSpawner::set_active_shot_indices);
     ClassDB::bind_method(D_METHOD("get_active_shot_indices"), &BulletSpawner::get_active_shot_indices);
 
-    ClassDB::bind_method(D_METHOD("set_inherit_rotation", "enabled"), &BulletSpawner::set_inherit_rotation);
-    ClassDB::bind_method(D_METHOD("get_inherit_rotation"), &BulletSpawner::get_inherit_rotation);
-
-    ClassDB::bind_method(D_METHOD("set_rotation_modifier", "radians"), &BulletSpawner::set_rotation_modifier);
-    ClassDB::bind_method(D_METHOD("get_rotation_modifier"), &BulletSpawner::get_rotation_modifier);
-
-    ClassDB::bind_method(D_METHOD("set_rotation_modifier_degrees", "degrees"), &BulletSpawner::set_rotation_modifier_degrees);
-    ClassDB::bind_method(D_METHOD("get_rotation_modifier_degrees"), &BulletSpawner::get_rotation_modifier_degrees);
-
-    ClassDB::bind_method(D_METHOD("set_adjusted_global_rotation", "radians"), &BulletSpawner::set_adjusted_global_rotation);
-    ClassDB::bind_method(D_METHOD("get_adjusted_global_rotation"), &BulletSpawner::get_adjusted_global_rotation);
-
-    ClassDB::bind_method(D_METHOD("set_inherit_scale", "enabled"), &BulletSpawner::set_inherit_scale);
-    ClassDB::bind_method(D_METHOD("get_inherit_scale"), &BulletSpawner::get_inherit_scale);
-
-    ClassDB::bind_method(D_METHOD("set_scale_mod", "scale"), &BulletSpawner::set_scale_mod);
-    ClassDB::bind_method(D_METHOD("get_scale_mod"), &BulletSpawner::get_scale_mod);
-
-    ClassDB::bind_method(D_METHOD("set_adjusted_global_scale", "scale"), &BulletSpawner::set_adjusted_global_scale);
-    ClassDB::bind_method(D_METHOD("get_adjusted_global_scale"), &BulletSpawner::get_adjusted_global_scale);
-
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
@@ -607,12 +500,6 @@ void BulletSpawner::_bind_methods() {
     ADD_GROUP("Pattern", "");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "pattern_mode", PROPERTY_HINT_ENUM, "All,Manual"), "set_pattern_mode", "get_pattern_mode");
     ADD_PROPERTY(PropertyInfo(Variant::POOL_INT_ARRAY, "active_shot_indices"), "set_active_shot_indices", "get_active_shot_indices");
-    ADD_GROUP("Transform Modifiers", "");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_rotation"), "set_inherit_rotation", "get_inherit_rotation");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_modifier", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_rotation_modifier", "get_rotation_modifier");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_modifier_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_modifier_degrees", "get_rotation_modifier_degrees");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "inherit_scale"), "set_inherit_scale", "get_inherit_scale");
-    ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale_modifier"), "set_scale_mod", "get_scale_mod");
 
     ADD_SIGNAL(MethodInfo("bullet_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::VECTOR2, "direction")));
     ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::ARRAY, "volley")));
@@ -644,10 +531,6 @@ BulletSpawner::BulletSpawner() {
     scatter_mode = NONE;
     scatter_range = 0.0;
     pattern_mode = ALL;
-    inherit_rotation = true;
-    rotation_modifier = 0.0;
-    inherit_scale = true;
-    scale_modifier = Vector2(1,1);
     in_game_preview = false;
     preview_color = Color(0.0, 1.0, 0.0, 1.0); //green
 }
