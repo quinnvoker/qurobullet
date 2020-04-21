@@ -9,16 +9,31 @@ void BulletServer::_notification(int p_what) {
 	switch (p_what) {
 
 		case NOTIFICATION_READY: {
-			_ready();
+			if (Engine::get_singleton()->is_editor_hint()) {
+				return;
+			}
+			set_process(true);
+			set_physics_process(true);
+			play_area = get_viewport_rect().grow(play_area_margin);
+			BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
+			relay->connect("bullet_spawn_requested", this, "spawn_bullet");
+			relay->connect("volley_spawn_requested", this, "spawn_volley");
+			_init_bullets();
 		} break;
 
-		case NOTIFICATION_INTERNAL_PROCESS: {
-			_process_internal(get_process_delta_time());
-		}
-		break;
+		case NOTIFICATION_PROCESS: {
+			//update bullet canvasitems
+			for (int i = 0; i < live_bullets.size(); i++){
+				Bullet *bullet = live_bullets[i];
+				VS::get_singleton()->canvas_item_set_transform(bullet->get_ci_rid(), bullet->get_transform());
+			}
+		} break;
 
-		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
-			_physics_process_internal(get_physics_process_delta_time());
+		case NOTIFICATION_PHYSICS_PROCESS: {
+			if (Engine::get_singleton()->is_editor_hint()) {
+				return;
+			}
+			_process_bullets(get_physics_process_delta_time());
 		}
 		break;
 
@@ -27,28 +42,7 @@ void BulletServer::_notification(int p_what) {
 	}
 }
 
-void BulletServer::_ready() {
-	if (Engine::get_singleton()->is_editor_hint())
-		return;
-	set_process_internal(true);
-	set_physics_process_internal(true);
-	play_area = get_viewport_rect().grow(play_area_margin);
-	BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
-	relay->connect("bullet_spawn_requested", this, "spawn_bullet");
-	relay->connect("volley_spawn_requested", this, "spawn_volley");
-	_init_bullets();
-}
-
-void BulletServer::_process_internal(float delta) {
-	for (int i = 0; i < live_bullets.size(); i++){
-		Bullet *b = live_bullets[i];
-		VS::get_singleton()->canvas_item_set_transform(b->get_ci_rid(), b->get_transform());
-	}
-}
-
-void BulletServer::_physics_process_internal(float delta) {
-	if (Engine::get_singleton()->is_editor_hint())
-		return;
+void BulletServer::_process_bullets(float delta) {
 	Vector<int> bullet_indices_to_clear;
 	Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
 	Vector<Physics2DDirectSpaceState::ShapeResult> results;

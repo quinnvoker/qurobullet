@@ -5,15 +5,34 @@ void BulletSpawner::_notification(int p_what) {
     switch (p_what) {
 
 		case NOTIFICATION_READY: {
-			_ready();
+			set_notify_transform(true);
+            if (Engine::get_singleton()->is_editor_hint()){
+                set_physics_process(false);
+                set_process_internal(true);
+                return;
+            }
+            BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
+            connect("bullet_fired", relay, "on_bullet_fired");
+            connect("volley_fired", relay, "on_volley_fired");
+            set_physics_process(true);
+            set_process_internal(in_game_preview);
 		} break;
 
         case NOTIFICATION_INTERNAL_PROCESS: {
-            _process_internal(get_process_delta_time());
+            update();
         } break;
 
-		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
-			_physics_process_internal(get_physics_process_delta_time());
+		case NOTIFICATION_PHYSICS_PROCESS: {
+			if (Engine::get_singleton()->is_editor_hint()){
+                return;
+            }
+            if (autofire){
+                _autofire_time += get_physics_process_delta_time();
+                if (_autofire_time >= interval_frames / ProjectSettings::get_singleton()->get("physics/common/physics_fps").operator float()){
+                    fire();
+                    _autofire_time = 0;
+                }
+            }
 		} break;
 
         case NOTIFICATION_TRANSFORM_CHANGED: {
@@ -35,42 +54,13 @@ void BulletSpawner::_notification(int p_what) {
             _previous_transform = get_global_transform();
         } break;
 
+        case NOTIFICATION_DRAW: {
+            _draw_shot_preview(preview_color, Color(1,1,1,1));
+        }
+
 		default:
 			break;
 	}
-}
-
-void BulletSpawner::_ready() {
-    set_notify_transform(true);
-    if (Engine::get_singleton()->is_editor_hint()){
-        set_physics_process_internal(false);
-        set_process_internal(true);
-        return;
-    }
-    BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
-	connect("bullet_fired", relay, "on_bullet_fired");
-	connect("volley_fired", relay, "on_volley_fired");
-    set_physics_process_internal(true);
-    if (!in_game_preview){
-        set_process_internal(false);
-    }
-}
-
-void BulletSpawner::_process_internal(float delta) {
-    update();
-}
-
-void BulletSpawner::_physics_process_internal(float delta){
-    if (Engine::get_singleton()->is_editor_hint()){
-        return;
-    }
-    if (autofire){
-        _autofire_time += delta;
-        if (_autofire_time >= interval_frames / ProjectSettings::get_singleton()->get("physics/common/physics_fps").operator float()){
-            fire();
-            _autofire_time = 0;
-        }
-    }
 }
 
 //public functions
@@ -483,7 +473,8 @@ Vector2 BulletSpawner::get_adjusted_global_scale() const {
 
 //drawing functions
 void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p_shot_col) {
-    
+    draw_circle(Vector2(), radius, p_border_col);
+    draw_line(Vector2(), Vector2(1 * radius, 0).rotated(arc_rotation + get_adjusted_global_rotation()), p_shot_col);
 }
 
 void BulletSpawner::_draw_adjusted_arc(float p_inner_rad, float p_outer_rad, const Vector2 &p_volley_start, int p_point_count, const Color &p_color) {

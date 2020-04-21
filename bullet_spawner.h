@@ -66,10 +66,6 @@ private:
 
     Transform2D _previous_transform;
 
-    void _ready();
-    void _process_internal(float delta);
-    void _physics_process_internal(float delta);
-
     Array _get_active_shots(const Array &p_volley, const PoolIntArray &p_shot_indices);
 
     void _update_cached_volley();

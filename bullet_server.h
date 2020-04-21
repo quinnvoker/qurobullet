@@ -19,10 +19,8 @@ class BulletServer : public Node2D {
 
 	Vector<Bullet *> live_bullets;
 	Vector<Bullet *> dead_bullets;
-
-	void _ready();
-	void _process_internal(float delta);
-	void _physics_process_internal(float delta);
+	
+	void _process_bullets(float delta);
 
 	void _init_bullets();
 	void _create_bullet();
