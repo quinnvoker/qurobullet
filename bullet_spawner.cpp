@@ -379,9 +379,11 @@ PoolIntArray BulletSpawner::get_active_shot_indices() const{
 
 //drawing functions
 void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p_shot_col) {
+    //example work to show how to scale things properly
+    /*
     Color bg = Color(p_shot_col.r, p_shot_col.g, p_shot_col.b, 0.25);
     Vector<Vector2> arc_points;
-    arc_points.resize(128);
+    arc_points.resize(64);
     for(int i = 0; i < arc_points.size(); i++){
         Vector2 current_point = Vector2(cos(2 * M_PI / arc_points.size() * i), sin(2 * M_PI / arc_points.size() * i));
         arc_points.set(i, current_point * radius + (current_point.normalized() * 50) / get_global_scale());
@@ -389,6 +391,88 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
     draw_colored_polygon(arc_points, bg);
     draw_circle(Vector2(), radius, p_border_col);
     draw_line(Vector2(), Vector2(1 * radius, 0).rotated(arc_rotation), p_shot_col);
+    */
+    Color dim_border_col = Color(p_border_col.r, p_border_col.g, p_border_col.b, 0.25);
+    Vector<Vector2> arc_points;
+    Vector<Vector2> outer_points;
+    arc_points.resize(64);
+    outer_points.resize(64);
+    float arc_extent = arc_width / 2;
+    float preview_extent = 50;
+    for (int i = 0; i < arc_points.size(); i++) {
+        Vector2 normal = Vector2(cos(-arc_extent), sin(-arc_extent)).rotated(arc_width / (arc_points.size() - 1) * i + arc_rotation);
+        Vector2 inner_point = normal * radius;
+        Vector2 outer_point;
+        switch (aim_mode) {
+            case RADIAL: {
+                outer_point = inner_point + normal.rotated(aim_angle) * preview_extent / get_global_scale();
+            } break;
+
+            case UNIFORM: {
+                outer_point = inner_point + Vector2(1,0).rotated(aim_angle) * preview_extent / get_global_scale();
+            } break;
+
+            case TARGET_LOCAL: {
+                outer_point = inner_point + (aim_target_position - inner_point).normalized() * preview_extent / get_global_scale();
+                if (inner_point.distance_to(outer_point) > inner_point.distance_to(aim_target_position)) {
+                    outer_point = aim_target_position - get_global_position();
+                }
+            } break;
+            
+            case TARGET_GLOBAL: {
+                outer_point = inner_point + (aim_target_position - (get_global_position() + inner_point)).normalized() * preview_extent / get_global_scale();
+                if (inner_point.distance_to(outer_point) > inner_point.distance_to(aim_target_position - get_global_position())) {
+                    outer_point = aim_target_position - get_global_position();
+                }
+            } break;
+            
+            default:
+                break;
+        }
+        arc_points.set(i, inner_point);
+        outer_points.set(outer_points.size() - (1 + i), outer_point);
+    }
+    if (arc_width < 2* M_PI){
+        arc_points.append_array(outer_points);
+        arc_points.push_back(arc_points[0]);
+        draw_polyline(arc_points, p_border_col);
+    } else {
+        draw_polyline(arc_points, p_border_col);
+        draw_polyline(outer_points, p_border_col);
+    }
+
+    Vector2 inner_crosshair = Vector2(1,0).rotated(arc_rotation) * radius;
+    draw_line(Vector2(), inner_crosshair, p_border_col);
+
+    Vector2 outer_crosshair = Vector2(1,0).rotated(arc_rotation);
+    switch (aim_mode) {
+        case RADIAL: {
+            outer_crosshair = outer_crosshair * radius + outer_crosshair.rotated(aim_angle) * preview_extent / get_global_scale();
+            draw_line(outer_crosshair, outer_crosshair + Vector2(1,0).rotated(arc_rotation + aim_angle) * 5 / get_global_scale(), p_border_col);
+        } break;
+
+        case UNIFORM: {
+            outer_crosshair = outer_crosshair * radius + Vector2(1,0).rotated(aim_angle) * preview_extent / get_global_scale();
+            draw_line(outer_crosshair, outer_crosshair + Vector2(1,0).rotated(arc_rotation + aim_angle) * 5 / get_global_scale(), p_border_col);
+        } break;
+
+        case TARGET_LOCAL: {
+            outer_crosshair = outer_crosshair * radius + (aim_target_position - outer_crosshair * radius).normalized() * preview_extent / get_global_scale();
+            if (inner_crosshair.distance_to(outer_crosshair) > inner_crosshair.distance_to(aim_target_position)) {
+                break;
+            }
+            draw_line(outer_crosshair, outer_crosshair + (aim_target_position - outer_crosshair).normalized() * 5 / get_global_scale(), p_border_col);
+        } break;
+        
+        case TARGET_GLOBAL: {
+            outer_crosshair = outer_crosshair * radius + (aim_target_position - (get_global_position() + outer_crosshair * radius)).normalized() * preview_extent / get_global_scale();
+            draw_line(outer_crosshair, outer_crosshair + (aim_target_position - (get_global_position() + outer_crosshair)).normalized() * 5 / get_global_scale(), p_border_col);
+        } break;
+
+        default:
+            break;
+    }
+    
 }
 
 void BulletSpawner::_draw_adjusted_arc(float p_inner_rad, float p_outer_rad, const Vector2 &p_volley_start, int p_point_count, const Color &p_color) {
