@@ -421,10 +421,12 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
             } break;
             
             case TARGET_GLOBAL: {
-                if (inner_point.rotated(get_global_rotation()).distance_to(aim_target_position - get_global_position()) < preview_extent) {
-                    outer_point = (aim_target_position - get_global_position()).rotated(-get_global_rotation());
+                Vector2 transformed_inner = (inner_point * get_global_scale()).rotated(get_global_rotation());
+                Vector2 relative_target = aim_target_position - get_global_position();
+                if (transformed_inner.distance_to(relative_target) < preview_extent) {
+                    outer_point = relative_target.rotated(-get_global_rotation()) / get_global_scale();
                 } else {
-                    outer_point = inner_point + ((aim_target_position - (get_global_position() + inner_point.rotated(get_global_rotation()))).normalized() * preview_extent / get_global_scale()).rotated(-get_global_rotation());  
+                    outer_point = inner_point + ((relative_target - transformed_inner).normalized() * preview_extent / get_global_scale()).rotated(-get_global_rotation());  
                 }
             } break;
             
