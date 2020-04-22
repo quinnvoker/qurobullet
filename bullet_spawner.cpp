@@ -402,37 +402,7 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
     for (int i = 0; i < arc_points.size(); i++) {
         Vector2 normal = Vector2(cos(-arc_extent), sin(-arc_extent)).rotated(arc_width / (arc_points.size() - 1) * i + arc_rotation);
         Vector2 inner_point = normal * radius;
-        Vector2 outer_point;
-        switch (aim_mode) {
-            case RADIAL: {
-                outer_point = inner_point + normal.rotated(aim_angle) * preview_extent / get_global_scale();
-            } break;
-
-            case UNIFORM: {
-                outer_point = inner_point + Vector2(1,0).rotated(aim_angle) * preview_extent / get_global_scale();
-            } break;
-
-            case TARGET_LOCAL: {
-                if (inner_point.distance_to(aim_target_position) < preview_extent){
-                    outer_point = aim_target_position;
-                } else {
-                    outer_point = inner_point + (aim_target_position - inner_point).normalized() * preview_extent / get_global_scale();
-                }
-            } break;
-            
-            case TARGET_GLOBAL: {
-                Vector2 transformed_inner = (inner_point * get_global_scale()).rotated(get_global_rotation());
-                Vector2 relative_target = aim_target_position - get_global_position();
-                if (transformed_inner.distance_to(relative_target) < preview_extent) {
-                    outer_point = relative_target.rotated(-get_global_rotation()) / get_global_scale();
-                } else {
-                    outer_point = inner_point + ((relative_target - transformed_inner).normalized() * preview_extent / get_global_scale()).rotated(-get_global_rotation());  
-                }
-            } break;
-            
-            default:
-                break;
-        }
+        Vector2 outer_point = _get_outer_preview_point(inner_point, normal, preview_extent);
         arc_points.set(i, inner_point);
         outer_points.set(outer_points.size() - (1 + i), outer_point);
     }
@@ -444,6 +414,7 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
         draw_polyline(arc_points, p_border_col);
         draw_polyline(outer_points, p_border_col);
     }
+
 
     Vector2 inner_crosshair = Vector2(1,0).rotated(arc_rotation) * radius;
     draw_line(Vector2(), inner_crosshair, p_border_col);
@@ -482,8 +453,40 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
     
 }
 
-void BulletSpawner::_draw_adjusted_arc(float p_inner_rad, float p_outer_rad, const Vector2 &p_volley_start, int p_point_count, const Color &p_color) {
-    
+Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent) {
+    Vector2 outer_point;
+    switch (aim_mode) {
+        case RADIAL: {
+            outer_point = p_inner_point + p_inner_normal.rotated(aim_angle) * p_extent / get_global_scale();
+        } break;
+
+        case UNIFORM: {
+            outer_point = p_inner_point + Vector2(1,0).rotated(aim_angle) * p_extent / get_global_scale();
+        } break;
+
+        case TARGET_LOCAL: {
+            Vector2 transformed_inner = p_inner_point * get_global_scale();
+            if (transformed_inner.distance_to(aim_target_position) < p_extent){
+                outer_point = aim_target_position;
+            } else {
+                outer_point = p_inner_point + (aim_target_position - transformed_inner).normalized() * p_extent / get_global_scale();
+            }
+        } break;
+        
+        case TARGET_GLOBAL: {
+            Vector2 transformed_inner = (p_inner_point * get_global_scale()).rotated(get_global_rotation());
+            Vector2 relative_target = aim_target_position - get_global_position();
+            if (transformed_inner.distance_to(relative_target) < p_extent) {
+                outer_point = relative_target.rotated(-get_global_rotation()) / get_global_scale();
+            } else {
+                outer_point = p_inner_point + ((relative_target - transformed_inner).normalized() * p_extent / get_global_scale()).rotated(-get_global_rotation());  
+            }
+        } break;
+        
+        default:
+            break;
+    }
+    return outer_point;
 }
 
 void BulletSpawner::_validate_property(PropertyInfo &property) const{
