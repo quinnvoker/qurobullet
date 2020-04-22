@@ -413,16 +413,18 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
             } break;
 
             case TARGET_LOCAL: {
-                outer_point = inner_point + (aim_target_position - inner_point).normalized() * preview_extent / get_global_scale();
-                if (inner_point.distance_to(outer_point) > inner_point.distance_to(aim_target_position)) {
-                    outer_point = aim_target_position - get_global_position();
+                if (inner_point.distance_to(aim_target_position) < preview_extent){
+                    outer_point = aim_target_position;
+                } else {
+                    outer_point = inner_point + (aim_target_position - inner_point).normalized() * preview_extent / get_global_scale();
                 }
             } break;
             
             case TARGET_GLOBAL: {
-                outer_point = inner_point + (aim_target_position - (get_global_position() + inner_point)).normalized() * preview_extent / get_global_scale();
-                if (inner_point.distance_to(outer_point) > inner_point.distance_to(aim_target_position - get_global_position())) {
-                    outer_point = aim_target_position - get_global_position();
+                if (inner_point.rotated(get_global_rotation()).distance_to(aim_target_position - get_global_position()) < preview_extent) {
+                    outer_point = (aim_target_position - get_global_position()).rotated(-get_global_rotation());
+                } else {
+                    outer_point = inner_point + ((aim_target_position - (get_global_position() + inner_point.rotated(get_global_rotation()))).normalized() * preview_extent / get_global_scale()).rotated(-get_global_rotation());  
                 }
             } break;
             
@@ -457,14 +459,17 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
         } break;
 
         case TARGET_LOCAL: {
-            outer_crosshair = outer_crosshair * radius + (aim_target_position - outer_crosshair * radius).normalized() * preview_extent / get_global_scale();
-            if (inner_crosshair.distance_to(outer_crosshair) > inner_crosshair.distance_to(aim_target_position)) {
+            if (inner_crosshair.distance_to(aim_target_position) < preview_extent) {
                 break;
             }
+            outer_crosshair = outer_crosshair * radius + (aim_target_position - outer_crosshair * radius).normalized() * preview_extent / get_global_scale();
             draw_line(outer_crosshair, outer_crosshair + (aim_target_position - outer_crosshair).normalized() * 5 / get_global_scale(), p_border_col);
         } break;
         
         case TARGET_GLOBAL: {
+            if (inner_crosshair.distance_to(aim_target_position - get_global_position()) < preview_extent) {
+                break;
+            }
             outer_crosshair = outer_crosshair * radius + (aim_target_position - (get_global_position() + outer_crosshair * radius)).normalized() * preview_extent / get_global_scale();
             draw_line(outer_crosshair, outer_crosshair + (aim_target_position - (get_global_position() + outer_crosshair)).normalized() * 5 / get_global_scale(), p_border_col);
         } break;
