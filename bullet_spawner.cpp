@@ -404,15 +404,16 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
         Vector2 inner_point = normal * radius;
         Vector2 outer_point = _get_outer_preview_point(inner_point, normal, preview_extent);
         inner_points.set(i, inner_point);
-        outer_points.set(outer_points.size() - (1 + i), outer_point);
+        outer_points.set(i, outer_point);
     }
     if (arc_width < 2* M_PI){
-        inner_points.append_array(outer_points);
-        inner_points.push_back(inner_points[0]);
+        outer_points.insert(0, inner_points[0]);
+        outer_points.push_back(inner_points[inner_points.size() - 1]);
         draw_polyline(inner_points, p_border_col);
+        draw_polyline(outer_points, dim_border_col);
     } else {
         draw_polyline(inner_points, p_border_col);
-        draw_polyline(outer_points, p_border_col);
+        draw_polyline(outer_points, dim_border_col);
     }
 
 
@@ -452,13 +453,12 @@ Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, co
             } else {
                 outer_point = p_inner_point + (aim_target_position - global_inner_point).rotated(-get_global_rotation()).normalized() * p_extent / get_global_scale();
             }
-            //debug
-            draw_line(outer_point, local_target, Color(1,0,0,0.25));
         } break;
         
         default:
             break;
     }
+    draw_line(p_inner_point, outer_point, Color(1,0,0,0.25));
     return outer_point;
 }
 
