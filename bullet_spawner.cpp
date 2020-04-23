@@ -142,9 +142,9 @@ void BulletSpawner::_update_cached_volley() {
 Array BulletSpawner::_create_volley() const {
     Array volley;
     if (shot_count == 1 || (arc_width == 0.0 && !(scatter_mode == BULLET && radius > 0))){
-        Vector2 dir = Vector2(1,0).rotated(arc_rotation + get_global_rotation());
+        Vector2 dir = Vector2(1,0).rotated(arc_rotation);
         Dictionary shot;
-        shot["position"] = dir * radius;
+        shot["position"] = _get_shot_position(dir);
         shot["direction"] = _get_shot_direction(dir * radius, dir);
         volley.push_back(shot);
         return volley;
@@ -422,7 +422,26 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
     Vector2 crosshair_outer_point = _get_outer_preview_point(crosshair_inner_point, crosshair_normal, preview_extent);
     draw_line(Vector2(), crosshair_inner_point, p_border_col);
     draw_line(crosshair_outer_point, _get_outer_preview_point(crosshair_inner_point, crosshair_normal, preview_extent + 5), p_border_col);
-        
+    
+    Array shots;
+    if (pattern_mode == MANUAL){
+        Array volley = get_volley();
+        shots.resize(active_shot_indices.size());
+        for (int i = 0; i < active_shot_indices.size(); i++){
+            if (active_shot_indices[i] > -1 && active_shot_indices[i] < volley.size()){
+                shots[i] = volley[active_shot_indices[i]];
+            }
+        }
+    } else {
+        shots = get_volley();
+    }
+
+    for (int i = 0; i < shots.size(); i++){
+        Dictionary shot = shots[i];
+        Vector2 local_position = shot["position"].operator Vector2().rotated(-get_global_rotation()) / get_global_scale();
+        Vector2 local_direction = shot["direction"].operator Vector2().rotated(-get_global_rotation());
+        draw_line(local_position, local_position + local_direction * preview_extent / get_global_scale(), p_shot_col);
+    }
 }
 
 Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent) {
@@ -458,7 +477,7 @@ Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, co
         default:
             break;
     }
-    draw_line(p_inner_point, outer_point, Color(1,0,0,0.25));
+    //draw_line(p_inner_point, outer_point, Color(1,0,0,0.25));
     return outer_point;
 }
 
@@ -598,7 +617,7 @@ BulletSpawner::BulletSpawner() {
     scatter_mode = NONE;
     scatter_range = 0.0;
     pattern_mode = ALL;
-    in_game_preview = false;
+    in_game_preview = true;
     preview_color = Color(0.0, 1.0, 0.0, 1.0); //green
 }
 
