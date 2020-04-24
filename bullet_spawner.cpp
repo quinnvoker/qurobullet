@@ -47,7 +47,7 @@ void BulletSpawner::_notification(int p_what) {
         } break;
 
         case NOTIFICATION_DRAW: {
-            _draw_shot_preview(preview_color, Color(1,1,1,1));
+            _draw_preview(preview_color, Color(1,1,1,1));
         }
 
 		default:
@@ -124,10 +124,12 @@ Array BulletSpawner::get_scattered_volley() {
 //private functions
 Array BulletSpawner::_get_active_shots(const Array &p_volley, const PoolIntArray &p_shot_indices){
     Array active_shots;
+    Dictionary used_indices;
     for (int i = 0; i < p_shot_indices.size(); i++){
         int shot_index = p_shot_indices[i];
-        if (shot_index > -1 && shot_index < p_volley.size()){
+        if (shot_index > -1 && shot_index < p_volley.size() && !used_indices.has(shot_index)){
             active_shots.append(p_volley[shot_index]);
+            used_indices[shot_index] = true;
         }
     }
     return active_shots;
@@ -141,7 +143,7 @@ void BulletSpawner::_update_cached_volley() {
 
 Array BulletSpawner::_create_volley() const {
     Array volley;
-    if (shot_count == 1 || (arc_width == 0.0 && !(scatter_mode == BULLET && radius > 0))){
+    if (_get_unique_shot_count(true) == 1){
         Vector2 dir = Vector2(1,0).rotated(arc_rotation);
         Dictionary shot;
         shot["position"] = _get_shot_position(dir);
@@ -167,9 +169,10 @@ Array BulletSpawner::_create_volley() const {
             shot_angle = Math::wrapf(shot_angle, 0 - spacing / 2, arc_width + spacing / 2);
         }
         shot_angle += volley_start;
-        if (arc_width >= 2 * M_PI || Math::abs(Math::fmod(shot_angle, float(M_PI))) <= arc_extent + 0.001){
+        Vector2 shot_normal = Vector2(1,0).rotated(shot_angle);
+        if (arc_width >= 2 * M_PI || Math::abs(shot_normal.angle()) <= arc_extent + 0.001){
             Dictionary shot;
-            Vector2 shot_normal = Vector2(1,0).rotated(shot_angle + arc_rotation);
+            shot_normal = shot_normal.rotated(arc_rotation);
             shot["position"] = _get_shot_position(shot_normal);
             shot["direction"] = _get_shot_direction(shot["position"], shot_normal);
             volley.push_back(shot);
@@ -378,42 +381,33 @@ PoolIntArray BulletSpawner::get_active_shot_indices() const{
 }
 
 //drawing functions
-void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p_shot_col) {
-    //example work to show how to scale things properly
-    /*
-    Color bg = Color(p_shot_col.r, p_shot_col.g, p_shot_col.b, 0.25);
-    Vector<Vector2> arc_points;
-    arc_points.resize(64);
-    for(int i = 0; i < arc_points.size(); i++){
-        Vector2 current_point = Vector2(cos(2 * M_PI / arc_points.size() * i), sin(2 * M_PI / arc_points.size() * i));
-        arc_points.set(i, current_point * radius + (current_point.normalized() * 50) / get_global_scale());
-    }
-    draw_colored_polygon(arc_points, bg);
-    draw_circle(Vector2(), radius, p_border_col);
-    draw_line(Vector2(), Vector2(1 * radius, 0).rotated(arc_rotation), p_shot_col);
-    */
-    Color dim_border_col = Color(p_border_col.r, p_border_col.g, p_border_col.b, 0.25);
-    Vector<Vector2> inner_points;
-    Vector<Vector2> outer_points;
-    inner_points.resize(64);
-    outer_points.resize(64);
-    float arc_extent = arc_width / 2;
+void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot_col) { 
     float preview_extent = 50;
-    for (int i = 0; i < inner_points.size(); i++) {
-        Vector2 normal = Vector2(cos(-arc_extent), sin(-arc_extent)).rotated(arc_width / (inner_points.size() - 1) * i + arc_rotation);
-        Vector2 inner_point = normal * radius;
-        Vector2 outer_point = _get_outer_preview_point(inner_point, normal, preview_extent);
-        inner_points.set(i, inner_point);
-        outer_points.set(i, outer_point);
-    }
-    if (arc_width < 2* M_PI){
-        outer_points.insert(0, inner_points[0]);
-        outer_points.push_back(inner_points[inner_points.size() - 1]);
-        draw_polyline(inner_points, p_border_col);
-        draw_polyline(outer_points, dim_border_col);
-    } else {
-        draw_polyline(inner_points, p_border_col);
-        draw_polyline(outer_points, dim_border_col);
+    Color dim_border_col = Color(p_border_col.r, p_border_col.g, p_border_col.b, 0.25);
+    Color dim_shot_col = Color(p_shot_col.r, p_shot_col.g, p_shot_col.b, 0.25);
+
+    if (_get_unique_shot_count() > 1) {
+        Vector<Vector2> inner_points;
+        Vector<Vector2> outer_points;
+        inner_points.resize(64);
+        outer_points.resize(64);
+        float arc_extent = arc_width / 2;
+        for (int i = 0; i < inner_points.size(); i++) {
+            Vector2 normal = Vector2(cos(-arc_extent), sin(-arc_extent)).rotated(arc_width / (inner_points.size() - 1) * i + arc_rotation);
+            Vector2 inner_point = normal * radius;
+            Vector2 outer_point = _get_outer_preview_point(inner_point, normal, preview_extent);
+            inner_points.set(i, inner_point);
+            outer_points.set(i, outer_point);
+        }
+        if (arc_width < 2* M_PI){
+            outer_points.insert(0, inner_points[0]);
+            outer_points.push_back(inner_points[inner_points.size() - 1]);
+            draw_polyline(inner_points, p_border_col);
+            draw_polyline(outer_points, dim_border_col);
+        } else {
+            draw_polyline(inner_points, p_border_col);
+            draw_polyline(outer_points, dim_border_col);
+        }
     }
 
 
@@ -421,30 +415,25 @@ void BulletSpawner::_draw_shot_preview(const Color &p_border_col, const Color &p
     Vector2 crosshair_inner_point = crosshair_normal * radius;
     Vector2 crosshair_outer_point = _get_outer_preview_point(crosshair_inner_point, crosshair_normal, preview_extent);
     draw_line(Vector2(), crosshair_inner_point, p_border_col);
-    draw_line(crosshair_outer_point, _get_outer_preview_point(crosshair_inner_point, crosshair_normal, preview_extent + 5), p_border_col);
+    draw_line(crosshair_outer_point, _get_outer_preview_point(crosshair_inner_point, crosshair_normal, preview_extent + preview_extent / 10), p_border_col);
+    draw_line(crosshair_inner_point, crosshair_outer_point, dim_border_col);
     
-    Array shots;
-    if (pattern_mode == MANUAL){
-        Array volley = get_volley();
-        shots.resize(active_shot_indices.size());
-        for (int i = 0; i < active_shot_indices.size(); i++){
-            if (active_shot_indices[i] > -1 && active_shot_indices[i] < volley.size()){
-                shots[i] = volley[active_shot_indices[i]];
-            }
+    if (_get_unique_shot_count() > 1){
+        _draw_shot_lines(get_volley(), preview_extent, dim_shot_col);
+        if (pattern_mode == MANUAL) {
+            _draw_shot_lines(_get_active_shots(get_volley(), active_shot_indices), preview_extent / 5, p_shot_col);
+        } else {
+            _draw_shot_lines(get_volley(), preview_extent / 5, p_shot_col);
         }
     } else {
-        shots = get_volley();
+        draw_line(crosshair_inner_point, crosshair_outer_point, dim_shot_col);
+        draw_line(crosshair_inner_point, crosshair_inner_point + (crosshair_outer_point - crosshair_inner_point) / 5, p_shot_col);
     }
-
-    for (int i = 0; i < shots.size(); i++){
-        Dictionary shot = shots[i];
-        Vector2 local_position = shot["position"].operator Vector2().rotated(-get_global_rotation()) / get_global_scale();
-        Vector2 local_direction = shot["direction"].operator Vector2().rotated(-get_global_rotation());
-        draw_line(local_position, local_position + local_direction * preview_extent / get_global_scale(), p_shot_col);
-    }
+    
+    
 }
 
-Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent) {
+Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent) const {
     Vector2 outer_point;
     switch (aim_mode) {
         case RADIAL: {
@@ -477,8 +466,31 @@ Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, co
         default:
             break;
     }
-    //draw_line(p_inner_point, outer_point, Color(1,0,0,0.25));
     return outer_point;
+}
+
+void BulletSpawner::_draw_shot_lines(const Array &p_volley, float p_length, const Color &p_color) {
+    for (int i = 0; i < p_volley.size(); i++){
+        Dictionary shot = p_volley[i];
+        Vector2 local_position = shot["position"].operator Vector2().rotated(-get_global_rotation()) / get_global_scale();
+        Vector2 local_direction = shot["direction"].operator Vector2().rotated(-get_global_rotation());
+        draw_line(local_position, local_position + local_direction * p_length / get_global_scale(), p_color);
+    }
+}
+
+int BulletSpawner::_get_unique_shot_count(bool p_include_scatter) const {
+    //returns number of shots that will follow a unique path (or have potential to, with scatter) after firing
+    //used in checks to prevent multiple bullets from "stacking" by being spawned in the same position with the same direction
+    if (shot_count <= 1){
+        return 1;
+    }
+    if (arc_width < 0.001 || (aim_mode != RADIAL && radius < 0.001)) {
+        if (p_include_scatter && scatter_mode == BULLET && scatter_range > 0.0){
+            return shot_count;
+        }
+        return 1;
+    }
+    return shot_count;
 }
 
 void BulletSpawner::_validate_property(PropertyInfo &property) const{

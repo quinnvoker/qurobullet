@@ -68,8 +68,11 @@ private:
     Vector2 _get_shot_position(const Vector2 &p_normal) const;
     Vector2 _get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const;
 
-    void _draw_shot_preview(const Color &p_border_col, const Color &p_shot_col);
-    Vector2 _get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent);
+    void _draw_preview(const Color &p_border_col, const Color &p_shot_col);
+    Vector2 _get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent) const;
+    void _draw_shot_lines(const Array &p_volley, float p_length, const Color &p_color);
+
+    int _get_unique_shot_count(bool p_include_scatter = false) const;
 
 protected:
     static void _bind_methods();
