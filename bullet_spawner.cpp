@@ -435,8 +435,6 @@ void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot
         draw_line(crosshair_inner_point, crosshair_outer_point, dim_shot_col);
         draw_line(crosshair_inner_point, crosshair_inner_point + (crosshair_outer_point - crosshair_inner_point) / 5, p_shot_col);
     }
-    
-    
 }
 
 Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent) const {
@@ -478,9 +476,23 @@ Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, co
 void BulletSpawner::_draw_shot_lines(const Array &p_volley, float p_length, const Color &p_color) {
     for (int i = 0; i < p_volley.size(); i++){
         Dictionary shot = p_volley[i];
-        Vector2 local_position = shot["position"].operator Vector2().rotated(-get_global_rotation()) / get_global_scale();
-        Vector2 local_direction = shot["direction"].operator Vector2().rotated(-get_global_rotation());
-        draw_line(local_position, local_position + local_direction * p_length / get_global_scale(), p_color);
+        Vector2 pos = shot["position"];
+        Vector2 dir = shot["direction"];
+        float length = p_length;
+        if (aim_mode == TARGET_LOCAL) {
+            float dist = pos.distance_to(aim_target_position);
+            if (dist < length){
+                length = dist;
+            }
+        } else if (aim_mode == TARGET_GLOBAL) {
+            float dist = (pos + get_global_position()).distance_to(aim_target_position);
+            if (dist < length){
+                length = dist;
+            }
+        }
+        Vector2 local_position = pos.rotated(-get_global_rotation()) / get_global_scale();
+        Vector2 local_direction = dir.rotated(-get_global_rotation());
+        draw_line(local_position, local_position + local_direction * length / get_global_scale(), p_color);
     }
 }
 
