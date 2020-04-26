@@ -146,6 +146,7 @@ Array BulletSpawner::_create_volley() const {
     if (_get_unique_shot_count(true) == 1){
         Vector2 dir = Vector2(1,0).rotated(arc_rotation);
         Dictionary shot;
+        shot["normal"] = dir;
         shot["position"] = _get_shot_position(dir);
         shot["direction"] = _get_shot_direction(dir * radius, dir);
         volley.push_back(shot);
@@ -173,6 +174,7 @@ Array BulletSpawner::_create_volley() const {
         if (arc_width >= 2 * M_PI || Math::abs(shot_normal.angle()) <= arc_extent + 0.001){
             Dictionary shot;
             shot_normal = shot_normal.rotated(arc_rotation);
+            shot["normal"] = shot_normal;
             shot["position"] = _get_shot_position(shot_normal);
             shot["direction"] = _get_shot_direction(shot["position"], shot_normal);
             volley.push_back(shot);
@@ -476,23 +478,10 @@ Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, co
 void BulletSpawner::_draw_shot_lines(const Array &p_volley, float p_length, const Color &p_color) {
     for (int i = 0; i < p_volley.size(); i++){
         Dictionary shot = p_volley[i];
-        Vector2 pos = shot["position"];
-        Vector2 dir = shot["direction"];
-        float length = p_length;
-        if (aim_mode == TARGET_LOCAL) {
-            float dist = pos.distance_to(aim_target_position);
-            if (dist < length){
-                length = dist;
-            }
-        } else if (aim_mode == TARGET_GLOBAL) {
-            float dist = (pos + get_global_position()).distance_to(aim_target_position);
-            if (dist < length){
-                length = dist;
-            }
-        }
-        Vector2 local_position = pos.rotated(-get_global_rotation()) / get_global_scale();
-        Vector2 local_direction = dir.rotated(-get_global_rotation());
-        draw_line(local_position, local_position + local_direction * length / get_global_scale(), p_color);
+        Vector2 normal = shot["normal"];
+        Vector2 position = shot["position"];
+        Vector2 local_position = position.rotated(-get_global_rotation()) / get_global_scale();
+        draw_line(local_position, _get_outer_preview_point(local_position, normal, p_length), p_color);
     }
 }
 
