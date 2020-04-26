@@ -104,6 +104,7 @@
 			The rotational offset of the volley's shot positions within the defined arc.
 			At 0, the shot positions are unchanged. At -1, the volley is rotated to the counterclockwise extent of the arc, and at 1, the volley is rotated to the clockwise extent.
 			Used to simulate arc rotation without affecting the bounds within which bullets are fired. With an arc width of 360 degrees, its visible effect is indistinguishable from [code]arc_rotation[/code].
+			Incompatible with [code]MANUAL[/code] pattern mode, because it breaks volley shot indexing.
 		</member>
 		<member name="arc_rotation" type="float" setter="set_arc_rotation" getter="get_arc_rotation" default="0.0">
 			The rotation of the firing arc around this spawner's circumference, with respect to any scaling applied to this spawner. Measured in radians.

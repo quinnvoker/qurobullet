@@ -186,22 +186,28 @@ Vector2 BulletSpawner::_get_shot_position(const Vector2 &p_normal) const{
 }
 
 Vector2 BulletSpawner::_get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const{
+    Vector2 direction;
     switch (aim_mode){
-        case RADIAL:
-            return p_normal.rotated(aim_angle + get_global_rotation());
-
-        case UNIFORM:
-            return Vector2(1,0).rotated(aim_angle + get_global_rotation());
-        
-        case TARGET_LOCAL:
-            return (aim_target_position - p_position).normalized();
-
-        case TARGET_GLOBAL:
-            return (aim_target_position - (get_global_position() + p_position)).normalized();
-
-        default:
-            return Vector2();
+        case RADIAL: {
+            direction = p_normal.rotated(aim_angle + get_global_rotation());
+        } break;
+        case UNIFORM: {
+            direction = Vector2(1,0).rotated(aim_angle + get_global_rotation());
+        } break;
+        case TARGET_LOCAL: {
+            direction = (aim_target_position - p_position).normalized();
+        } break;
+        case TARGET_GLOBAL: {
+            direction = (aim_target_position - (get_global_position() + p_position)).normalized();
+        } break;
+        default:{
+        } break;
     }
+    //if calculated direction is not a normal, such as when targeted aim modes aim at their own current position, use the initial shot normal instead
+    if (!direction.is_normalized()){
+        direction = p_normal;
+    }
+    return direction;
 }
 
 //setters/getters
