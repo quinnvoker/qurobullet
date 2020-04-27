@@ -52,15 +52,16 @@ private:
     PatternMode pattern_mode;
     PoolIntArray active_shot_indices;
 
-    bool in_game_preview;
+    bool preview_visible_in_game;
     Color preview_color;
+    Color preview_shot_color;
+    float preview_extent;
+    int preview_arc_points;
 
     Array _cached_volley;
     bool _cache_update_required;
 
     Transform2D _previous_transform;
-
-    Array _get_active_shots(const Array &p_volley, const PoolIntArray &p_shot_indices);
 
     void _update_cached_volley();
 
@@ -68,11 +69,12 @@ private:
     Vector2 _get_shot_position(const Vector2 &p_normal) const;
     Vector2 _get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const;
 
+    int _get_unique_shot_count(bool p_include_scatter = false) const;
+    Array _get_selected_shots(const Array &p_volley, const PoolIntArray &p_shot_indices);
+
     void _draw_preview(const Color &p_border_col, const Color &p_shot_col);
     Vector2 _get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent) const;
     void _draw_shot_lines(const Array &p_volley, float p_length, const Color &p_color);
-
-    int _get_unique_shot_count(bool p_include_scatter = false) const;
 
 protected:
     static void _bind_methods();
@@ -142,6 +144,21 @@ public:
 
     void set_active_shot_indices(const PoolIntArray &p_points);
     PoolIntArray get_active_shot_indices() const;
+
+    void set_preview_visible_in_game(bool p_enabled);
+    bool get_preview_visible_in_game() const;
+
+    void set_preview_color(const Color &p_color);
+    Color get_preview_color() const;
+
+    void set_preview_shot_color(const Color &p_color);
+    Color get_preview_shot_color() const;
+
+    void set_preview_extent(float p_length);
+    float get_preview_extent() const;
+
+    void set_preview_arc_points(int p_count);
+    int get_preview_arc_points() const;
 
     BulletSpawner();
     ~BulletSpawner();

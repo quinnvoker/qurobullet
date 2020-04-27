@@ -15,7 +15,7 @@ void BulletSpawner::_notification(int p_what) {
             connect("bullet_fired", relay, "on_bullet_fired");
             connect("volley_fired", relay, "on_volley_fired");
             set_physics_process(true);
-            set_process_internal(in_game_preview);
+            set_process_internal(preview_visible_in_game);
 		} break;
 
         case NOTIFICATION_INTERNAL_PROCESS: {
@@ -47,7 +47,9 @@ void BulletSpawner::_notification(int p_what) {
         } break;
 
         case NOTIFICATION_DRAW: {
-            _draw_preview(preview_color, Color(1,1,1,1));
+            if (Engine::get_singleton()->is_editor_hint() || preview_visible_in_game){
+                _draw_preview(preview_color, preview_shot_color);
+            }
         }
 
 		default:
@@ -67,7 +69,7 @@ void BulletSpawner::fire() {
         break;
 
     case MANUAL:
-        emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), _get_active_shots(get_scattered_volley(), active_shot_indices));
+        emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), _get_selected_shots(get_scattered_volley(), active_shot_indices));
         break;
 
     default:
@@ -79,7 +81,7 @@ void BulletSpawner::fire_shots(const PoolIntArray &p_shot_indices) {
     if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint()){
         return;
     }
-    emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), _get_active_shots(get_scattered_volley(), p_shot_indices));
+    emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), _get_selected_shots(get_scattered_volley(), p_shot_indices));
 }
 
 Array BulletSpawner::get_volley() {
@@ -122,19 +124,6 @@ Array BulletSpawner::get_scattered_volley() {
 }
 
 //private functions
-Array BulletSpawner::_get_active_shots(const Array &p_volley, const PoolIntArray &p_shot_indices){
-    Array active_shots;
-    Dictionary used_indices;
-    for (int i = 0; i < p_shot_indices.size(); i++){
-        int shot_index = p_shot_indices[i];
-        if (shot_index > -1 && shot_index < p_volley.size() && !used_indices.has(shot_index)){
-            active_shots.append(p_volley[shot_index]);
-            used_indices[shot_index] = true;
-        }
-    }
-    return active_shots;
-}
-
 void BulletSpawner::_update_cached_volley() {
     Array new_volley = _create_volley();
     _cached_volley = new_volley;
@@ -210,6 +199,34 @@ Vector2 BulletSpawner::_get_shot_direction(const Vector2 &p_position, const Vect
         direction = p_normal;
     }
     return direction;
+}
+
+int BulletSpawner::_get_unique_shot_count(bool p_include_scatter) const {
+    //returns number of shots that will follow a unique path (or have potential to, with scatter) after firing
+    //used in checks to prevent an entire volley from "stacking" by being spawned in the same position with the same direction
+    if (shot_count <= 1){
+        return 1;
+    }
+    if (arc_width < 0.001 || (aim_mode != RADIAL && radius < 0.001)) {
+        if (p_include_scatter && scatter_mode == BULLET && scatter_range > 0.0){
+            return shot_count;
+        }
+        return 1;
+    }
+    return shot_count;
+}
+
+Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PoolIntArray &p_shot_indices){
+    Array selected_shots;
+    Dictionary used_indices;
+    for (int i = 0; i < p_shot_indices.size(); i++){
+        int shot_index = p_shot_indices[i];
+        if (shot_index > -1 && shot_index < p_volley.size() && !used_indices.has(shot_index)){
+            selected_shots.append(p_volley[shot_index]);
+            used_indices[shot_index] = true;
+        }
+    }
+    return selected_shots;
 }
 
 //setters/getters
@@ -388,6 +405,61 @@ PoolIntArray BulletSpawner::get_active_shot_indices() const{
     return active_shot_indices;
 }
 
+void BulletSpawner::set_preview_visible_in_game(bool p_enabled){
+    preview_visible_in_game = p_enabled;
+    if (preview_visible_in_game){
+        update();
+    }
+}
+
+bool BulletSpawner::get_preview_visible_in_game() const {
+    return preview_visible_in_game;
+}
+
+void BulletSpawner::set_preview_color(const Color &p_color){
+    preview_color = p_color;
+    if (Engine::get_singleton()->is_editor_hint() || preview_visible_in_game) {
+        update();
+    }
+}
+
+Color BulletSpawner::get_preview_color() const {
+    return preview_color;
+}
+
+void BulletSpawner::set_preview_shot_color(const Color &p_color){
+    preview_shot_color = p_color;
+    if (Engine::get_singleton()->is_editor_hint() || preview_visible_in_game) {
+        update();
+    }
+}
+
+Color BulletSpawner::get_preview_shot_color() const {
+    return preview_shot_color;
+}
+
+void BulletSpawner::set_preview_extent(float p_length){
+    preview_extent = p_length;
+    if (Engine::get_singleton()->is_editor_hint() || preview_visible_in_game) {
+        update();
+    }
+}
+
+float BulletSpawner::get_preview_extent() const {
+    return preview_extent;
+}
+
+void BulletSpawner::set_preview_arc_points(int p_count){
+    preview_arc_points = p_count;
+    if (Engine::get_singleton()->is_editor_hint() || preview_visible_in_game) {
+        update();
+    }
+}
+
+int BulletSpawner::get_preview_arc_points() const {
+    return preview_arc_points;
+}
+
 //drawing functions
 void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot_col) { 
     float preview_extent = 50;
@@ -397,8 +469,8 @@ void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot
     if (_get_unique_shot_count() > 1) {
         Vector<Vector2> inner_points;
         Vector<Vector2> outer_points;
-        inner_points.resize(64);
-        outer_points.resize(64);
+        inner_points.resize(preview_arc_points);
+        outer_points.resize(preview_arc_points);
         float arc_extent = arc_width / 2;
         for (int i = 0; i < inner_points.size(); i++) {
             Vector2 normal = Vector2(cos(-arc_extent), sin(-arc_extent)).rotated(arc_width / (inner_points.size() - 1) * i + arc_rotation);
@@ -429,13 +501,19 @@ void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot
     if (_get_unique_shot_count() > 1){
         _draw_shot_lines(get_volley(), preview_extent, dim_shot_col);
         if (pattern_mode == MANUAL) {
-            _draw_shot_lines(_get_active_shots(get_volley(), active_shot_indices), preview_extent / 5, p_shot_col);
+            _draw_shot_lines(_get_selected_shots(get_volley(), active_shot_indices), preview_extent / 5, p_shot_col);
         } else {
             _draw_shot_lines(get_volley(), preview_extent / 5, p_shot_col);
         }
     } else {
         draw_line(crosshair_inner_point, crosshair_outer_point, dim_shot_col);
         draw_line(crosshair_inner_point, crosshair_inner_point + (crosshair_outer_point - crosshair_inner_point) / 5, p_shot_col);
+    }
+
+    if (aim_mode == TARGET_LOCAL) {
+        draw_circle(aim_target_position, 1, p_border_col);
+    } else if (aim_mode == TARGET_GLOBAL) {
+        draw_circle(aim_target_position - get_global_position(), 1, p_border_col);
     }
 }
 
@@ -483,21 +561,6 @@ void BulletSpawner::_draw_shot_lines(const Array &p_volley, float p_length, cons
         Vector2 local_position = position.rotated(-get_global_rotation()) / get_global_scale();
         draw_line(local_position, _get_outer_preview_point(local_position, normal, p_length), p_color);
     }
-}
-
-int BulletSpawner::_get_unique_shot_count(bool p_include_scatter) const {
-    //returns number of shots that will follow a unique path (or have potential to, with scatter) after firing
-    //used in checks to prevent multiple bullets from "stacking" by being spawned in the same position with the same direction
-    if (shot_count <= 1){
-        return 1;
-    }
-    if (arc_width < 0.001 || (aim_mode != RADIAL && radius < 0.001)) {
-        if (p_include_scatter && scatter_mode == BULLET && scatter_range > 0.0){
-            return shot_count;
-        }
-        return 1;
-    }
-    return shot_count;
 }
 
 void BulletSpawner::_validate_property(PropertyInfo &property) const{
@@ -583,6 +646,15 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_active_shot_indices", "mode"), &BulletSpawner::set_active_shot_indices);
     ClassDB::bind_method(D_METHOD("get_active_shot_indices"), &BulletSpawner::get_active_shot_indices);
 
+    ClassDB::bind_method(D_METHOD("set_preview_visible_in_game", "mode"), &BulletSpawner::set_preview_visible_in_game);
+    ClassDB::bind_method(D_METHOD("get_preview_visible_in_game"), &BulletSpawner::get_preview_visible_in_game);
+
+    ClassDB::bind_method(D_METHOD("set_preview_color", "mode"), &BulletSpawner::set_preview_color);
+    ClassDB::bind_method(D_METHOD("get_preview_color"), &BulletSpawner::get_preview_color);
+
+    ClassDB::bind_method(D_METHOD("set_preview_shot_color", "mode"), &BulletSpawner::set_preview_shot_color);
+    ClassDB::bind_method(D_METHOD("get_preview_shot_color"), &BulletSpawner::get_preview_shot_color);
+
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
@@ -605,6 +677,10 @@ void BulletSpawner::_bind_methods() {
     ADD_GROUP("Pattern", "");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "pattern_mode", PROPERTY_HINT_ENUM, "All,Manual"), "set_pattern_mode", "get_pattern_mode");
     ADD_PROPERTY(PropertyInfo(Variant::POOL_INT_ARRAY, "active_shot_indices"), "set_active_shot_indices", "get_active_shot_indices");
+    ADD_GROUP("Preview", "preview_");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview_visible_in_game"), "set_preview_visible_in_game", "get_preview_visible_in_game");
+    ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_color"), "set_preview_color", "get_preview_color");
+    ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_shot_color"), "set_preview_shot_color", "get_preview_shot_color");
 
     ADD_SIGNAL(MethodInfo("bullet_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::VECTOR2, "direction")));
     ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::ARRAY, "volley")));
@@ -636,8 +712,9 @@ BulletSpawner::BulletSpawner() {
     scatter_mode = NONE;
     scatter_range = 0.0;
     pattern_mode = ALL;
-    in_game_preview = true;
+    preview_visible_in_game = true;
     preview_color = Color(0.0, 1.0, 0.0, 1.0); //green
+    preview_shot_color = Color(1.0, 1.0, 1.0, 1.0);
 }
 
 BulletSpawner::~BulletSpawner() {
