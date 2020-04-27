@@ -462,7 +462,6 @@ int BulletSpawner::get_preview_arc_points() const {
 
 //drawing functions
 void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot_col) { 
-    float preview_extent = 50;
     Color dim_border_col = Color(p_border_col.r, p_border_col.g, p_border_col.b, 0.25);
     Color dim_shot_col = Color(p_shot_col.r, p_shot_col.g, p_shot_col.b, 0.25);
 
@@ -495,7 +494,7 @@ void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot
     Vector2 crosshair_inner_point = crosshair_normal * radius;
     Vector2 crosshair_outer_point = _get_outer_preview_point(crosshair_inner_point, crosshair_normal, preview_extent);
     draw_line(Vector2(), crosshair_inner_point, p_border_col);
-    draw_line(crosshair_outer_point, _get_outer_preview_point(crosshair_inner_point, crosshair_normal, preview_extent + preview_extent / 10), p_border_col);
+    draw_line(crosshair_outer_point, _get_outer_preview_point(crosshair_inner_point, crosshair_normal, preview_extent + preview_extent / 5), p_border_col);
     draw_line(crosshair_inner_point, crosshair_outer_point, dim_border_col);
     
     if (_get_unique_shot_count() > 1){
@@ -655,6 +654,12 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_preview_shot_color", "mode"), &BulletSpawner::set_preview_shot_color);
     ClassDB::bind_method(D_METHOD("get_preview_shot_color"), &BulletSpawner::get_preview_shot_color);
 
+    ClassDB::bind_method(D_METHOD("set_preview_extent", "mode"), &BulletSpawner::set_preview_extent);
+    ClassDB::bind_method(D_METHOD("get_preview_extent"), &BulletSpawner::get_preview_extent);
+
+    ClassDB::bind_method(D_METHOD("set_preview_arc_points", "mode"), &BulletSpawner::set_preview_arc_points);
+    ClassDB::bind_method(D_METHOD("get_preview_arc_points"), &BulletSpawner::get_preview_arc_points);
+
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
@@ -681,6 +686,8 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview_visible_in_game"), "set_preview_visible_in_game", "get_preview_visible_in_game");
     ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_color"), "set_preview_color", "get_preview_color");
     ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_shot_color"), "set_preview_shot_color", "get_preview_shot_color");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "preview_extent", PROPERTY_HINT_RANGE, "0,500,0.1,or_greater"), "set_preview_extent", "get_preview_extent");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "preview_arc_points", PROPERTY_HINT_RANGE, "2,128,or_greater"), "set_preview_arc_points", "get_preview_arc_points");
 
     ADD_SIGNAL(MethodInfo("bullet_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::VECTOR2, "direction")));
     ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::ARRAY, "volley")));
@@ -715,6 +722,8 @@ BulletSpawner::BulletSpawner() {
     preview_visible_in_game = true;
     preview_color = Color(0.0, 1.0, 0.0, 1.0); //green
     preview_shot_color = Color(1.0, 1.0, 1.0, 1.0);
+    preview_arc_points = 32;
+    preview_extent = 50;
 }
 
 BulletSpawner::~BulletSpawner() {
