@@ -8,19 +8,13 @@ void BulletSpawner::_notification(int p_what) {
 			set_notify_transform(true);
             if (Engine::get_singleton()->is_editor_hint()){
                 set_physics_process(false);
-                set_process_internal(true);
                 return;
             }
             BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
             connect("bullet_fired", relay, "on_bullet_fired");
             connect("volley_fired", relay, "on_volley_fired");
             set_physics_process(true);
-            set_process_internal(preview_visible_in_game);
 		} break;
-
-        case NOTIFICATION_INTERNAL_PROCESS: {
-            update();
-        } break;
 
 		case NOTIFICATION_PHYSICS_PROCESS: {
 			if (Engine::get_singleton()->is_editor_hint()){
@@ -37,11 +31,11 @@ void BulletSpawner::_notification(int p_what) {
 
         case NOTIFICATION_TRANSFORM_CHANGED: {
             if (aim_mode == TARGET_GLOBAL && get_global_transform().get_origin() != _previous_transform.get_origin()) {
-                _cache_update_required = true;
+                _volley_change_notify();
             } else if (get_global_transform().get_rotation() != _previous_transform.get_rotation()){
-                _cache_update_required = true;
+                _volley_change_notify();
             } else if (get_global_transform().get_scale() != _previous_transform.get_scale()){
-                _cache_update_required = true;
+                _volley_change_notify();
             }
             _previous_transform = get_global_transform();
         } break;
@@ -64,13 +58,13 @@ void BulletSpawner::fire() {
     }
     switch (pattern_mode)
     {
-    case ALL:
+    case ALL: {
         emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), get_scattered_volley());
-        break;
+    } break;
 
-    case MANUAL:
+    case MANUAL: {
         emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), _get_selected_shots(get_scattered_volley(), active_shot_indices));
-        break;
+    } break;
 
     default:
         break;
@@ -85,14 +79,15 @@ void BulletSpawner::fire_shots(const PoolIntArray &p_shot_indices) {
 }
 
 Array BulletSpawner::get_volley() {
-    if (_cache_update_required){
-        _update_cached_volley();
+    if (_volley_changed){
+        _cached_volley = _create_volley();
+        _volley_changed = false;
     }
     return _cached_volley;
 }
 
 Array BulletSpawner::get_scattered_volley() {
-    if (scatter_mode == NONE || scatter_range <= 0.0){
+    if (scatter_mode == NONE || Math::is_zero_approx(scatter_range)){
         return get_volley();
     } 
 
@@ -124,10 +119,24 @@ Array BulletSpawner::get_scattered_volley() {
 }
 
 //private functions
-void BulletSpawner::_update_cached_volley() {
-    Array new_volley = _create_volley();
-    _cached_volley = new_volley;
-    _cache_update_required = false;
+Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PoolIntArray &p_shot_indices) const {
+    Array selected_shots;
+    Dictionary used_indices;
+    for (int i = 0; i < p_shot_indices.size(); i++){
+        int shot_index = p_shot_indices[i];
+        if (shot_index > -1 && shot_index < p_volley.size() && !used_indices.has(shot_index)){
+            selected_shots.append(p_volley[shot_index]);
+            used_indices[shot_index] = true;
+        }
+    }
+    return selected_shots;
+}
+
+void BulletSpawner::_volley_change_notify() {
+    _volley_changed = true;
+    if(Engine::get_singleton()->is_editor_hint() || preview_visible_in_game){
+        update();
+    }
 }
 
 Array BulletSpawner::_create_volley() const {
@@ -216,19 +225,6 @@ int BulletSpawner::_get_unique_shot_count(bool p_include_scatter) const {
     return shot_count;
 }
 
-Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PoolIntArray &p_shot_indices){
-    Array selected_shots;
-    Dictionary used_indices;
-    for (int i = 0; i < p_shot_indices.size(); i++){
-        int shot_index = p_shot_indices[i];
-        if (shot_index > -1 && shot_index < p_volley.size() && !used_indices.has(shot_index)){
-            selected_shots.append(p_volley[shot_index]);
-            used_indices[shot_index] = true;
-        }
-    }
-    return selected_shots;
-}
-
 //setters/getters
 void BulletSpawner::set_autofire(bool p_enabled) {
     autofire = p_enabled;
@@ -252,7 +248,7 @@ int BulletSpawner::get_interval_frames() const {
 
 void BulletSpawner::set_bullet_type(const Ref<BulletType> &p_type) {
     bullet_type = p_type;
-    _cache_update_required = true;
+    _volley_change_notify();
 }
 
 Ref<BulletType> BulletSpawner::get_bullet_type() const {
@@ -261,7 +257,7 @@ Ref<BulletType> BulletSpawner::get_bullet_type() const {
 
 void BulletSpawner::set_shot_count(int p_count) {
     shot_count = p_count;
-    _cache_update_required = true;
+    _volley_change_notify();
 }
 
 int BulletSpawner::get_shot_count() const {
@@ -270,7 +266,7 @@ int BulletSpawner::get_shot_count() const {
 
 void BulletSpawner::set_radius(float p_radius) {
     radius = p_radius;
-    _cache_update_required = true;    
+    _volley_change_notify();    
 }
 
 float BulletSpawner::get_radius() const {
@@ -279,7 +275,7 @@ float BulletSpawner::get_radius() const {
 
 void BulletSpawner::set_arc_width(float p_radians){
     arc_width = p_radians;
-    _cache_update_required = true;
+    _volley_change_notify();
 }
 
 float BulletSpawner::get_arc_width() const {
@@ -288,7 +284,7 @@ float BulletSpawner::get_arc_width() const {
 
 void BulletSpawner::set_arc_width_degrees(float p_degrees){
     arc_width = Math::deg2rad(p_degrees);
-    _cache_update_required = true;
+    _volley_change_notify();
 }
 
 float BulletSpawner::get_arc_width_degrees() const {
@@ -297,7 +293,7 @@ float BulletSpawner::get_arc_width_degrees() const {
 
 void BulletSpawner::set_arc_rotation(float p_radians) {
     arc_rotation = p_radians;
-    _cache_update_required = true;
+    _volley_change_notify();
 }
 
 float BulletSpawner::get_arc_rotation() const {
@@ -306,7 +302,7 @@ float BulletSpawner::get_arc_rotation() const {
 
 void BulletSpawner::set_arc_rotation_degrees(float p_degrees) {
     arc_rotation = Math::deg2rad(p_degrees);
-    _cache_update_required = true;
+    _volley_change_notify();
 }
 
 float BulletSpawner::get_arc_rotation_degrees() const {
@@ -315,7 +311,7 @@ float BulletSpawner::get_arc_rotation_degrees() const {
 
 void BulletSpawner::set_arc_offset(float p_offset) {
     arc_offset = p_offset;
-    _cache_update_required = true;
+    _volley_change_notify();
 }
 
 float BulletSpawner::get_arc_offset() const {
@@ -324,7 +320,7 @@ float BulletSpawner::get_arc_offset() const {
 
 void BulletSpawner::set_aim_mode(AimMode p_mode){
     aim_mode = p_mode;
-    _cache_update_required = true;
+    _volley_change_notify();
     _change_notify();
 }
 
@@ -336,7 +332,7 @@ BulletSpawner::AimMode BulletSpawner::get_aim_mode() const {
 void BulletSpawner::set_aim_angle(float p_radians){
     aim_angle = p_radians;
     if (aim_mode == RADIAL || aim_mode == UNIFORM){
-        _cache_update_required = true;
+        _volley_change_notify();
     }
 }
 
@@ -355,7 +351,7 @@ float BulletSpawner::get_aim_angle_degrees() const {
 void BulletSpawner::set_aim_target_position(const Vector2 &p_position) {
     aim_target_position = p_position;
     if (aim_mode == TARGET_LOCAL || aim_mode == TARGET_GLOBAL) {
-        _cache_update_required = true;
+        _volley_change_notify();
     }
 }
 
@@ -661,10 +657,10 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_preview_arc_points"), &BulletSpawner::get_preview_arc_points);
 
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,1,or_greater"), "set_interval_frames", "get_interval_frames");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "shot_count", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_shot_count", "get_shot_count");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "radius", PROPERTY_HINT_RANGE, "0,100,0.01,or_greater"), "set_radius", "get_radius");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "shot_count", PROPERTY_HINT_RANGE, "1,100,or_greater"), "set_shot_count", "get_shot_count");
+    ADD_PROPERTY(PropertyInfo(Variant::REAL, "radius", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_radius", "get_radius");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_width", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_width", "get_arc_width");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_width_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_width_degrees", "get_arc_width_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_rotation", "get_arc_rotation");

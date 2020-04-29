@@ -59,18 +59,19 @@ private:
     int preview_arc_points;
 
     Array _cached_volley;
-    bool _cache_update_required;
+    bool _volley_changed;
 
     Transform2D _previous_transform;
+    
+    Array _get_selected_shots(const Array &p_volley, const PoolIntArray &p_shot_indices) const;
 
-    void _update_cached_volley();
+    void _volley_change_notify();
 
     Array _create_volley() const;
     Vector2 _get_shot_position(const Vector2 &p_normal) const;
     Vector2 _get_shot_direction(const Vector2 &p_position, const Vector2 &p_normal) const;
 
     int _get_unique_shot_count(bool p_include_scatter = false) const;
-    Array _get_selected_shots(const Array &p_volley, const PoolIntArray &p_shot_indices);
 
     void _draw_preview(const Color &p_border_col, const Color &p_shot_col);
     Vector2 _get_outer_preview_point(const Vector2 &p_inner_point, const Vector2 &p_inner_normal, float p_extent) const;
