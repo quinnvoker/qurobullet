@@ -94,11 +94,11 @@
 			The mode used by this spawner to calculate the direction each bullet is fired in.
 			RADIAL causes bullets' directions to be determined by their position along this spawner's circumference, radiating outwards. Can be rotated with [code]aim_angle[/code].
 			UNIFORM causes all bullets to share the same direction vector. Defaults to a vector of (1,0), and rotated with [code]aim_angle[/code].
-			TARGET_LOCAL causes all bullets' directions to point towards [code]aim_target_position[/code], in space local to this spawner.
+			TARGET_RELATIVE causes all bullets' directions to point towards [code]aim_target_position[/code], in space local to this spawner.
 			TARGET_GLOBAL causes all bullet's directions to point towards [code]aim_target_position[/code], in global space.
 		</member>
 		<member name="aim_target_position" type="Vector2" setter="set_aim_target_position" getter="get_aim_target_position" default="Vector2( 0, 0 )">
-			The point all bullets fired by this spawner will be directed towards. For TARGET_LOCAL and TARGET_GLOBAL aim modes.
+			The point all bullets fired by this spawner will be directed towards. For TARGET_RELATIVE and TARGET_GLOBAL aim modes.
 		</member>
 		<member name="arc_offset" type="float" setter="set_arc_offset" getter="get_arc_offset" default="0.0">
 			The rotational offset of the volley's shot positions within the defined arc.
@@ -207,7 +207,7 @@
 		</constant>
 		<constant name="UNIFORM" value="1" enum="AimMode">
 		</constant>
-		<constant name="TARGET_LOCAL" value="2" enum="AimMode">
+		<constant name="TARGET_RELATIVE" value="2" enum="AimMode">
 		</constant>
 		<constant name="TARGET_GLOBAL" value="3" enum="AimMode">
 		</constant>

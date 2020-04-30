@@ -18,7 +18,7 @@ public:
     enum AimMode {
         RADIAL,
         UNIFORM,
-        TARGET_LOCAL,
+        TARGET_RELATIVE,
         TARGET_GLOBAL,
     };
 

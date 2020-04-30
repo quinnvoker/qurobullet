@@ -194,7 +194,7 @@ Vector2 BulletSpawner::_get_shot_direction(const Vector2 &p_position, const Vect
         case UNIFORM: {
             direction = Vector2(1,0).rotated(aim_angle + get_global_rotation());
         } break;
-        case TARGET_LOCAL: {
+        case TARGET_RELATIVE: {
             direction = (aim_target_position - p_position).normalized();
         } break;
         case TARGET_GLOBAL: {
@@ -350,7 +350,7 @@ float BulletSpawner::get_aim_angle_degrees() const {
 
 void BulletSpawner::set_aim_target_position(const Vector2 &p_position) {
     aim_target_position = p_position;
-    if (aim_mode == TARGET_LOCAL || aim_mode == TARGET_GLOBAL) {
+    if (aim_mode == TARGET_RELATIVE || aim_mode == TARGET_GLOBAL) {
         _volley_change_notify();
     }
 }
@@ -505,10 +505,10 @@ void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot
         draw_line(crosshair_inner_point, crosshair_inner_point + (crosshair_outer_point - crosshair_inner_point) / 5, p_shot_col);
     }
 
-    if (aim_mode == TARGET_LOCAL) {
-        draw_circle(aim_target_position, 1, p_border_col);
+    if (aim_mode == TARGET_RELATIVE) {
+        draw_circle(aim_target_position.rotated(-get_global_rotation()) / get_global_scale(), 1, p_border_col);
     } else if (aim_mode == TARGET_GLOBAL) {
-        draw_circle(aim_target_position - get_global_position(), 1, p_border_col);
+        draw_circle((aim_target_position - get_global_position()).rotated(-get_global_rotation()) / get_global_scale(), 1, p_border_col);
     }
 }
 
@@ -523,18 +523,19 @@ Vector2 BulletSpawner::_get_outer_preview_point(const Vector2 &p_inner_point, co
             outer_point = p_inner_point + Vector2(1,0).rotated(aim_angle) * p_extent / get_global_scale();
         } break;
 
-        case TARGET_LOCAL: {
+        case TARGET_RELATIVE: {
             Vector2 transformed_inner = p_inner_point * get_global_scale();
-            if (transformed_inner.distance_to(aim_target_position) < p_extent){
-                outer_point = aim_target_position;
+            Vector2 local_target = aim_target_position.rotated(-get_global_rotation());
+            if (transformed_inner.distance_to(local_target) < p_extent){
+                outer_point = local_target / get_global_scale();
             } else {
-                outer_point = p_inner_point + (aim_target_position - transformed_inner).normalized() * p_extent / get_global_scale();
+                outer_point = p_inner_point + (local_target - transformed_inner).normalized() * p_extent / get_global_scale();
             }
         } break;
         
         case TARGET_GLOBAL: {
             Vector2 global_inner_point = get_global_position() + (p_inner_point * get_global_scale()).rotated(get_global_rotation());
-            Vector2 local_target = aim_target_position - get_global_position().rotated(-get_global_rotation()) / get_global_scale();
+            Vector2 local_target = (aim_target_position - get_global_position()).rotated(-get_global_rotation()) / get_global_scale();
             if (global_inner_point.distance_to(aim_target_position) < p_extent){
                 outer_point = local_target;
             } else {
@@ -563,7 +564,7 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
         property.usage = 0;
     }
 
-    if (property.name == "aim_target_position" && !(aim_mode == TARGET_LOCAL || aim_mode == TARGET_GLOBAL)){
+    if (property.name == "aim_target_position" && !(aim_mode == TARGET_RELATIVE || aim_mode == TARGET_GLOBAL)){
         property.usage = PROPERTY_USAGE_NOEDITOR;
     }
 
@@ -667,7 +668,7 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_rotation_degrees", "get_arc_rotation_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_arc_offset", "get_arc_offset");
     ADD_GROUP("Aim", "aim_");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "aim_mode", PROPERTY_HINT_ENUM, "Radial,Uniform,Local Target,Global Target"), "set_aim_mode", "get_aim_mode");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "aim_mode", PROPERTY_HINT_ENUM, "Radial,Uniform,Relative Target,Global Target"), "set_aim_mode", "get_aim_mode");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "aim_angle", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_aim_angle", "get_aim_angle");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "aim_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_aim_angle_degrees", "get_aim_angle_degrees");
     ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "aim_target_position"), "set_aim_target_position", "get_aim_target_position");
@@ -693,7 +694,7 @@ void BulletSpawner::_bind_methods() {
 
     BIND_ENUM_CONSTANT(RADIAL);
     BIND_ENUM_CONSTANT(UNIFORM);
-    BIND_ENUM_CONSTANT(TARGET_LOCAL);
+    BIND_ENUM_CONSTANT(TARGET_RELATIVE);
     BIND_ENUM_CONSTANT(TARGET_GLOBAL);
 
     BIND_ENUM_CONSTANT(NONE);
