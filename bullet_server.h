@@ -11,14 +11,16 @@ class BulletServer : public Node2D {
 	GDCLASS(BulletServer, Node2D);
 
 	int bullet_pool_size;
-	Rect2 play_area;
-	float play_area_margin;
 
 	bool pop_on_collide;
 	float max_lifetime;
 
 	Vector<Bullet *> live_bullets;
 	Vector<Bullet *> dead_bullets;
+
+	Rect2 play_area;
+	float play_area_margin;
+	bool play_area_allow_incoming;
 	
 	void _process_bullets(float delta);
 
@@ -42,14 +44,17 @@ public:
 	void set_bullet_pool_size(int p_size);
 	int get_bullet_pool_size() const;
 
-	void set_play_area_margin(float p_margin);
-	float get_play_area_margin() const;
-
 	void set_pop_on_collide(bool p_enabled);
 	bool get_pop_on_collide() const;
 
 	void set_max_lifetime(float p_time);
 	float get_max_lifetime() const;
+
+	void set_play_area_margin(float p_margin);
+	float get_play_area_margin() const;
+
+	void set_play_area_allow_incoming(bool p_enabled);
+	bool get_play_area_allow_incoming() const;
 };
 
 #endif

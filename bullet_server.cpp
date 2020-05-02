@@ -75,7 +75,11 @@ void BulletServer::_process_bullets(float delta) {
 				}
 			}
 		} else {
-			bullet->pop();
+			if (play_area_allow_incoming && bullet->get_direction().dot(play_area.position + play_area.size / 2 - bullet->get_position()) >= 0) {
+				bullet->update(delta);
+			} else {
+				bullet->pop();
+			}
 		}
 		
 	}
@@ -154,18 +158,6 @@ int BulletServer::get_bullet_pool_size() const {
 	return bullet_pool_size;
 }
 
-void BulletServer::set_play_area_margin(float p_margin) {
-	play_area_margin = p_margin;
-	if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint())
-		return;
-	play_area = get_viewport_rect().grow(play_area_margin);
-}
-
-float BulletServer::get_play_area_margin() const {
-	return play_area_margin;
-}
-
-
 void BulletServer::set_max_lifetime(float p_time) {
 	max_lifetime = p_time;
 }
@@ -182,6 +174,25 @@ bool BulletServer::get_pop_on_collide() const {
 	return pop_on_collide;
 }
 
+void BulletServer::set_play_area_margin(float p_margin) {
+	play_area_margin = p_margin;
+	if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint())
+		return;
+	play_area = get_viewport_rect().grow(play_area_margin);
+}
+
+float BulletServer::get_play_area_margin() const {
+	return play_area_margin;
+}
+
+void BulletServer::set_play_area_allow_incoming(bool p_enabled) {
+	play_area_allow_incoming = p_enabled;
+}
+
+bool BulletServer::get_play_area_allow_incoming() const {
+	return play_area_allow_incoming;
+}
+
 void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
 	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "volley"), &BulletServer::spawn_volley);
@@ -191,19 +202,23 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_bullet_pool_size", "size"), &BulletServer::set_bullet_pool_size);
 	ClassDB::bind_method(D_METHOD("get_bullet_pool_size"), &BulletServer::get_bullet_pool_size);
 
-	ClassDB::bind_method(D_METHOD("set_play_area_margin", "margin"), &BulletServer::set_play_area_margin);
-	ClassDB::bind_method(D_METHOD("get_play_area_margin"), &BulletServer::get_play_area_margin);
-
 	ClassDB::bind_method(D_METHOD("set_pop_on_collide", "enabled"), &BulletServer::set_pop_on_collide);
 	ClassDB::bind_method(D_METHOD("get_pop_on_collide"), &BulletServer::get_pop_on_collide);
 
 	ClassDB::bind_method(D_METHOD("set_max_lifetime", "time"), &BulletServer::set_max_lifetime);
 	ClassDB::bind_method(D_METHOD("get_max_lifetime"), &BulletServer::get_max_lifetime);
 
+	ClassDB::bind_method(D_METHOD("set_play_area_margin", "margin"), &BulletServer::set_play_area_margin);
+	ClassDB::bind_method(D_METHOD("get_play_area_margin"), &BulletServer::get_play_area_margin);
+
+	ClassDB::bind_method(D_METHOD("set_play_area_allow_incoming", "allow_incoming"), &BulletServer::set_play_area_allow_incoming);
+	ClassDB::bind_method(D_METHOD("get_play_area_allow_incoming"), &BulletServer::get_play_area_allow_incoming);
+
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size", PROPERTY_HINT_RANGE, "1,5000,1,or_greater"), "set_bullet_pool_size", "get_bullet_pool_size");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "max_lifetime", PROPERTY_HINT_RANGE, "0,300,0.01,or_greater"), "set_max_lifetime", "get_max_lifetime");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pop_on_collide"), "set_pop_on_collide", "get_pop_on_collide");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "play_area_allow_incoming", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_allow_incoming", "get_play_area_allow_incoming");
 
 	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders")));
 }
