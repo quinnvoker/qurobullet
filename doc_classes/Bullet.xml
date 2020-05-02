@@ -6,7 +6,7 @@
 	<description>
 		Representation of a controllable bullet.
 		A [Bullet] is a minimal representation of a simulated projectile. It does not perform any automatic processing or colliding of its own, instead relying on a [BulletServer] or other external script to drive it.
-		It contains simple state information, a [CanvasItem] [RID] to draw to, and a [BulletType] resource which defines its appearance, collision information, and behaviour.
+		It contains state information, a [CanvasItem] [RID] to draw to, and a [BulletType] resource which defines its appearance, collision information, and behaviour.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -57,7 +57,7 @@
 			<return type="Transform2D">
 			</return>
 			<description>
-				Returns a transform representing this [Bullet]'s position, rotation, and the scale set by its [BulletType].
+				Returns a transform representing this [Bullet]'s current position, rotation, and the scale.
 			</description>
 		</method>
 		<method name="get_type" qualifiers="const">
@@ -71,7 +71,7 @@
 			<return type="bool">
 			</return>
 			<description>
-				Returns [code]true[/code] if this [Bullet] has popped and is awaiting cleanup.
+				Returns [code]true[/code] if this [Bullet] has been popped.
 			</description>
 		</method>
 		<method name="pop">
