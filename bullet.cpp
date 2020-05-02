@@ -32,7 +32,7 @@ bool Bullet::is_popped() {
 }
 
 bool Bullet::can_collide() {
-	return !type.is_null() && (!type->get_collision_shape().is_null() && type->get_collision_mask() != 0);
+	return type.is_valid() && (!type->get_collision_shape().is_null() && type->get_collision_mask() != 0);
 }
 
 void Bullet::_update_offset(){
@@ -92,7 +92,7 @@ Ref<BulletType> Bullet::get_type() const {
 
 void Bullet::set_direction(const Vector2 &p_direction) {
     direction = p_direction;
-	if (!type.is_null() && type->get_face_direction()){
+	if (type.is_valid() && type->get_face_direction()){
 		rotation = p_direction.angle();
 	}
 }
@@ -120,10 +120,10 @@ float Bullet::get_rotation() const {
 Transform2D Bullet::get_transform(){
 	Transform2D t;
 	t.set_origin(position);
-	if (type.is_null()){
-		t.set_rotation_and_scale(rotation, Vector2(1,1));
-	} else {
+	if (type.is_valid()){
 		t.set_rotation_and_scale(rotation + type->get_rotation(), type->get_scale());
+	} else {
+		t.set_rotation_and_scale(rotation, Vector2(1,1));
 	}
 	return t;
 }
@@ -138,13 +138,15 @@ RID Bullet::get_ci_rid() const{
 
 void Bullet::_update_appearance() {
 	VS::get_singleton()->canvas_item_clear(ci_rid);
-	if (!type.is_null()) {
+	if (type.is_valid()) {
 		VisualServer *vs = VS::get_singleton();
-		if (!type->get_texture().is_null()) {
+		if (type->get_texture().is_valid()) {
 			Ref<Texture> tex = type->get_texture();
 			vs->canvas_item_add_texture_rect(ci_rid, Rect2(-tex->get_size() / 2, tex->get_size()), tex->get_rid());
+		} else if (type->get_collision_shape().is_valid()) {
+			type->get_collision_shape()->draw(ci_rid, Color(1,1,1,1));
 		}
-		if (!type->get_material().is_null()) {
+		if (type->get_material().is_valid()) {
 			vs->canvas_item_set_material(ci_rid, type->get_material()->get_rid());
 		}
 		vs->canvas_item_set_modulate(ci_rid, type->get_modulate());
