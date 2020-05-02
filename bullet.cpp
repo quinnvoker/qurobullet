@@ -82,18 +82,8 @@ float Bullet::get_time() const {
 }
 
 void Bullet::set_type(const Ref<BulletType> &p_type) {
-	if (!type.is_null()){
-		if (p_type->get_material() != type->get_material()){
-			ci_set_material(p_type->get_material());
-		}
-		if (p_type->get_texture() != type->get_texture()){
-			ci_draw_texture(p_type->get_texture());
-		}
-	} else {
-		ci_set_material(p_type->get_material());
-		ci_draw_texture(p_type->get_texture());
-	}
     type = p_type;
+	_update_appearance();
 }
 
 Ref<BulletType> Bullet::get_type() const {
@@ -138,27 +128,28 @@ Transform2D Bullet::get_transform(){
 	return t;
 }
 
-void Bullet::set_ci_rid(const RID $p_rid){
-	ci_rid = $p_rid;
+void Bullet::set_ci_rid(const RID &p_rid){
+	ci_rid = p_rid;
 }
 
 RID Bullet::get_ci_rid() const{
 	return ci_rid;
 }
 
-void Bullet::ci_set_material(const Ref<Material> &p_material){
-	if (p_material.is_null()){
-		return;
-	}
-	VS::get_singleton()->canvas_item_set_material(ci_rid, p_material->get_rid());
-}
-
-void Bullet::ci_draw_texture(const Ref<Texture> &p_texture){
+void Bullet::_update_appearance() {
 	VS::get_singleton()->canvas_item_clear(ci_rid);
-	if (p_texture.is_null()){
-		return;
+	if (!type.is_null()) {
+		VisualServer *vs = VS::get_singleton();
+		if (!type->get_texture().is_null()) {
+			Ref<Texture> tex = type->get_texture();
+			vs->canvas_item_add_texture_rect(ci_rid, Rect2(-tex->get_size() / 2, tex->get_size()), tex->get_rid());
+		}
+		if (!type->get_material().is_null()) {
+			vs->canvas_item_set_material(ci_rid, type->get_material()->get_rid());
+		}
+		vs->canvas_item_set_modulate(ci_rid, type->get_modulate());
+		vs->canvas_item_set_light_mask(ci_rid, type->get_light_mask());
 	}
-	VS::get_singleton()->canvas_item_add_texture_rect(ci_rid, Rect2(-p_texture->get_size() / 2, p_texture->get_size()), p_texture->get_rid());
 }
 
 void Bullet::_bind_methods(){

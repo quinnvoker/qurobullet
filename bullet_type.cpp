@@ -32,6 +32,22 @@ Ref<Texture> BulletType::get_texture() const {
 	return texture;
 }
 
+void BulletType::set_modulate(const Color &p_color) {
+	modulate = p_color;
+}
+
+Color BulletType::get_modulate() const {
+	return modulate;
+}
+
+void BulletType::set_light_mask(int p_mask) {
+	light_mask = p_mask;
+}
+
+int BulletType::get_light_mask() const {
+	return light_mask;
+}
+
 void BulletType::set_material(const Ref<Material> &p_material) {
 	material = p_material;
 }
@@ -184,6 +200,12 @@ void BulletType::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_texture", "texture"), &BulletType::set_texture);
 	ClassDB::bind_method(D_METHOD("get_texture"), &BulletType::get_texture);
 
+	ClassDB::bind_method(D_METHOD("set_modulate", "modulate"), &BulletType::set_modulate);
+	ClassDB::bind_method(D_METHOD("get_modulate"), &BulletType::get_modulate);
+
+	ClassDB::bind_method(D_METHOD("set_light_mask", "light_mask"), &BulletType::set_light_mask);
+	ClassDB::bind_method(D_METHOD("get_light_mask"), &BulletType::get_light_mask);
+
 	ClassDB::bind_method(D_METHOD("set_material", "material"), &BulletType::set_material);
 	ClassDB::bind_method(D_METHOD("get_material"), &BulletType::get_material);
 
@@ -235,8 +257,10 @@ void BulletType::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "speed", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_speed", "get_speed");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lifetime", PROPERTY_HINT_RANGE, "0,30,0.01,or_greater"), "set_lifetime", "get_lifetime");
-	ADD_GROUP("Drawing", "");
+	ADD_GROUP("Appearance", "");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "modulate"), "set_modulate", "get_modulate");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "light_mask", PROPERTY_HINT_LAYERS_2D_RENDER), "set_light_mask", "get_light_mask");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
 	ADD_GROUP("Collision", "collision_");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "collision_shape", PROPERTY_HINT_RESOURCE_TYPE, "Shape2D"), "set_collision_shape", "get_collision_shape");
@@ -268,6 +292,8 @@ void BulletType::_bind_methods() {
 BulletType::BulletType() {
 	lifetime = 0.0;
 	texture = Ref<Texture>();
+	modulate = Color(1,1,1,1);
+	light_mask = 1;
 	material = Ref<Material>();
 	face_direction = false;
 	scale = Vector2(1,1);

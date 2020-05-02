@@ -21,6 +21,8 @@ private:
 	float damage;
 	float lifetime;
 	Ref<Texture> texture;
+	Color modulate;
+	int light_mask;
 	Ref<Material> material;
 	Ref<Shape2D> collision_shape;
 	int collision_mask;
@@ -53,6 +55,12 @@ public:
 
 	void set_texture(const Ref<Texture> &p_texture);
 	Ref<Texture> get_texture() const;
+
+	void set_modulate(const Color &p_color);
+	Color get_modulate() const;
+
+	void set_light_mask(int p_mask);
+	int get_light_mask() const;
 
 	void set_material(const Ref<Material> &p_material);
 	Ref<Material> get_material() const;
