@@ -31,7 +31,7 @@
 			</argument>
 			<argument index="1" name="position" type="Vector2">
 			</argument>
-			<argument index="2" name="volley" type="Array">
+			<argument index="2" name="shots" type="Array">
 			</argument>
 			<description>
 				Emits [code]volley_spawn_requested[/code] with the given parameters.
@@ -57,7 +57,7 @@
 			</argument>
 			<argument index="1" name="position" type="Vector2">
 			</argument>
-			<argument index="2" name="volley" type="Array">
+			<argument index="2" name="shots" type="Array">
 			</argument>
 			<description>
 				Emits when the relay has received a bullet spawn request signal.

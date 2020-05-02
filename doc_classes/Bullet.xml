@@ -25,13 +25,6 @@
 				Returns the [RID] of the [CanvasItem] associated with this [Bullet].
 			</description>
 		</method>
-		<method name="get_type" qualifiers="const">
-			<return type="BulletType">
-			</return>
-			<description>
-				Returns the [BulletType] currently held by this [Bullet].
-			</description>
-		</method>
 		<method name="get_direction" qualifiers="const">
 			<return type="Vector2">
 			</return>
@@ -64,14 +57,21 @@
 			<return type="Transform2D">
 			</return>
 			<description>
-				Returns a transform representing this [Bullet]'s position, rotation, and the scale set by its [BulletType]. 
+				Returns a transform representing this [Bullet]'s position, rotation, and the scale set by its [BulletType].
+			</description>
+		</method>
+		<method name="get_type" qualifiers="const">
+			<return type="BulletType">
+			</return>
+			<description>
+				Returns the [BulletType] currently held by this [Bullet].
 			</description>
 		</method>
 		<method name="is_popped">
 			<return type="bool">
 			</return>
 			<description>
-				Returns [code]true[/code] if this [Bullet] has popped and is awaiting cleanup. 
+				Returns [code]true[/code] if this [Bullet] has popped and is awaiting cleanup.
 			</description>
 		</method>
 		<method name="pop">
@@ -79,16 +79,6 @@
 			</return>
 			<description>
 				Marks this [Bullet] as inactive and ready to be cleaned up by the server, and disables its visibility.
-			</description>
-		</method>
-		<method name="set_type">
-			<return type="void">
-			</return>
-			<argument index="0" name="type" type="BulletType">
-			</argument>
-			<description>
-				Sets the [BulletType] that will be used to define this [Bullet]'s appearance and behaviour.
-				Causes the [CanvasItem] to update to reflect texture or material changes.
 			</description>
 		</method>
 		<method name="set_direction">
@@ -116,6 +106,16 @@
 			</argument>
 			<description>
 				Sets the rotation of this [Bullet].
+			</description>
+		</method>
+		<method name="set_type">
+			<return type="void">
+			</return>
+			<argument index="0" name="type" type="BulletType">
+			</argument>
+			<description>
+				Sets the [BulletType] that will be used to define this [Bullet]'s appearance and behaviour.
+				Causes the [CanvasItem] to update to reflect texture or material changes.
 			</description>
 		</method>
 		<method name="spawn">

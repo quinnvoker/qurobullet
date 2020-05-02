@@ -51,8 +51,10 @@
 			The total number of bullets managed by this server.
 			A [BulletServer] generates all bullets on ready, and adds/removes them from play by cycling them between active and inactive groups. Spawning bullets pulls them from the inactive group and makes them active, and recycles the oldest active bullet if no inactive bullets are available.
 		</member>
-		<member name="max_lifetime" type="float" setter="set_max_lifetime" getter="get_max_lifetime" default="1.0">
+		<member name="max_lifetime" type="float" setter="set_max_lifetime" getter="get_max_lifetime" default="0.0">
 			The maximium lifetime of any [Bullet] managed by the server. Bullets older than this are automatically popped.
+		</member>
+		<member name="play_area_allow_incoming" type="bool" setter="set_play_area_allow_incoming" getter="get_play_area_allow_incoming" default="false">
 		</member>
 		<member name="play_area_margin" type="float" setter="set_play_area_margin" getter="get_play_area_margin" default="0.0">
 			The distance bullets controlled by this server can travel outside the the current [Viewport] before being popped.
@@ -70,7 +72,7 @@
 			</argument>
 			<description>
 				Emitted when a bullet has collided with an area or body. Contains the [Bullet] which collided and an [Array] of the collision objects it collided with.
-				Note that [BulletServer] will report collisions even with unmonitorable collision objects, so long as they're on the same layer. If you need a target to be "hidden" from bullets, it must be 
+				Note that [BulletServer] will report collisions even with unmonitorable collision objects, so long as they're on the same layer. If you need a target to be "hidden" from bullets, it must be
 			</description>
 		</signal>
 	</signals>
