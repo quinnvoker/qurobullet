@@ -216,8 +216,8 @@ int BulletSpawner::_get_unique_shot_count(bool p_include_scatter) const {
     if (shot_count <= 1){
         return 1;
     }
-    if (arc_width < 0.001 || (aim_mode != RADIAL && radius < 0.001)) {
-        if (p_include_scatter && scatter_mode == BULLET && scatter_range > 0.0){
+    if (Math::is_zero_approx(arc_width) || (aim_mode != RADIAL && Math::is_zero_approx(radius))) {
+        if (p_include_scatter && scatter_mode == BULLET && !Math::is_zero_approx(scatter_range)){
             return shot_count;
         }
         return 1;
