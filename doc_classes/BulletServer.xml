@@ -66,6 +66,10 @@
 			If [code]true[/code], bullets will be popped automatically if the server determines they have collided.
 			Disable if you're implementing more nuanced bullet behaviour on collision, like reflection.
 		</member>
+		<member name="relay_autoconnect" type="bool" setter="set_relay_autoconnect" getter="get_relay_autoconnect" default="true">
+			If [code]true[/code], this server will automatically connect to the [BulletServerRelay] singleton on ready. Provides effortless connection between spawner and server. 
+			If disabled, you must manually connect spawning signals to this server's [code]spawn_bullet[/code] or [code]spawn_volley[/code] functions via script.
+		</member>
 	</members>
 	<signals>
 		<signal name="collision_detected">

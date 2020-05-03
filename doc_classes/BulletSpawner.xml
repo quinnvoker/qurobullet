@@ -116,12 +116,16 @@
 		<member name="preview_shot_color" type="Color" setter="set_preview_shot_color" getter="get_preview_shot_color" default="Color( 1, 1, 1, 1 )">
 			The color used to draw the shots in the preview of this spawner.
 		</member>
-		<member name="preview_visible_in_game" type="bool" setter="set_preview_visible_in_game" getter="get_preview_visible_in_game" default="true">
+		<member name="preview_visible_in_game" type="bool" setter="set_preview_visible_in_game" getter="get_preview_visible_in_game" default="false">
 			If [code]true[/code], this spawner's preview will be drawn in game.
 		</member>
 		<member name="radius" type="float" setter="set_radius" getter="get_radius" default="10.0">
 			The radius of the spawning circle. All bullets originate at some position on this circle, as determined by the arc settings.
 			At [code]0[/code], in aim modes other than [code]RADIAL[/code], only a single shot will fire and [code]arc_width[/code] will be useless, because all shots will have the same spawn point and direction.
+		</member>
+		<member name="relay_autoconnect" type="bool" setter="set_relay_autoconnect" getter="get_relay_autoconnect" default="true">
+			If [code]true[/code], this spawner will automatically connect to the [BulletServerRelay] singleton on ready. Provides effortless connection between spawner and server. 
+			If disabled, you must manually connect this spawner's [code]volley_fired[/code] signal to a server via script.
 		</member>
 		<member name="scatter_mode" type="int" setter="set_scatter_mode" getter="get_scatter_mode" enum="BulletSpawner.ScatterMode" default="0">
 			The mode used to scatter bullets when firing.
