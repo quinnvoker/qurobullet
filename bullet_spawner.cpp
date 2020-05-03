@@ -16,6 +16,7 @@ void BulletSpawner::_notification(int p_what) {
                 connect("volley_fired", relay, "on_volley_fired");
             }
             set_physics_process(true);
+            set_visible(preview_visible_in_game);
 		} break;
 
 		case NOTIFICATION_PHYSICS_PROCESS: {
@@ -43,7 +44,7 @@ void BulletSpawner::_notification(int p_what) {
         } break;
 
         case NOTIFICATION_DRAW: {
-            if (Engine::get_singleton()->is_editor_hint() || preview_draw_in_game){
+            if (is_visible_in_tree()){
                 _draw_preview(preview_color, preview_shot_color);
             }
         }
@@ -136,7 +137,7 @@ Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PoolIntArr
 
 void BulletSpawner::_volley_change_notify() {
     _volley_changed = true;
-    if(Engine::get_singleton()->is_editor_hint() || preview_draw_in_game){
+    if(is_visible_in_tree()){
         update();
     }
 }
@@ -403,20 +404,20 @@ PoolIntArray BulletSpawner::get_active_shot_indices() const{
     return active_shot_indices;
 }
 
-void BulletSpawner::set_preview_draw_in_game(bool p_enabled){
-    preview_draw_in_game = p_enabled;
-    if (preview_draw_in_game){
+void BulletSpawner::set_preview_visible_in_game(bool p_enabled){
+    preview_visible_in_game = p_enabled;
+    if (is_visible_in_tree()){
         update();
     }
 }
 
-bool BulletSpawner::get_preview_draw_in_game() const {
-    return preview_draw_in_game;
+bool BulletSpawner::get_preview_visible_in_game() const {
+    return preview_visible_in_game;
 }
 
 void BulletSpawner::set_preview_color(const Color &p_color){
     preview_color = p_color;
-    if (Engine::get_singleton()->is_editor_hint() || preview_draw_in_game) {
+    if (is_visible_in_tree()) {
         update();
     }
 }
@@ -427,7 +428,7 @@ Color BulletSpawner::get_preview_color() const {
 
 void BulletSpawner::set_preview_shot_color(const Color &p_color){
     preview_shot_color = p_color;
-    if (Engine::get_singleton()->is_editor_hint() || preview_draw_in_game) {
+    if (is_visible_in_tree()) {
         update();
     }
 }
@@ -438,7 +439,7 @@ Color BulletSpawner::get_preview_shot_color() const {
 
 void BulletSpawner::set_preview_extent(float p_length){
     preview_extent = p_length;
-    if (Engine::get_singleton()->is_editor_hint() || preview_draw_in_game) {
+    if (is_visible_in_tree()) {
         update();
     }
 }
@@ -449,7 +450,7 @@ float BulletSpawner::get_preview_extent() const {
 
 void BulletSpawner::set_preview_arc_points(int p_count){
     preview_arc_points = p_count;
-    if (Engine::get_singleton()->is_editor_hint() || preview_draw_in_game) {
+    if (is_visible_in_tree()) {
         update();
     }
 }
@@ -652,8 +653,8 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_active_shot_indices", "mode"), &BulletSpawner::set_active_shot_indices);
     ClassDB::bind_method(D_METHOD("get_active_shot_indices"), &BulletSpawner::get_active_shot_indices);
 
-    ClassDB::bind_method(D_METHOD("set_preview_draw_in_game", "mode"), &BulletSpawner::set_preview_draw_in_game);
-    ClassDB::bind_method(D_METHOD("get_preview_draw_in_game"), &BulletSpawner::get_preview_draw_in_game);
+    ClassDB::bind_method(D_METHOD("set_preview_visible_in_game", "mode"), &BulletSpawner::set_preview_visible_in_game);
+    ClassDB::bind_method(D_METHOD("get_preview_visible_in_game"), &BulletSpawner::get_preview_visible_in_game);
 
     ClassDB::bind_method(D_METHOD("set_preview_color", "mode"), &BulletSpawner::set_preview_color);
     ClassDB::bind_method(D_METHOD("get_preview_color"), &BulletSpawner::get_preview_color);
@@ -693,7 +694,7 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "pattern_mode", PROPERTY_HINT_ENUM, "All,Manual"), "set_pattern_mode", "get_pattern_mode");
     ADD_PROPERTY(PropertyInfo(Variant::POOL_INT_ARRAY, "active_shot_indices"), "set_active_shot_indices", "get_active_shot_indices");
     ADD_GROUP("Preview", "preview_");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview_draw_in_game"), "set_preview_draw_in_game", "get_preview_draw_in_game");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview_visible_in_game"), "set_preview_visible_in_game", "get_preview_visible_in_game");
     ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_color"), "set_preview_color", "get_preview_color");
     ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_shot_color"), "set_preview_shot_color", "get_preview_shot_color");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "preview_extent", PROPERTY_HINT_RANGE, "0,500,0.1,or_greater"), "set_preview_extent", "get_preview_extent");
@@ -730,7 +731,7 @@ BulletSpawner::BulletSpawner() {
     scatter_mode = NONE;
     scatter_range = 0.0;
     pattern_mode = ALL;
-    preview_draw_in_game = true;
+    preview_visible_in_game = false;
     preview_color = Color(0.0, 1.0, 0.0, 1.0); //green
     preview_shot_color = Color(1.0, 1.0, 1.0, 1.0);
     preview_arc_points = 32;

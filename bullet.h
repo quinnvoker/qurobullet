@@ -25,7 +25,7 @@ class Bullet : public Object {
 	RID ci_rid;
 
 	void _update_offset();
-	void _update_appearance();
+	void _update_appearance(const Ref<BulletType> &p_type = NULL);
 
 	protected:
 		static void _bind_methods();

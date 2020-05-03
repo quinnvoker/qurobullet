@@ -116,7 +116,7 @@
 		<member name="preview_shot_color" type="Color" setter="set_preview_shot_color" getter="get_preview_shot_color" default="Color( 1, 1, 1, 1 )">
 			The color used to draw the shots in the preview of this spawner.
 		</member>
-		<member name="preview_draw_in_game" type="bool" setter="set_preview_draw_in_game" getter="get_preview_draw_in_game" default="true">
+		<member name="preview_visible_in_game" type="bool" setter="set_preview_visible_in_game" getter="get_preview_visible_in_game" default="true">
 			If [code]true[/code], this spawner's preview will be drawn in game.
 		</member>
 		<member name="radius" type="float" setter="set_radius" getter="get_radius" default="10.0">

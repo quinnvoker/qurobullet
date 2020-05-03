@@ -82,8 +82,8 @@ float Bullet::get_time() const {
 }
 
 void Bullet::set_type(const Ref<BulletType> &p_type) {
+	_update_appearance(p_type);
     type = p_type;
-	_update_appearance();
 }
 
 Ref<BulletType> Bullet::get_type() const {
@@ -136,21 +136,22 @@ RID Bullet::get_ci_rid() const{
 	return ci_rid;
 }
 
-void Bullet::_update_appearance() {
-	VS::get_singleton()->canvas_item_clear(ci_rid);
-	if (type.is_valid()) {
+void Bullet::_update_appearance(const Ref<BulletType> &p_type) {
+	if (p_type.is_valid()) {
 		VisualServer *vs = VS::get_singleton();
-		if (type->get_texture().is_valid()) {
-			Ref<Texture> tex = type->get_texture();
-			vs->canvas_item_add_texture_rect(ci_rid, Rect2(-tex->get_size() / 2, tex->get_size()), tex->get_rid());
-		} else if (type->get_collision_shape().is_valid()) {
-			type->get_collision_shape()->draw(ci_rid, Color(1,1,1,1));
+		Ref<Texture> old_tex = type.is_valid() ? type->get_texture() : NULL;
+		Ref<Texture> new_tex = p_type->get_texture();
+		if (new_tex.is_null()) {
+			vs->canvas_item_clear(ci_rid);
+		} else if (old_tex != new_tex) {
+			vs->canvas_item_clear(ci_rid);
+			vs->canvas_item_add_texture_rect(ci_rid, Rect2(-new_tex->get_size() / 2, new_tex->get_size()), new_tex->get_rid());
 		}
-		if (type->get_material().is_valid()) {
-			vs->canvas_item_set_material(ci_rid, type->get_material()->get_rid());
+		if (p_type->get_material().is_valid()) {
+			vs->canvas_item_set_material(ci_rid, p_type->get_material()->get_rid());
 		}
-		vs->canvas_item_set_modulate(ci_rid, type->get_modulate());
-		vs->canvas_item_set_light_mask(ci_rid, type->get_light_mask());
+		vs->canvas_item_set_modulate(ci_rid, p_type->get_modulate());
+		vs->canvas_item_set_light_mask(ci_rid, p_type->get_light_mask());
 	}
 }
 
