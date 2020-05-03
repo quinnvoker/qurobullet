@@ -5,7 +5,7 @@
 	</brief_description>
 	<description>
 		Node2D which controls a set pool of [Bullet]s and reports their collisions.
-		A [BulletServer] in a scene will automatically connect to the [BulletServerRelay] singleton on ready, to receive spawning signals any active [BulletSpawner] nodes.
+		A [BulletServer] in a scene will automatically connect to the [BulletServerRelay] singleton on ready, to receive spawning signals from any active [BulletSpawner] nodes.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -42,7 +42,7 @@
 			</argument>
 			<description>
 				Spawns a volley of [Bullet]s of [code]type[/code], originating at [code]position[/code], with their relative spawn positions and directions determined by Spawns a [Bullet] of [code]type[/code] at [code]position[/code] from the bullet pool, firing in [code]volley[/code].
-				[code]volley[/code] is simply an [Array] of [Dictionary] items, each containing a "position" and "direction". You can build your own if you wish to spawn custom volleys.
+				[code]volley[/code] is an [Array] of [Dictionary] items, each containing a "position" and "direction". You can build your own if you wish to spawn custom volleys.
 			</description>
 		</method>
 	</methods>
@@ -55,9 +55,12 @@
 			The maximium lifetime of any [Bullet] managed by the server. Bullets older than this are automatically popped.
 		</member>
 		<member name="play_area_allow_incoming" type="bool" setter="set_play_area_allow_incoming" getter="get_play_area_allow_incoming" default="false">
+			If enabled, bullets outside of the play area will only be automatically popped if they are moving away from it.
+			Bullets outside of the play area will not detect collisions.
+			Calculation of whether bullet is "incoming" is approximate, and based on its angle to the center of the play area, so bullets that would enter a corner of the play area at an oblique angle may still be popped.
 		</member>
 		<member name="play_area_margin" type="float" setter="set_play_area_margin" getter="get_play_area_margin" default="0.0">
-			The distance bullets controlled by this server can travel outside the the current [Viewport] before being popped.
+			The distance, in pixels, bullets controlled by this server can travel outside the the current [Viewport] before being popped. Can be negative.
 		</member>
 		<member name="pop_on_collide" type="bool" setter="set_pop_on_collide" getter="get_pop_on_collide" default="true">
 			If [code]true[/code], bullets will be popped automatically if the server determines they have collided.
@@ -72,7 +75,7 @@
 			</argument>
 			<description>
 				Emitted when a bullet has collided with an area or body. Contains the [Bullet] which collided and an [Array] of the collision objects it collided with.
-				Note that [BulletServer] will report collisions even with unmonitorable collision objects, so long as they're on the same layer. If you need a target to be "hidden" from bullets, it must be
+				Note that [BulletServer] will report collisions even with unmonitorable collision shapes, so long as they're on the same layer.
 			</description>
 		</signal>
 	</signals>

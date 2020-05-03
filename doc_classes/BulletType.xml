@@ -44,7 +44,7 @@
 		</member>
 		<member name="lifetime" type="float" setter="set_lifetime" getter="get_lifetime" default="0.0">
 			The maximum lifetime of this type of bullet. Bullets that are active beyond this period are automatically popped.
-			If set to [code]0[/code], this bullet type's lifetime is unlimited.
+			If set to [code]0[/code], this type of bullet's lifetime is unlimited.
 			If the current [BulletServer] has an active [code]max_lifetime[/code] as well, the shorter of the two will be applied.
 		</member>
 		<member name="light_mask" type="int" setter="set_light_mask" getter="get_light_mask" default="1">

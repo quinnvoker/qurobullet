@@ -52,7 +52,7 @@ private:
     PatternMode pattern_mode;
     PoolIntArray active_shot_indices;
 
-    bool preview_visible_in_game;
+    bool preview_draw_in_game;
     Color preview_color;
     Color preview_shot_color;
     float preview_extent;
@@ -146,8 +146,8 @@ public:
     void set_active_shot_indices(const PoolIntArray &p_points);
     PoolIntArray get_active_shot_indices() const;
 
-    void set_preview_visible_in_game(bool p_enabled);
-    bool get_preview_visible_in_game() const;
+    void set_preview_draw_in_game(bool p_enabled);
+    bool get_preview_draw_in_game() const;
 
     void set_preview_color(const Color &p_color);
     Color get_preview_color() const;
