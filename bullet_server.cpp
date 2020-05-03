@@ -12,12 +12,14 @@ void BulletServer::_notification(int p_what) {
 			if (Engine::get_singleton()->is_editor_hint()) {
 				return;
 			}
+			if (relay_autoconnect) {
+				BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
+				relay->connect("bullet_spawn_requested", this, "spawn_bullet");
+				relay->connect("volley_spawn_requested", this, "spawn_volley");
+			}
 			set_process(true);
 			set_physics_process(true);
 			play_area = get_viewport_rect().grow(play_area_margin);
-			BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
-			relay->connect("bullet_spawn_requested", this, "spawn_bullet");
-			relay->connect("volley_spawn_requested", this, "spawn_volley");
 			_init_bullets();
 		} break;
 
@@ -193,6 +195,14 @@ bool BulletServer::get_play_area_allow_incoming() const {
 	return play_area_allow_incoming;
 }
 
+void BulletServer::set_relay_autoconnect(bool p_enabled) {
+	relay_autoconnect = p_enabled;
+}
+
+bool BulletServer::get_relay_autoconnect() const {
+	return relay_autoconnect;
+}
+
 void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
 	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "volley"), &BulletServer::spawn_volley);
@@ -214,11 +224,17 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_play_area_allow_incoming", "allow_incoming"), &BulletServer::set_play_area_allow_incoming);
 	ClassDB::bind_method(D_METHOD("get_play_area_allow_incoming"), &BulletServer::get_play_area_allow_incoming);
 
+	ClassDB::bind_method(D_METHOD("set_relay_autoconnect", "allow_incoming"), &BulletServer::set_relay_autoconnect);
+	ClassDB::bind_method(D_METHOD("get_relay_autoconnect"), &BulletServer::get_relay_autoconnect);
+
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size", PROPERTY_HINT_RANGE, "1,5000,1,or_greater"), "set_bullet_pool_size", "get_bullet_pool_size");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "max_lifetime", PROPERTY_HINT_RANGE, "0,300,0.01,or_greater"), "set_max_lifetime", "get_max_lifetime");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pop_on_collide"), "set_pop_on_collide", "get_pop_on_collide");
+	ADD_GROUP("Play Area", "play_area_");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "play_area_allow_incoming", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_allow_incoming", "get_play_area_allow_incoming");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "play_area_allow_incoming"), "set_play_area_allow_incoming", "get_play_area_allow_incoming");
+	ADD_GROUP("Relay", "relay_");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "relay_autoconnect"), "set_relay_autoconnect", "get_relay_autoconnect");
 
 	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders")));
 }
@@ -228,6 +244,7 @@ BulletServer::BulletServer() {
 	bullet_pool_size = 1500;
 	play_area_margin = 0;
 	pop_on_collide = true;
+	relay_autoconnect = true;
 }
 
 BulletServer::~BulletServer() {

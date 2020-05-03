@@ -117,7 +117,7 @@
 			The color used to draw the shots in the preview of this spawner.
 		</member>
 		<member name="preview_draw_in_game" type="bool" setter="set_preview_draw_in_game" getter="get_preview_draw_in_game" default="true">
-			If enabled, this spawner's preview will be drawn in game.
+			If [code]true[/code], this spawner's preview will be drawn in game.
 		</member>
 		<member name="radius" type="float" setter="set_radius" getter="get_radius" default="10.0">
 			The radius of the spawning circle. All bullets originate at some position on this circle, as determined by the arc settings.

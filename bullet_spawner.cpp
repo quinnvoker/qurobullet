@@ -10,9 +10,11 @@ void BulletSpawner::_notification(int p_what) {
                 set_physics_process(false);
                 return;
             }
-            BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
-            connect("bullet_fired", relay, "on_bullet_fired");
-            connect("volley_fired", relay, "on_volley_fired");
+            if (relay_autoconnect) {
+                BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
+                connect("bullet_fired", relay, "on_bullet_fired");
+                connect("volley_fired", relay, "on_volley_fired");
+            }
             set_physics_process(true);
 		} break;
 
@@ -456,6 +458,14 @@ int BulletSpawner::get_preview_arc_points() const {
     return preview_arc_points;
 }
 
+void BulletSpawner::set_relay_autoconnect(bool p_enabled) {
+	relay_autoconnect = p_enabled;
+}
+
+bool BulletSpawner::get_relay_autoconnect() const {
+	return relay_autoconnect;
+}
+
 //drawing functions
 void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot_col) { 
     Color dim_border_col = Color(p_border_col.r, p_border_col.g, p_border_col.b, 0.25);
@@ -657,6 +667,9 @@ void BulletSpawner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_preview_arc_points", "mode"), &BulletSpawner::set_preview_arc_points);
     ClassDB::bind_method(D_METHOD("get_preview_arc_points"), &BulletSpawner::get_preview_arc_points);
 
+    ClassDB::bind_method(D_METHOD("set_relay_autoconnect", "allow_incoming"), &BulletSpawner::set_relay_autoconnect);
+	ClassDB::bind_method(D_METHOD("get_relay_autoconnect"), &BulletSpawner::get_relay_autoconnect);
+
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,or_greater"), "set_interval_frames", "get_interval_frames");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
@@ -685,6 +698,8 @@ void BulletSpawner::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_shot_color"), "set_preview_shot_color", "get_preview_shot_color");
     ADD_PROPERTY(PropertyInfo(Variant::REAL, "preview_extent", PROPERTY_HINT_RANGE, "0,500,0.1,or_greater"), "set_preview_extent", "get_preview_extent");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "preview_arc_points", PROPERTY_HINT_RANGE, "2,128,or_greater"), "set_preview_arc_points", "get_preview_arc_points");
+    ADD_GROUP("Relay", "relay_");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "relay_autoconnect"), "set_relay_autoconnect", "get_relay_autoconnect");
 
     ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::ARRAY, "volley")));
 
@@ -720,6 +735,7 @@ BulletSpawner::BulletSpawner() {
     preview_shot_color = Color(1.0, 1.0, 1.0, 1.0);
     preview_arc_points = 32;
     preview_extent = 50;
+    relay_autoconnect = true;
 }
 
 BulletSpawner::~BulletSpawner() {

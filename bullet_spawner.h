@@ -58,6 +58,8 @@ private:
     float preview_extent;
     int preview_arc_points;
 
+    bool relay_autoconnect;
+
     Array _cached_volley;
     bool _volley_changed;
 
@@ -160,6 +162,9 @@ public:
 
     void set_preview_arc_points(int p_count);
     int get_preview_arc_points() const;
+
+    void set_relay_autoconnect(bool p_enabled);
+	bool get_relay_autoconnect() const;
 
     BulletSpawner();
     ~BulletSpawner();

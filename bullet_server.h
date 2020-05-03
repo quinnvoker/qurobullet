@@ -21,6 +21,8 @@ class BulletServer : public Node2D {
 	Rect2 play_area;
 	float play_area_margin;
 	bool play_area_allow_incoming;
+
+	bool relay_autoconnect;
 	
 	void _process_bullets(float delta);
 
@@ -55,6 +57,9 @@ public:
 
 	void set_play_area_allow_incoming(bool p_enabled);
 	bool get_play_area_allow_incoming() const;
+
+	void set_relay_autoconnect(bool p_enabled);
+	bool get_relay_autoconnect() const;
 };
 
 #endif
