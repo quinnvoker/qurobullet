@@ -12,8 +12,8 @@ void BulletSpawner::_notification(int p_what) {
             }
             if (relay_autoconnect) {
                 BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
-                connect("bullet_fired", relay, "on_bullet_fired");
-                connect("volley_fired", relay, "on_volley_fired");
+                connect("bullet_fired", relay, "spawn_bullet");
+                connect("volley_fired", relay, "spawn_volley");
             }
             set_physics_process(true);
             set_visible(preview_visible_in_game);
@@ -702,7 +702,7 @@ void BulletSpawner::_bind_methods() {
     ADD_GROUP("Relay", "relay_");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "relay_autoconnect"), "set_relay_autoconnect", "get_relay_autoconnect");
 
-    ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "position"), PropertyInfo(Variant::ARRAY, "volley")));
+    ADD_SIGNAL(MethodInfo("volley_fired", PropertyInfo(Variant::OBJECT, "type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), PropertyInfo(Variant::VECTOR2, "origin"), PropertyInfo(Variant::ARRAY, "volley")));
 
     BIND_ENUM_CONSTANT(ALL);
     BIND_ENUM_CONSTANT(MANUAL);

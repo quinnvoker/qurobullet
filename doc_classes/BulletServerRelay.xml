@@ -10,7 +10,7 @@
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="on_bullet_fired">
+		<method name="spawn_bullet">
 			<return type="void">
 			</return>
 			<argument index="0" name="type" type="BulletType">
@@ -20,16 +20,16 @@
 			<argument index="2" name="direction" type="Vector2">
 			</argument>
 			<description>
-				Emits [code]bullet_spawn_requested[/code] with the given parameterss.
+				Emits [code]bullet_spawn_requested[/code] with the given parameters.
 				Connect custom singular bullet spawn request signals here.
 			</description>
 		</method>
-		<method name="on_volley_fired">
+		<method name="spawn_volley">
 			<return type="void">
 			</return>
 			<argument index="0" name="type" type="BulletType">
 			</argument>
-			<argument index="1" name="position" type="Vector2">
+			<argument index="1" name="origin" type="Vector2">
 			</argument>
 			<argument index="2" name="shots" type="Array">
 			</argument>
@@ -55,7 +55,7 @@
 		<signal name="volley_spawn_requested">
 			<argument index="0" name="type" type="BulletType">
 			</argument>
-			<argument index="1" name="position" type="Vector2">
+			<argument index="1" name="origin" type="Vector2">
 			</argument>
 			<argument index="2" name="shots" type="Array">
 			</argument>

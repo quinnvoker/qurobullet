@@ -122,10 +122,10 @@ void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_
 	live_bullets.insert(0, bullet);
 }
 
-void BulletServer::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_volley) {
+void BulletServer::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_origin, const Array &p_volley) {
 	for (int i = 0; i < p_volley.size(); i++) {
 		Dictionary shot = p_volley[i];
-		spawn_bullet(p_type, p_position + shot["position"], shot["direction"]);
+		spawn_bullet(p_type, p_origin + shot["position"], shot["direction"]);
 		shot.empty();
 	}
 }

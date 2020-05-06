@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BulletServer" inherits="Node2D" version="3.2">
 	<brief_description>
-		Node2D which controls a set pool of [Bullet]s and reports their collisions.
+		Node2D which creates, spawns, and processes a set pool of [Bullet] objects and reports their collisions.
 	</brief_description>
 	<description>
-		Node2D which controls a set pool of [Bullet]s and reports their collisions.
-		A [BulletServer] in a scene will automatically connect to the [BulletServerRelay] singleton on ready, to receive spawning signals from any active [BulletSpawner] nodes.
+		Node2D which creates, spawns, and processes a set pool of [Bullet] objects and reports their collisions.
 	</description>
 	<tutorials>
 	</tutorials>
