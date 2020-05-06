@@ -35,6 +35,7 @@ void BulletServer::_notification(int p_what) {
 			if (Engine::get_singleton()->is_editor_hint()) {
 				return;
 			}
+			play_area = get_viewport_rect().grow(play_area_margin);
 			_process_bullets(get_physics_process_delta_time());
 		}
 		break;
@@ -178,9 +179,6 @@ bool BulletServer::get_pop_on_collide() const {
 
 void BulletServer::set_play_area_margin(float p_margin) {
 	play_area_margin = p_margin;
-	if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint())
-		return;
-	play_area = get_viewport_rect().grow(play_area_margin);
 }
 
 float BulletServer::get_play_area_margin() const {
@@ -240,7 +238,7 @@ void BulletServer::_bind_methods() {
 }
 
 BulletServer::BulletServer() {
-	set_physics_process(true);
+	set_as_toplevel(true);
 	bullet_pool_size = 1500;
 	play_area_margin = 0;
 	pop_on_collide = true;
