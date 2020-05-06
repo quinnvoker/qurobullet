@@ -29,6 +29,8 @@ class BulletServer : public Node2D {
 	void _init_bullets();
 	void _create_bullet();
 
+	void _update_play_area();
+
 protected:
 	static void _bind_methods();
 

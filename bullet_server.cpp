@@ -19,7 +19,7 @@ void BulletServer::_notification(int p_what) {
 			}
 			set_process(true);
 			set_physics_process(true);
-			play_area = get_viewport_rect().grow(play_area_margin);
+			_update_play_area();
 			_init_bullets();
 		} break;
 
@@ -35,7 +35,7 @@ void BulletServer::_notification(int p_what) {
 			if (Engine::get_singleton()->is_editor_hint()) {
 				return;
 			}
-			play_area = get_viewport_rect().grow(play_area_margin);
+			_update_play_area();
 			_process_bullets(get_physics_process_delta_time());
 		}
 		break;
@@ -104,6 +104,13 @@ void BulletServer::_create_bullet() {
 	Bullet *bullet = memnew(Bullet);
 	VS::get_singleton()->canvas_item_set_parent(bullet->get_ci_rid(), get_canvas_item());
 	dead_bullets.insert(0, bullet);
+}
+
+void BulletServer::_update_play_area(){
+	Transform2D canvas_transform = get_canvas_transform();
+	Vector2 view_pos = -canvas_transform.get_origin() / canvas_transform.get_scale();
+	Vector2 view_size = get_viewport_rect().size / canvas_transform.get_scale();
+	play_area = Rect2(view_pos, view_size).grow(play_area_margin);
 }
 
 void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
@@ -238,7 +245,6 @@ void BulletServer::_bind_methods() {
 }
 
 BulletServer::BulletServer() {
-	set_as_toplevel(true);
 	bullet_pool_size = 1500;
 	play_area_margin = 0;
 	pop_on_collide = true;
