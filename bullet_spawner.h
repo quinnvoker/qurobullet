@@ -168,6 +168,8 @@ public:
     void set_relay_autoconnect(bool p_enabled);
 	bool get_relay_autoconnect() const;
 
+    String get_configuration_warning() const;
+
     BulletSpawner();
     ~BulletSpawner();
 };

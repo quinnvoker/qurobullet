@@ -141,6 +141,9 @@ Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PoolIntArr
 
 void BulletSpawner::_volley_change_notify() {
     _volley_changed = true;
+#ifdef TOOLS_ENABLED
+	update_configuration_warning();
+#endif
     if(is_visible_in_tree()){
         update();
     }
@@ -590,6 +593,29 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
     if (property.name == "active_shot_indices" && pattern_mode != MANUAL){
         property.usage = PROPERTY_USAGE_NOEDITOR;
     }
+}
+
+String BulletSpawner::get_configuration_warning() const {
+    String warning;
+    if (bullet_type.is_null()){
+        warning += TTR("This BulletSpawner has no BulletType configured, and will not be able to fire bullets.\nConsider defining one in the BulletSpawner's properties.");
+    }
+    
+    if (pattern_mode == MANUAL && !Math::is_zero_approx(arc_offset)){
+        if (warning != String()){
+            warning += "\n\n";
+        }
+        warning += TTR("This BulletSpawner has a non-zero arc_offset while in MANUAL pattern mode. Shot indices may shift unexpectedly.\nConsider setting the pattern mode to ALL or the arc_offset to zero, depending on your needs.");
+    }
+
+    if (aim_mode != RADIAL && Math::is_zero_approx(radius)){
+        if (warning != String()){
+            warning += "\n\n";
+        }
+        warning += TTR("This BulletSpawner has a radius of zero, and aim_mode is not RADIAL.\nWith this configuration, only one bullet will be fired, regardless of bullet count and arc width, because all bullets would have identical flight paths.");
+    }
+
+    return warning;
 }
 
 //godot binds
