@@ -12,7 +12,6 @@ void BulletSpawner::_notification(int p_what) {
             }
             if (relay_autoconnect) {
                 BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
-                connect("bullet_fired", relay, "spawn_bullet");
                 connect("volley_fired", relay, "spawn_volley");
             }
             set_physics_process(true);
