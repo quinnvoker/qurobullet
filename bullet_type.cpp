@@ -323,7 +323,7 @@ BulletType::BulletType() {
 	scale = Vector2(1,1);
 	damage = 0.0;
 	collision_shape = Ref<Shape2D>();
-	collision_mask = 0;
+	collision_mask = 1;
 	collision_detect_bodies = true;
 	collision_detect_areas = true;
 	speed = 100.0;
