@@ -33,14 +33,14 @@ private:
     float _autofire_time;
     int interval_frames;
 
-    Ref<BulletType> bullet_type;
-
     int shot_count;
 
     float radius;
     float arc_width;
     float arc_rotation;
     float arc_offset;
+
+    Ref<BulletType> bullet_type;
 
     AimMode aim_mode;
     float aim_angle;
@@ -99,9 +99,6 @@ public:
     void set_interval_frames(int p_interval);
     int get_interval_frames() const;
 
-    void set_bullet_type(const Ref<BulletType> &p_type);
-    Ref<BulletType> get_bullet_type() const;
-
     void set_shot_count(int p_count);
     int get_shot_count() const;
 
@@ -122,6 +119,9 @@ public:
 
     void set_arc_offset(float p_offset);
     float get_arc_offset() const;
+
+    void set_bullet_type(const Ref<BulletType> &p_type);
+    Ref<BulletType> get_bullet_type() const;
 
     void set_aim_mode(AimMode p_mode);
     AimMode get_aim_mode() const;
