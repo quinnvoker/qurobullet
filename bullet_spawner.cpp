@@ -396,6 +396,7 @@ float BulletSpawner::get_scatter_range_degrees() const {
 
 void BulletSpawner::set_pattern_mode(PatternMode p_mode) {
     pattern_mode = p_mode;
+    _volley_change_notify();
     _change_notify();
 }
 
@@ -405,6 +406,7 @@ BulletSpawner::PatternMode BulletSpawner::get_pattern_mode() const {
 
 void BulletSpawner::set_active_shot_indices(const PoolIntArray &p_points) {
     active_shot_indices = p_points;
+    _volley_change_notify();
 }
 
 PoolIntArray BulletSpawner::get_active_shot_indices() const{
