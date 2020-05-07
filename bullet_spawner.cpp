@@ -55,8 +55,12 @@ void BulletSpawner::_notification(int p_what) {
 }
 
 //public functions
+bool BulletSpawner::can_fire() const {
+    return !Engine::get_singleton()->is_editor_hint() && is_inside_tree() && bullet_type.is_valid();
+}
+
 void BulletSpawner::fire() {
-    if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint()){
+    if (!can_fire()){
         return;
     }
     switch (pattern_mode)
@@ -75,7 +79,7 @@ void BulletSpawner::fire() {
 }
 
 void BulletSpawner::fire_shots(const PoolIntArray &p_shot_indices) {
-    if (!is_inside_tree() || Engine::get_singleton()->is_editor_hint()){
+    if (!can_fire()){
         return;
     }
     emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), _get_selected_shots(get_scattered_volley(), p_shot_indices));
@@ -590,6 +594,7 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const{
 
 //godot binds
 void BulletSpawner::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("can_fire"), &BulletSpawner::can_fire);
     ClassDB::bind_method(D_METHOD("fire"), &BulletSpawner::fire);
     ClassDB::bind_method(D_METHOD("fire_shots", "shot_indices"), &BulletSpawner::fire_shots);
 

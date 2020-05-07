@@ -85,6 +85,8 @@ protected:
     void _validate_property(PropertyInfo &property) const;
 
 public:
+    bool can_fire() const;
+
     void fire();
     void fire_shots(const PoolIntArray &p_shot_indices);
 
