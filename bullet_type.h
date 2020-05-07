@@ -26,6 +26,8 @@ private:
 	Ref<Material> material;
 	Ref<Shape2D> collision_shape;
 	int collision_mask;
+	bool collision_detect_bodies;
+	bool collision_detect_areas;
 	float linear_acceleration;
 	float curve_rate;
 	WaveType h_wave_type;
@@ -70,6 +72,12 @@ public:
 
 	void set_collision_mask(int p_mask);
 	int get_collision_mask() const;
+
+	void set_collision_detect_bodies(bool p_enabled);
+	bool get_collision_detect_bodies() const;
+
+	void set_collision_detect_areas(bool p_enabled);
+	bool get_collision_detect_areas() const;
 
 	void set_linear_acceleration(float p_acceleration);
 	float get_linear_acceleration() const;

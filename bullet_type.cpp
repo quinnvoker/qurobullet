@@ -72,6 +72,22 @@ int BulletType::get_collision_mask() const {
 	return collision_mask;
 }
 
+void BulletType::set_collision_detect_bodies(bool p_enabled) {
+	collision_detect_bodies = p_enabled;
+}
+
+bool BulletType::get_collision_detect_bodies() const {
+	return collision_detect_bodies;
+}
+
+void BulletType::set_collision_detect_areas(bool p_enabled) {
+	collision_detect_areas = p_enabled;
+}
+
+bool BulletType::get_collision_detect_areas() const {
+	return collision_detect_areas;
+}
+
 void BulletType::set_linear_acceleration(float p_acceleration) {
 	linear_acceleration = p_acceleration;
 }
@@ -215,6 +231,12 @@ void BulletType::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_collision_mask", "collision_mask"), &BulletType::set_collision_mask);
 	ClassDB::bind_method(D_METHOD("get_collision_mask"), &BulletType::get_collision_mask);
 
+	ClassDB::bind_method(D_METHOD("set_collision_detect_bodies", "enabled"), &BulletType::set_collision_detect_bodies);
+	ClassDB::bind_method(D_METHOD("get_collision_detect_bodies"), &BulletType::get_collision_detect_bodies);
+
+	ClassDB::bind_method(D_METHOD("set_collision_detect_areas", "enabled"), &BulletType::set_collision_detect_areas);
+	ClassDB::bind_method(D_METHOD("get_collision_detect_areas"), &BulletType::get_collision_detect_areas);
+
 	ClassDB::bind_method(D_METHOD("set_linear_acceleration", "linear_acceleration"), &BulletType::set_linear_acceleration);
 	ClassDB::bind_method(D_METHOD("get_linear_acceleration"), &BulletType::get_linear_acceleration);
 
@@ -265,6 +287,8 @@ void BulletType::_bind_methods() {
 	ADD_GROUP("Collision", "collision_");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "collision_shape", PROPERTY_HINT_RESOURCE_TYPE, "Shape2D"), "set_collision_shape", "get_collision_shape");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "collision_mask", PROPERTY_HINT_LAYERS_2D_PHYSICS), "set_collision_mask", "get_collision_mask");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "collision_detect_bodies"), "set_collision_detect_bodies", "get_collision_detect_bodies");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "collision_detect_areas"), "set_collision_detect_areas", "get_collision_detect_areas");
 	ADD_GROUP("Trajectory", "");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "linear_acceleration", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_linear_acceleration", "get_linear_acceleration");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate", PROPERTY_HINT_RANGE, "-360,360,0.01,or_lesser,or_greater"), "set_curve_rate", "get_curve_rate");
@@ -300,6 +324,8 @@ BulletType::BulletType() {
 	damage = 0.0;
 	collision_shape = Ref<Shape2D>();
 	collision_mask = 0;
+	collision_detect_bodies = true;
+	collision_detect_areas = true;
 	speed = 100.0;
 	linear_acceleration = 0.0;
 	curve_rate = 0.0;

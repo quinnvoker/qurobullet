@@ -65,7 +65,7 @@ void BulletServer::_process_bullets(float delta) {
 				continue;
 			}
 			Ref<BulletType> b_type = bullet->get_type();
-			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), true, true);
+			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), b_type->get_collision_detect_bodies(), b_type->get_collision_detect_areas());
 			if (collisions > 0){
 				Array colliders;
 				colliders.resize(collisions);
