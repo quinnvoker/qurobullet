@@ -237,9 +237,10 @@ int BulletSpawner::_get_unique_shot_count(bool p_include_scatter) const {
 //setters/getters
 void BulletSpawner::set_autofire(bool p_enabled) {
     autofire = p_enabled;
-    _autofire_time = 0;
     if (autofire){
-        fire();
+        _autofire_time = INFINITY;
+    } else {
+        _autofire_time = 0;
     }
 }
 
