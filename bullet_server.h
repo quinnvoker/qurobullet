@@ -10,6 +10,14 @@
 class BulletServer : public Node2D {
 	GDCLASS(BulletServer, Node2D);
 
+public:
+	enum AreaMode {
+		VIEWPORT,
+		MANUAL,
+		INFINITE,
+	};
+
+private:
 	int bullet_pool_size;
 
 	bool pop_on_collide;
@@ -18,7 +26,8 @@ class BulletServer : public Node2D {
 	Vector<Bullet *> live_bullets;
 	Vector<Bullet *> dead_bullets;
 
-	Rect2 play_area;
+	AreaMode play_area_mode;
+	Rect2 play_area_rect;
 	float play_area_margin;
 	bool play_area_allow_incoming;
 
@@ -33,8 +42,8 @@ class BulletServer : public Node2D {
 
 protected:
 	static void _bind_methods();
-
 	void _notification(int p_what);
+	void _validate_property(PropertyInfo &property) const;
 
 public:
 	BulletServer();
@@ -54,6 +63,12 @@ public:
 	void set_max_lifetime(float p_time);
 	float get_max_lifetime() const;
 
+	void set_play_area_mode(AreaMode p_mode);
+	AreaMode get_play_area_mode() const;
+
+	void set_play_area_rect(const Rect2 &p_rect);
+	Rect2 get_play_area_rect() const;
+
 	void set_play_area_margin(float p_margin);
 	float get_play_area_margin() const;
 
@@ -63,5 +78,7 @@ public:
 	void set_relay_autoconnect(bool p_enabled);
 	bool get_relay_autoconnect() const;
 };
+
+VARIANT_ENUM_CAST(BulletServer::AreaMode)
 
 #endif
