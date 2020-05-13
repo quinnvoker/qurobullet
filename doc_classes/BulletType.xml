@@ -12,7 +12,13 @@
 	<methods>
 	</methods>
 	<members>
-		<member name="collision_mask" type="int" setter="set_collision_mask" getter="get_collision_mask" default="0">
+		<member name="collision_detect_areas" type="bool" setter="set_collision_detect_areas" getter="get_collision_detect_areas" default="true">
+			If [code]true[/code], this type of bullet will scan for areas in its collision checks.
+		</member>
+		<member name="collision_detect_bodies" type="bool" setter="set_collision_detect_bodies" getter="get_collision_detect_bodies" default="true">
+			If [code]true[/code], this type of bullet will scan for bodies in its collision checks.
+		</member>
+		<member name="collision_mask" type="int" setter="set_collision_mask" getter="get_collision_mask" default="1">
 			The physics layers to scan for determining collision detection with this type of bullet.
 		</member>
 		<member name="collision_shape" type="Shape2D" setter="set_collision_shape" getter="get_collision_shape">
@@ -35,7 +41,7 @@
 			The amplitude of this type of bullet's parallel offset wave.
 			Measured in pixels, and determines the maximum distance this type of bullet will be displaced along its trajectory by the parallel offset wave.
 		</member>
-		<member name="h_wave_frequency" type="float" setter="set_h_wave_frequency" getter="get_h_wave_frequency" default="0.0">
+		<member name="h_wave_frequency" type="float" setter="set_h_wave_frequency" getter="get_h_wave_frequency" default="1.4013e-45">
 			The frequency of this type of bullet's parallel offset wave.
 			Measured in Hz, and determines how many times per second the parallel offset wave will repeat.
 		</member>
@@ -83,7 +89,7 @@
 			The frequency of this type of bullet's perpendicular offset wave.
 			Measured in Hz, and determines how many times per second the perpendicular offset wave will repeat.
 		</member>
-		<member name="v_wave_type" type="int" setter="set_v_wave_type" getter="get_v_wave_type" enum="BulletType.WaveType" default="1">
+		<member name="v_wave_type" type="int" setter="set_v_wave_type" getter="get_v_wave_type" enum="BulletType.WaveType" default="0">
 			The wave type applied to this type of bullet's perpendicular offset.
 		</member>
 	</members>

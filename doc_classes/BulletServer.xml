@@ -61,6 +61,15 @@
 		<member name="play_area_margin" type="float" setter="set_play_area_margin" getter="get_play_area_margin" default="0.0">
 			The distance, in pixels, bullets controlled by this server can travel outside the the current [Viewport] before being popped. Can be negative.
 		</member>
+		<member name="play_area_mode" type="int" setter="set_play_area_mode" getter="get_play_area_mode" enum="BulletServer.AreaMode" default="0">
+			The current mode used to define the play area's limits.
+			[code]VIEWPORT[/code] causes the play area to automatically follow the current viewport, with a configurable margin.
+			[code]MANUAL[/code] allows the play area's [Rect2] to be defined directly.
+			[code]INFINITE[/code] causes the play area to become infinite, and no bullet will pop based on location. Some other form of cleanup routine, such as [code]max_lifetime[/code], is recommended in this mode for best performance.
+		</member>
+		<member name="play_area_rect" type="Rect2" setter="set_play_area_rect" getter="get_play_area_rect" default="Rect2( 0, 0, 0, 0 )">
+			The [Rect2] definining the limits for active bullets in the server. Any bullet outside of this rectangle on physics process may be automatically popped, depending on configuration.
+		</member>
 		<member name="pop_on_collide" type="bool" setter="set_pop_on_collide" getter="get_pop_on_collide" default="true">
 			If [code]true[/code], bullets will be popped automatically if the server determines they have collided.
 			Disable if you're implementing more nuanced bullet behaviour on collision, like reflection.
@@ -83,5 +92,11 @@
 		</signal>
 	</signals>
 	<constants>
+		<constant name="VIEWPORT" value="0" enum="AreaMode">
+		</constant>
+		<constant name="MANUAL" value="1" enum="AreaMode">
+		</constant>
+		<constant name="INFINITE" value="2" enum="AreaMode">
+		</constant>
 	</constants>
 </class>

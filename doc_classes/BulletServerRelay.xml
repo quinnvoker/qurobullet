@@ -55,7 +55,7 @@
 		<signal name="volley_spawn_requested">
 			<argument index="0" name="type" type="BulletType">
 			</argument>
-			<argument index="1" name="origin" type="Vector2">
+			<argument index="1" name="position" type="Vector2">
 			</argument>
 			<argument index="2" name="shots" type="Array">
 			</argument>
