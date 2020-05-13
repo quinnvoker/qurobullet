@@ -11,6 +11,13 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="can_fire" qualifiers="const">
+			<return type="bool">
+			</return>
+			<description>
+				Returns [code]true[/code] if this spawner is not in the editor, in the scene tree, and has a valid [code]bullet_type[/code].
+			</description>
+		</method>
 		<method name="fire">
 			<return type="void">
 			</return>
