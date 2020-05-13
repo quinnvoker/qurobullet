@@ -165,9 +165,9 @@ Array BulletSpawner::_create_volley() const {
     bool spacing_maxed = false;
 
     float volley_start = -arc_extent;
-    if (spacing > 2 * M_PI / shot_count){
-        spacing = 2 * M_PI / shot_count;
-        volley_start = -M_PI + spacing / 2;
+    if (spacing > 2 * Math_PI / shot_count){
+        spacing = 2 * Math_PI / shot_count;
+        volley_start = -Math_PI + spacing / 2;
         spacing_maxed = true;
     }
 
@@ -178,7 +178,7 @@ Array BulletSpawner::_create_volley() const {
         }
         shot_angle += volley_start;
         Vector2 shot_normal = Vector2(1,0).rotated(shot_angle);
-        if (arc_width >= 2 * M_PI || Math::abs(shot_normal.angle()) <= arc_extent + 0.001){
+        if (arc_width >= 2 * Math_PI || Math::abs(shot_normal.angle()) <= arc_extent + 0.001){
             Dictionary shot;
             shot_normal = shot_normal.rotated(arc_rotation);
             shot["normal"] = shot_normal;
@@ -494,7 +494,7 @@ void BulletSpawner::_draw_preview(const Color &p_border_col, const Color &p_shot
             inner_points.set(i, inner_point);
             outer_points.set(i, outer_point);
         }
-        if (arc_width < 2* M_PI){
+        if (arc_width < 2* Math_PI){
             outer_points.insert(0, inner_points[0]);
             outer_points.push_back(inner_points[inner_points.size() - 1]);
             draw_polyline(inner_points, p_border_col);

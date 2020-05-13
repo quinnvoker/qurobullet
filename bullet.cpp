@@ -39,15 +39,15 @@ void Bullet::_update_offset(){
 	position -= _offset;
 	Vector2 h_offset;
 	Vector2 v_offset;
-	Vector2 perpendicular = direction.rotated(M_PI_2);
+	Vector2 perpendicular = direction.rotated(Math_PI / 2);
 	
 	switch (type->get_h_wave_type()){
 		case BulletType::WaveType::SIN:
-			h_offset = direction * type->get_h_wave_amplitude() * sin(time * 2 * M_PI * type->get_h_wave_frequency());
+			h_offset = direction * type->get_h_wave_amplitude() * sin(time * 2 * Math_PI * type->get_h_wave_frequency());
 			break;
 		
 		case BulletType::WaveType::COS:
-			h_offset = direction * type->get_h_wave_amplitude() * (cos(time * 2 * M_PI * type->get_h_wave_frequency()) - 1);
+			h_offset = direction * type->get_h_wave_amplitude() * (cos(time * 2 * Math_PI * type->get_h_wave_frequency()) - 1);
 			break;
 
 		default:
@@ -57,11 +57,11 @@ void Bullet::_update_offset(){
 
 	switch (type->get_v_wave_type()){
 		case BulletType::WaveType::SIN:
-			v_offset = perpendicular * type->get_v_wave_amplitude() * sin(time * 2 * M_PI * type->get_v_wave_frequency());
+			v_offset = perpendicular * type->get_v_wave_amplitude() * sin(time * 2 * Math_PI * type->get_v_wave_frequency());
 			break;
 		
 		case BulletType::WaveType::COS:
-			v_offset = perpendicular * type->get_v_wave_amplitude() * (cos(time * 2 * M_PI * type->get_v_wave_frequency()) - 1);
+			v_offset = perpendicular * type->get_v_wave_amplitude() * (cos(time * 2 * Math_PI * type->get_v_wave_frequency()) - 1);
 			break;
 
 		default:
