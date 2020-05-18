@@ -35,9 +35,7 @@ void BulletServer::_notification(int p_what) {
 			if (Engine::get_singleton()->is_editor_hint()) {
 				return;
 			}
-			if (play_area_mode == VIEWPORT){
 			_update_play_area();
-			}
 			_process_bullets(get_physics_process_delta_time());
 		}
 		break;
@@ -109,6 +107,9 @@ void BulletServer::_create_bullet() {
 }
 
 void BulletServer::_update_play_area(){
+	if (play_area_mode != VIEWPORT){
+		return;
+	}
 	Transform2D canvas_transform = get_canvas_transform();
 	Vector2 view_pos = -canvas_transform.get_origin() / canvas_transform.get_scale();
 	Vector2 view_size = get_viewport_rect().size / canvas_transform.get_scale();
