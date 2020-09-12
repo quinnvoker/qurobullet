@@ -3,6 +3,8 @@
 # qurobullet
 A powerful 2D projectile system module for Godot!
 
+[Check out the release demo video here!](https://www.youtube.com/watch?v=Pye_jmW4an0)
+
 **qurobullet** provides a means of easily creating and processing thousands of configurable 2D projectiles in Godot. It handles the heavy-lifting of spawning, movement, and collision detection for large groups of bullets, and gives the user tools for designing bullet-hell-worthy patterns!
 
 It consists of three main components: the `BulletServer` and `BulletSpawner` nodes, and the `BulletType` resource. 
