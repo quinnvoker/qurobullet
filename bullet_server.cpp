@@ -84,7 +84,7 @@ void BulletServer::_process_bullets(float delta) {
 				bullet->pop();
 			}
 		}
-		
+
 	}
 
 	for (int i = 0; i < bullet_indices_to_clear.size(); i++) {
@@ -144,6 +144,10 @@ void BulletServer::clear_bullets(){
 	for (int i = 0; i < live_bullets.size(); i++){
 		live_bullets[i]->pop();
 	}
+}
+
+int BulletServer::get_bullet_amount(){
+	return live_bullets.size();
 }
 
 void BulletServer::set_bullet_pool_size(int p_size) {
