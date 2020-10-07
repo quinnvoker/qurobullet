@@ -146,7 +146,7 @@ void BulletServer::clear_bullets(){
 	}
 }
 
-int BulletServer::get_bullet_amount(){
+int BulletServer::get_bullet_count(){
 	return live_bullets.size();
 }
 
@@ -247,7 +247,7 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn_bullet", "type", "position", "direction"), &BulletServer::spawn_bullet);
 	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "volley"), &BulletServer::spawn_volley);
 	ClassDB::bind_method(D_METHOD("clear_bullets"), &BulletServer::clear_bullets);
-
+	ClassDB::bind_method(D_METHOD("get_bullet_count"), &BulletServer::get_bullet_count);
 
 	ClassDB::bind_method(D_METHOD("set_bullet_pool_size", "size"), &BulletServer::set_bullet_pool_size);
 	ClassDB::bind_method(D_METHOD("get_bullet_pool_size"), &BulletServer::get_bullet_pool_size);

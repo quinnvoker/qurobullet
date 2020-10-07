@@ -53,7 +53,7 @@ public:
 	void spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_position, const Array &p_volley);
 
 	void clear_bullets();
-	int get_bullet_amount();
+	int get_bullet_count();
 
 	void set_bullet_pool_size(int p_size);
 	int get_bullet_pool_size() const;
