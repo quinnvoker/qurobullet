@@ -147,7 +147,7 @@ void BulletServer::clear_bullets(){
 }
 
 int BulletServer::get_bullet_amount(){
-		return live_bullets.size();
+	return live_bullets.size();
 }
 
 void BulletServer::set_bullet_pool_size(int p_size) {
