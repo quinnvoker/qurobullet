@@ -303,7 +303,7 @@ void BulletType::_bind_methods() {
 	ADD_GROUP("Transform", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_rotation", "get_rotation");
-    ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
 	ADD_GROUP("Custom Data", "");
 	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "custom_data"), "set_custom_data", "get_custom_data");
@@ -329,8 +329,13 @@ BulletType::BulletType() {
 	speed = 100.0;
 	linear_acceleration = 0.0;
 	curve_rate = 0.0;
+	v_wave_type = WaveType::NONE;
 	v_wave_amplitude = 0.0;
 	v_wave_frequency = 0.0;
+	rotation = 0.0;
+	h_wave_type = WaveType::NONE;
+	h_wave_amplitude = 0.0;
+	h_wave_frequency = 0.0;
 }
 
 BulletType::~BulletType() {
