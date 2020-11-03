@@ -3,7 +3,7 @@
 #include "bullet_server_relay.h"
 #include "core/engine.h"
 #include "scene/resources/world_2d.h"
-#include "servers/physics_2d_server.h"
+#include "servers/physics_server_2d.h"
 
 void BulletServer::_notification(int p_what) {
 	switch (p_what) {
@@ -14,8 +14,8 @@ void BulletServer::_notification(int p_what) {
 			}
 			if (relay_autoconnect) {
 				BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
-				relay->connect("bullet_spawn_requested", this, "spawn_bullet");
-				relay->connect("volley_spawn_requested", this, "spawn_volley");
+				relay->connect("bullet_spawn_requested", Callable(this, "spawn_bullet"));
+				relay->connect("volley_spawn_requested", Callable(this, "spawn_volley"));
 			}
 			set_process(true);
 			set_physics_process(true);
@@ -27,7 +27,7 @@ void BulletServer::_notification(int p_what) {
 			//update bullet canvasitems
 			for (int i = 0; i < live_bullets.size(); i++){
 				Bullet *bullet = live_bullets[i];
-				VS::get_singleton()->canvas_item_set_transform(bullet->get_ci_rid(), bullet->get_transform());
+				RS::get_singleton()->canvas_item_set_transform(bullet->get_ci_rid(), bullet->get_transform());
 			}
 		} break;
 
@@ -47,13 +47,13 @@ void BulletServer::_notification(int p_what) {
 
 void BulletServer::_process_bullets(float delta) {
 	Vector<int> bullet_indices_to_clear;
-	Physics2DDirectSpaceState *space_state = get_world_2d()->get_direct_space_state();
-	Vector<Physics2DDirectSpaceState::ShapeResult> results;
+	PhysicsDirectSpaceState2D *space_state = get_world_2d()->get_direct_space_state();
+	Vector<PhysicsDirectSpaceState2D::ShapeResult> results;
 	results.resize(32);
 
 	for (int i = 0; i < live_bullets.size(); i++) {
 		Bullet *bullet = live_bullets[i];
-		VS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), i);
+		RS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), i);
 
 		if (bullet->is_popped()){
 			bullet_indices_to_clear.push_back(i);
@@ -102,7 +102,7 @@ void BulletServer::_init_bullets() {
 
 void BulletServer::_create_bullet() {
 	Bullet *bullet = memnew(Bullet);
-	VS::get_singleton()->canvas_item_set_parent(bullet->get_ci_rid(), get_canvas_item());
+	RS::get_singleton()->canvas_item_set_parent(bullet->get_ci_rid(), get_canvas_item());
 	dead_bullets.insert(0, bullet);
 }
 
@@ -128,7 +128,7 @@ void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_
 	}
 
 	bullet->spawn(p_type, p_position, p_direction);
-	VS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), 0);
+	RS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), 0);
 	live_bullets.insert(0, bullet);
 }
 
@@ -182,7 +182,7 @@ void BulletServer::set_bullet_pool_size(int p_size) {
 			bullet = live_bullets.get(live_bullets.size() - 1);
 			live_bullets.remove(live_bullets.size() - 1);
 		}
-		VS::get_singleton()->free(bullet->get_ci_rid());
+		RS::get_singleton()->free(bullet->get_ci_rid());
 		memdelete(bullet);
 	}
 }
@@ -293,12 +293,12 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_relay_autoconnect"), &BulletServer::get_relay_autoconnect);
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size", PROPERTY_HINT_RANGE, "1,5000,1,or_greater"), "set_bullet_pool_size", "get_bullet_pool_size");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "max_lifetime", PROPERTY_HINT_RANGE, "0,300,0.01,or_greater"), "set_max_lifetime", "get_max_lifetime");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_lifetime", PROPERTY_HINT_RANGE, "0,300,0.01,or_greater"), "set_max_lifetime", "get_max_lifetime");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pop_on_collide"), "set_pop_on_collide", "get_pop_on_collide");
 	ADD_GROUP("Play Area", "play_area_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "play_area_mode", PROPERTY_HINT_ENUM, "Viewport,Manual,Infinite"), "set_play_area_mode", "get_play_area_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::RECT2, "play_area_rect"), "set_play_area_rect", "get_play_area_rect");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "play_area_margin", PROPERTY_HINT_RANGE, "0,300,0.01,or_lesser,or_greater"), "set_play_area_margin", "get_play_area_margin");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "play_area_allow_incoming"), "set_play_area_allow_incoming", "get_play_area_allow_incoming");
 	ADD_GROUP("Relay", "relay_");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "relay_autoconnect"), "set_relay_autoconnect", "get_relay_autoconnect");

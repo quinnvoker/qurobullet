@@ -12,7 +12,7 @@ void BulletSpawner::_notification(int p_what) {
       }
       if (relay_autoconnect) {
         BulletServerRelay *relay = Object::cast_to<BulletServerRelay>(Engine::get_singleton()->get_singleton_object("BulletServerRelay"));
-        connect("volley_fired", relay, "spawn_volley");
+        connect("volley_fired", Callable(relay, "spawn_volley"));
       }
       set_physics_process(true);
       set_visible(preview_visible_in_game);
@@ -77,7 +77,7 @@ void BulletSpawner::fire() {
   }
 }
 
-void BulletSpawner::fire_shots(const PoolIntArray &p_shot_indices) {
+void BulletSpawner::fire_shots(const PackedInt32Array &p_shot_indices) {
   if (!can_fire()){
     return;
   }
@@ -125,7 +125,7 @@ Array BulletSpawner::get_scattered_volley() {
 }
 
 //private functions
-Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PoolIntArray &p_shot_indices) const {
+Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PackedInt32Array &p_shot_indices) const {
   Array selected_shots;
   Dictionary used_indices;
   for (int i = 0; i < p_shot_indices.size(); i++){
@@ -404,12 +404,12 @@ BulletSpawner::PatternMode BulletSpawner::get_pattern_mode() const {
   return pattern_mode;
 }
 
-void BulletSpawner::set_active_shot_indices(const PoolIntArray &p_points) {
+void BulletSpawner::set_active_shot_indices(const PackedInt32Array &p_points) {
   active_shot_indices = p_points;
   _volley_change_notify();
 }
 
-PoolIntArray BulletSpawner::get_active_shot_indices() const{
+PackedInt32Array BulletSpawner::get_active_shot_indices() const{
   return active_shot_indices;
 }
 
@@ -707,30 +707,30 @@ void BulletSpawner::_bind_methods() {
   ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autofire"), "set_autofire", "get_autofire");
   ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,or_greater"), "set_interval_frames", "get_interval_frames");
   ADD_PROPERTY(PropertyInfo(Variant::INT, "shot_count", PROPERTY_HINT_RANGE, "1,100,or_greater"), "set_shot_count", "get_shot_count");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "radius", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_radius", "get_radius");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_width", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_width", "get_arc_width");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_width_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_width_degrees", "get_arc_width_degrees");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_rotation", "get_arc_rotation");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_rotation_degrees", "get_arc_rotation_degrees");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "arc_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_arc_offset", "get_arc_offset");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "radius", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_radius", "get_radius");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_width", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_width", "get_arc_width");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_width_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_width_degrees", "get_arc_width_degrees");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_rotation", "get_arc_rotation");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_rotation_degrees", "get_arc_rotation_degrees");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_arc_offset", "get_arc_offset");
   ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
   ADD_GROUP("Aim", "aim_");
   ADD_PROPERTY(PropertyInfo(Variant::INT, "aim_mode", PROPERTY_HINT_ENUM, "Radial,Uniform,Relative Target,Global Target"), "set_aim_mode", "get_aim_mode");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "aim_angle", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_aim_angle", "get_aim_angle");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "aim_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_aim_angle_degrees", "get_aim_angle_degrees");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "aim_angle", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_aim_angle", "get_aim_angle");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "aim_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_aim_angle_degrees", "get_aim_angle_degrees");
   ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "aim_target_position"), "set_aim_target_position", "get_aim_target_position");
   ADD_GROUP("Scatter", "scatter_");
   ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_mode", PROPERTY_HINT_ENUM, "None,Bullet,Volley"), "set_scatter_mode", "get_scatter_mode");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_scatter_range", "get_scatter_range");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scatter_range", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_scatter_range", "get_scatter_range");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
   ADD_GROUP("Pattern", "");
   ADD_PROPERTY(PropertyInfo(Variant::INT, "pattern_mode", PROPERTY_HINT_ENUM, "All,Manual"), "set_pattern_mode", "get_pattern_mode");
-  ADD_PROPERTY(PropertyInfo(Variant::POOL_INT_ARRAY, "active_shot_indices"), "set_active_shot_indices", "get_active_shot_indices");
+  ADD_PROPERTY(PropertyInfo(Variant::PACKED_INT32_ARRAY, "active_shot_indices"), "set_active_shot_indices", "get_active_shot_indices");
   ADD_GROUP("Preview", "preview_");
   ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview_visible_in_game"), "set_preview_visible_in_game", "get_preview_visible_in_game");
   ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_color"), "set_preview_color", "get_preview_color");
   ADD_PROPERTY(PropertyInfo(Variant::COLOR, "preview_shot_color"), "set_preview_shot_color", "get_preview_shot_color");
-  ADD_PROPERTY(PropertyInfo(Variant::REAL, "preview_extent", PROPERTY_HINT_RANGE, "0,500,0.1,or_greater"), "set_preview_extent", "get_preview_extent");
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "preview_extent", PROPERTY_HINT_RANGE, "0,500,0.1,or_greater"), "set_preview_extent", "get_preview_extent");
   ADD_PROPERTY(PropertyInfo(Variant::INT, "preview_arc_points", PROPERTY_HINT_RANGE, "2,128,or_greater"), "set_preview_arc_points", "get_preview_arc_points");
   ADD_GROUP("Relay", "relay_");
   ADD_PROPERTY(PropertyInfo(Variant::BOOL, "relay_autoconnect"), "set_relay_autoconnect", "get_relay_autoconnect");

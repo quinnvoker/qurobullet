@@ -50,7 +50,7 @@ private:
   float scatter_range;
 
   PatternMode pattern_mode;
-  PoolIntArray active_shot_indices;
+  PackedInt32Array active_shot_indices;
 
   bool preview_visible_in_game;
   Color preview_color;
@@ -65,7 +65,7 @@ private:
 
   Transform2D _previous_transform;
 
-  Array _get_selected_shots(const Array &p_volley, const PoolIntArray &p_shot_indices) const;
+  Array _get_selected_shots(const Array &p_volley, const PackedInt32Array &p_shot_indices) const;
 
   void _volley_change_notify();
 
@@ -88,7 +88,7 @@ public:
   bool can_fire() const;
 
   void fire();
-  void fire_shots(const PoolIntArray &p_shot_indices);
+  void fire_shots(const PackedInt32Array &p_shot_indices);
 
   Array get_volley();
   Array get_scattered_volley();
@@ -147,8 +147,8 @@ public:
   void set_pattern_mode(PatternMode p_mode);
   PatternMode get_pattern_mode() const;
 
-  void set_active_shot_indices(const PoolIntArray &p_points);
-  PoolIntArray get_active_shot_indices() const;
+  void set_active_shot_indices(const PackedInt32Array &p_points);
+  PackedInt32Array get_active_shot_indices() const;
 
   void set_preview_visible_in_game(bool p_enabled);
   bool get_preview_visible_in_game() const;
