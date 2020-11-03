@@ -16,6 +16,28 @@
 				Pops all active bullets. Used to clear the board.
 			</description>
 		</method>
+		<method name="get_live_bullets">
+			<return type="Array">
+			</return>
+			<description>
+				Returns an array containing all currently live [Bullet] objects. 
+				Returned array is a copy of the server's internal live bullet array. Modifying this array will have no effect on BulletServer's internal arrays, but modifications made to the [Bullet]s themselves will take effect in the game.
+			</description>
+		</method>
+		<method name="get_live_bullet_count">
+			<return type="int">
+			</return>
+			<description>
+				Returns the number of bullets that are currently live.
+			</description>
+		</method>
+		<method name="get_live_bullet_positions">
+			<return type="Array">
+			</return>
+			<description>
+				Returns an array containing the Vector2 positions of all currently live bullets.
+			</description>
+		</method>
 		<method name="spawn_bullet">
 			<return type="void">
 			</return>
