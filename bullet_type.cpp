@@ -309,8 +309,8 @@ void BulletType::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "custom_data"), "set_custom_data", "get_custom_data");
 
 	BIND_ENUM_CONSTANT(NONE);
-    BIND_ENUM_CONSTANT(SIN);
-    BIND_ENUM_CONSTANT(COS);
+  BIND_ENUM_CONSTANT(SIN);
+  BIND_ENUM_CONSTANT(COS);
 }
 
 BulletType::BulletType() {

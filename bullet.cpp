@@ -3,16 +3,16 @@
 void Bullet::spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction) {
 	time = 0.0;
 	rotation = 0.0;
-    _popped = false;
+  _popped = false;
 	_offset = Vector2(0, 0);
-    set_type(p_type);
-    set_position(p_position);
-    set_direction(p_direction);
+  set_type(p_type);
+  set_position(p_position);
+  set_direction(p_direction);
 	VS::get_singleton()->canvas_item_set_visible(ci_rid, true);
 }
 
 void Bullet::update(float delta) {
-    float current_speed = type->get_speed() + type->get_linear_acceleration() * time;
+  float current_speed = type->get_speed() + type->get_linear_acceleration() * time;
 	set_direction(direction.rotated(Math::deg2rad(type->get_curve_rate()) * delta));
 	position += direction * current_speed * delta;
 	_update_offset();
@@ -23,12 +23,12 @@ void Bullet::update(float delta) {
 }
 
 void Bullet::pop() {
-    _popped = true;
+  _popped = true;
 	VS::get_singleton()->canvas_item_set_visible(ci_rid, false);
 }
 
 bool Bullet::is_popped() {
-    return _popped;
+  return _popped;
 }
 
 bool Bullet::can_collide() {
@@ -40,12 +40,12 @@ void Bullet::_update_offset(){
 	Vector2 h_offset;
 	Vector2 v_offset;
 	Vector2 perpendicular = direction.rotated(Math_PI / 2);
-	
+
 	switch (type->get_h_wave_type()){
 		case BulletType::WaveType::SIN:
 			h_offset = direction * type->get_h_wave_amplitude() * sin(time * 2 * Math_PI * type->get_h_wave_frequency());
 			break;
-		
+
 		case BulletType::WaveType::COS:
 			h_offset = direction * type->get_h_wave_amplitude() * (cos(time * 2 * Math_PI * type->get_h_wave_frequency()) - 1);
 			break;
@@ -59,7 +59,7 @@ void Bullet::_update_offset(){
 		case BulletType::WaveType::SIN:
 			v_offset = perpendicular * type->get_v_wave_amplitude() * sin(time * 2 * Math_PI * type->get_v_wave_frequency());
 			break;
-		
+
 		case BulletType::WaveType::COS:
 			v_offset = perpendicular * type->get_v_wave_amplitude() * (cos(time * 2 * Math_PI * type->get_v_wave_frequency()) - 1);
 			break;
@@ -74,47 +74,47 @@ void Bullet::_update_offset(){
 }
 
 void Bullet::set_time(float p_time) {
-	time = p_time;    
+	time = p_time;
 }
 
 float Bullet::get_time() const {
-    return time;
+  return time;
 }
 
 void Bullet::set_type(const Ref<BulletType> &p_type) {
 	_update_appearance(p_type);
-    type = p_type;
+  type = p_type;
 }
 
 Ref<BulletType> Bullet::get_type() const {
-    return type;
+  return type;
 }
 
 void Bullet::set_direction(const Vector2 &p_direction) {
-    direction = p_direction;
+  direction = p_direction;
 	if (type.is_valid() && type->get_face_direction()){
 		rotation = p_direction.angle();
 	}
 }
 
 Vector2 Bullet::get_direction() const {
-    return direction;
+  return direction;
 }
 
 void Bullet::set_position(const Vector2 &p_position) {
-    position = p_position;
+  position = p_position;
 }
 
 Vector2 Bullet::get_position() const {
-    return position;
+  return position;
 }
 
 void Bullet::set_rotation(float p_radians) {
-    rotation = 0.0;
+  rotation = 0.0;
 }
 
 float Bullet::get_rotation() const {
-    return rotation;
+  return rotation;
 }
 
 Transform2D Bullet::get_transform(){
@@ -164,7 +164,7 @@ void Bullet::_bind_methods(){
 	ClassDB::bind_method(D_METHOD("is_popped"), &Bullet::is_popped);
 
 	ClassDB::bind_method(D_METHOD("can_collide"), &Bullet::can_collide);
-	
+
 	ClassDB::bind_method(D_METHOD("get_time"), &Bullet::get_time);
 
 	ClassDB::bind_method(D_METHOD("set_type", "type"), &Bullet::set_type);
@@ -186,7 +186,7 @@ void Bullet::_bind_methods(){
 
 Bullet::Bullet() {
 	ci_rid = VS::get_singleton()->canvas_item_create();
-    direction = Vector2(0,0);
+  direction = Vector2(0,0);
 }
 
 Bullet::~Bullet(){
