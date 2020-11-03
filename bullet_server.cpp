@@ -158,6 +158,14 @@ Array BulletServer::get_live_bullets() {
 	return bullets;
 }
 
+Array BulletServer::get_live_bullet_positions() {
+	Array bullet_positions;
+	for (int i = 0; i < live_bullets.size(); i++) {
+		bullet_positions.push_back(live_bullets[i]->get_position());
+	}
+	return bullet_positions;
+}
+
 void BulletServer::set_bullet_pool_size(int p_size) {
 	if (p_size > -1)
 		bullet_pool_size = p_size;
@@ -256,7 +264,9 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("spawn_volley", "type", "position", "volley"), &BulletServer::spawn_volley);
 	ClassDB::bind_method(D_METHOD("clear_bullets"), &BulletServer::clear_bullets);
 	ClassDB::bind_method(D_METHOD("get_bullet_count"), &BulletServer::get_bullet_count);
+
 	ClassDB::bind_method(D_METHOD("get_live_bullets"), &BulletServer::get_live_bullets);
+	ClassDB::bind_method(D_METHOD("get_live_bullet_positions"), &BulletServer::get_live_bullet_positions);
 
 	ClassDB::bind_method(D_METHOD("set_bullet_pool_size", "size"), &BulletServer::set_bullet_pool_size);
 	ClassDB::bind_method(D_METHOD("get_bullet_pool_size"), &BulletServer::get_bullet_pool_size);
