@@ -287,8 +287,8 @@ void BulletServer::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders")));
 
 	BIND_ENUM_CONSTANT(VIEWPORT);
-    BIND_ENUM_CONSTANT(MANUAL);
-    BIND_ENUM_CONSTANT(INFINITE);
+  BIND_ENUM_CONSTANT(MANUAL);
+  BIND_ENUM_CONSTANT(INFINITE);
 }
 
 BulletServer::BulletServer() {
