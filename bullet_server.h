@@ -54,6 +54,7 @@ public:
 
 	void clear_bullets();
 	int get_bullet_count();
+	Array get_live_bullets();
 
 	void set_bullet_pool_size(int p_size);
 	int get_bullet_pool_size() const;
