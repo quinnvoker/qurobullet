@@ -32,11 +32,11 @@ void BulletSpawner::_notification(int p_what) {
 
 		case NOTIFICATION_TRANSFORM_CHANGED: {
 			if (aim_mode == TARGET_GLOBAL && get_global_transform().get_origin() != _previous_transform.get_origin()) {
-				_volley_change_notify();
+				_notify_volley_changed();
 			} else if (get_global_transform().get_rotation() != _previous_transform.get_rotation()) {
-				_volley_change_notify();
+				_notify_volley_changed();
 			} else if (get_global_transform().get_scale() != _previous_transform.get_scale()) {
-				_volley_change_notify();
+				_notify_volley_changed();
 			}
 			_previous_transform = get_global_transform();
 		} break;
@@ -135,7 +135,7 @@ Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PackedInt3
 	return selected_shots;
 }
 
-void BulletSpawner::_volley_change_notify() {
+void BulletSpawner::_notify_volley_changed() {
 	_volley_changed = true;
 #ifdef TOOLS_ENABLED
 	update_configuration_warning();
@@ -255,7 +255,7 @@ int BulletSpawner::get_interval_frames() const {
 
 void BulletSpawner::set_bullet_type(const Ref<BulletType> &p_type) {
 	bullet_type = p_type;
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 Ref<BulletType> BulletSpawner::get_bullet_type() const {
@@ -264,7 +264,7 @@ Ref<BulletType> BulletSpawner::get_bullet_type() const {
 
 void BulletSpawner::set_shot_count(int p_count) {
 	shot_count = p_count;
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 int BulletSpawner::get_shot_count() const {
@@ -273,7 +273,7 @@ int BulletSpawner::get_shot_count() const {
 
 void BulletSpawner::set_radius(float p_radius) {
 	radius = p_radius;
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 float BulletSpawner::get_radius() const {
@@ -282,7 +282,7 @@ float BulletSpawner::get_radius() const {
 
 void BulletSpawner::set_arc_width(float p_radians) {
 	arc_width = p_radians;
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 float BulletSpawner::get_arc_width() const {
@@ -291,7 +291,7 @@ float BulletSpawner::get_arc_width() const {
 
 void BulletSpawner::set_arc_width_degrees(float p_degrees) {
 	arc_width = Math::deg2rad(p_degrees);
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 float BulletSpawner::get_arc_width_degrees() const {
@@ -300,7 +300,7 @@ float BulletSpawner::get_arc_width_degrees() const {
 
 void BulletSpawner::set_arc_rotation(float p_radians) {
 	arc_rotation = p_radians;
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 float BulletSpawner::get_arc_rotation() const {
@@ -309,7 +309,7 @@ float BulletSpawner::get_arc_rotation() const {
 
 void BulletSpawner::set_arc_rotation_degrees(float p_degrees) {
 	arc_rotation = Math::deg2rad(p_degrees);
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 float BulletSpawner::get_arc_rotation_degrees() const {
@@ -318,7 +318,7 @@ float BulletSpawner::get_arc_rotation_degrees() const {
 
 void BulletSpawner::set_arc_offset(float p_offset) {
 	arc_offset = p_offset;
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 float BulletSpawner::get_arc_offset() const {
@@ -327,7 +327,7 @@ float BulletSpawner::get_arc_offset() const {
 
 void BulletSpawner::set_aim_mode(AimMode p_mode) {
 	aim_mode = p_mode;
-	_volley_change_notify();
+	_notify_volley_changed();
 	notify_property_list_changed();
 }
 
@@ -338,7 +338,7 @@ BulletSpawner::AimMode BulletSpawner::get_aim_mode() const {
 void BulletSpawner::set_aim_angle(float p_radians) {
 	aim_angle = p_radians;
 	if (aim_mode == RADIAL || aim_mode == UNIFORM) {
-		_volley_change_notify();
+		_notify_volley_changed();
 	}
 }
 
@@ -357,7 +357,7 @@ float BulletSpawner::get_aim_angle_degrees() const {
 void BulletSpawner::set_aim_target_position(const Vector2 &p_position) {
 	aim_target_position = p_position;
 	if (aim_mode == TARGET_RELATIVE || aim_mode == TARGET_GLOBAL) {
-		_volley_change_notify();
+		_notify_volley_changed();
 	}
 }
 
@@ -392,7 +392,7 @@ float BulletSpawner::get_scatter_range_degrees() const {
 
 void BulletSpawner::set_pattern_mode(PatternMode p_mode) {
 	pattern_mode = p_mode;
-	_volley_change_notify();
+	_notify_volley_changed();
 	notify_property_list_changed();
 }
 
@@ -402,7 +402,7 @@ BulletSpawner::PatternMode BulletSpawner::get_pattern_mode() const {
 
 void BulletSpawner::set_active_shot_indices(const PackedInt32Array &p_points) {
 	active_shot_indices = p_points;
-	_volley_change_notify();
+	_notify_volley_changed();
 }
 
 PackedInt32Array BulletSpawner::get_active_shot_indices() const {
