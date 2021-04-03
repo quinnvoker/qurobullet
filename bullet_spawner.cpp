@@ -328,7 +328,7 @@ float BulletSpawner::get_arc_offset() const {
 void BulletSpawner::set_aim_mode(AimMode p_mode) {
 	aim_mode = p_mode;
 	_volley_change_notify();
-	// _change_notify();
+	notify_property_list_changed();
 }
 
 BulletSpawner::AimMode BulletSpawner::get_aim_mode() const {
@@ -367,7 +367,7 @@ Vector2 BulletSpawner::get_aim_target_position() const {
 
 void BulletSpawner::set_scatter_mode(ScatterMode p_mode) {
 	scatter_mode = p_mode;
-	// _change_notify();
+	notify_property_list_changed();
 }
 
 BulletSpawner::ScatterMode BulletSpawner::get_scatter_mode() const {
@@ -393,7 +393,7 @@ float BulletSpawner::get_scatter_range_degrees() const {
 void BulletSpawner::set_pattern_mode(PatternMode p_mode) {
 	pattern_mode = p_mode;
 	_volley_change_notify();
-	// _change_notify();
+	notify_property_list_changed();
 }
 
 BulletSpawner::PatternMode BulletSpawner::get_pattern_mode() const {

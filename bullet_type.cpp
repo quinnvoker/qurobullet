@@ -106,7 +106,7 @@ float BulletType::get_curve_rate() const {
 
 void BulletType::set_h_wave_type(WaveType p_type) {
 	h_wave_type = p_type;
-	// _change_notify();
+	notify_property_list_changed();
 }
 
 BulletType::WaveType BulletType::get_h_wave_type() const {
@@ -131,7 +131,7 @@ float BulletType::get_h_wave_frequency() const {
 
 void BulletType::set_v_wave_type(WaveType p_type) {
 	v_wave_type = p_type;
-	// _change_notify();
+	notify_property_list_changed();
 }
 
 BulletType::WaveType BulletType::get_v_wave_type() const {

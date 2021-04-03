@@ -206,7 +206,7 @@ bool BulletServer::get_pop_on_collide() const {
 
 void BulletServer::set_play_area_mode(AreaMode p_mode) {
 	play_area_mode = p_mode;
-	// _change_notify();
+	notify_property_list_changed();
 }
 
 BulletServer::AreaMode BulletServer::get_play_area_mode() const {
