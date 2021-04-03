@@ -7,8 +7,8 @@
 #include "bullet_server.h"
 #include "bullet_server_relay.h"
 #include "bullet_spawner.h"
-#include "core/class_db.h"
-#include "core/engine.h"
+#include "core/object/class_db.h"
+#include "core/config/engine.h"
 
 void register_qurobullet_types() {
 	ClassDB::register_class<Bullet>();

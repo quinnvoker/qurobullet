@@ -1,7 +1,7 @@
 #ifndef BULLETTYPE_H
 #define BULLETTYPE_H
 
-#include "core/resource.h"
+#include "core/io/resource.h"
 #include "scene/resources/material.h"
 #include "scene/resources/shape_2d.h"
 #include "scene/resources/texture.h"

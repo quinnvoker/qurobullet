@@ -106,7 +106,7 @@ float BulletType::get_curve_rate() const {
 
 void BulletType::set_h_wave_type(WaveType p_type) {
 	h_wave_type = p_type;
-	_change_notify();
+	// _change_notify();
 }
 
 BulletType::WaveType BulletType::get_h_wave_type() const {
@@ -131,7 +131,7 @@ float BulletType::get_h_wave_frequency() const {
 
 void BulletType::set_v_wave_type(WaveType p_type) {
 	v_wave_type = p_type;
-	_change_notify();
+	// _change_notify();
 }
 
 BulletType::WaveType BulletType::get_v_wave_type() const {
@@ -162,7 +162,7 @@ bool BulletType::get_face_direction() const {
 	return face_direction;
 }
 
-void BulletType::set_rotation(float p_radians){
+void BulletType::set_rotation(float p_radians) {
 	rotation = p_radians;
 }
 
@@ -186,7 +186,7 @@ Vector2 BulletType::get_scale() const {
 	return scale;
 }
 
-void BulletType::set_custom_data(const Dictionary &p_data){
+void BulletType::set_custom_data(const Dictionary &p_data) {
 	custom_data = p_data;
 }
 
@@ -195,10 +195,10 @@ Dictionary BulletType::get_custom_data() const {
 }
 
 void BulletType::_validate_property(PropertyInfo &property) const {
-	if ((property.name == "h_wave_amplitude" || property.name == "h_wave_frequency") && h_wave_type == NONE){
+	if ((property.name == "h_wave_amplitude" || property.name == "h_wave_frequency") && h_wave_type == NONE) {
 		property.usage = PROPERTY_USAGE_STORAGE;
 	}
-	if ((property.name == "v_wave_amplitude" || property.name == "v_wave_frequency") && v_wave_type == NONE){
+	if ((property.name == "v_wave_amplitude" || property.name == "v_wave_frequency") && v_wave_type == NONE) {
 		property.usage = PROPERTY_USAGE_STORAGE;
 	}
 }
@@ -309,18 +309,18 @@ void BulletType::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "custom_data"), "set_custom_data", "get_custom_data");
 
 	BIND_ENUM_CONSTANT(NONE);
-  BIND_ENUM_CONSTANT(SIN);
-  BIND_ENUM_CONSTANT(COS);
+	BIND_ENUM_CONSTANT(SIN);
+	BIND_ENUM_CONSTANT(COS);
 }
 
 BulletType::BulletType() {
 	lifetime = 0.0;
 	texture = Ref<Texture2D>();
-	modulate = Color(1,1,1,1);
+	modulate = Color(1, 1, 1, 1);
 	light_mask = 1;
 	material = Ref<Material>();
 	face_direction = false;
-	scale = Vector2(1,1);
+	scale = Vector2(1, 1);
 	damage = 0.0;
 	collision_shape = Ref<Shape2D>();
 	collision_mask = 1;
