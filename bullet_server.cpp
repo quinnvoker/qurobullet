@@ -68,11 +68,15 @@ void BulletServer::_process_bullets(float delta) {
 			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0,0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), b_type->get_collision_detect_bodies(), b_type->get_collision_detect_areas());
 			if (collisions > 0){
 				Array colliders;
+				Array shapes;
 				colliders.resize(collisions);
+				shapes.resize(collisions);
 				for (int c = 0; c < collisions; c++){
 					colliders[c] = results[c].collider;
+					shapes[c] = results[c].shape;
 				}
 				emit_signal("collision_detected", bullet, colliders);
+				emit_signal("collision_shape_detected", bullet, colliders, shapes);
 				if(pop_on_collide){
 					bullet->pop();
 				}
@@ -304,7 +308,7 @@ void BulletServer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "relay_autoconnect"), "set_relay_autoconnect", "get_relay_autoconnect");
 
 	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders")));
-
+	ADD_SIGNAL(MethodInfo("collision_shape_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders"),  PropertyInfo(Variant::ARRAY, "shapes")));
 	BIND_ENUM_CONSTANT(VIEWPORT);
   BIND_ENUM_CONSTANT(MANUAL);
   BIND_ENUM_CONSTANT(INFINITE);
