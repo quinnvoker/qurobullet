@@ -24,11 +24,11 @@ float BulletType::get_lifetime() const {
 	return lifetime;
 }
 
-void BulletType::set_texture(const Ref<Texture> &p_texture) {
+void BulletType::set_texture(const Ref<Texture2D> &p_texture) {
 	texture = p_texture;
 }
 
-Ref<Texture> BulletType::get_texture() const {
+Ref<Texture2D> BulletType::get_texture() const {
 	return texture;
 }
 
@@ -106,7 +106,7 @@ float BulletType::get_curve_rate() const {
 
 void BulletType::set_h_wave_type(WaveType p_type) {
 	h_wave_type = p_type;
-	_change_notify();
+	notify_property_list_changed();
 }
 
 BulletType::WaveType BulletType::get_h_wave_type() const {
@@ -131,7 +131,7 @@ float BulletType::get_h_wave_frequency() const {
 
 void BulletType::set_v_wave_type(WaveType p_type) {
 	v_wave_type = p_type;
-	_change_notify();
+	notify_property_list_changed();
 }
 
 BulletType::WaveType BulletType::get_v_wave_type() const {
@@ -162,7 +162,7 @@ bool BulletType::get_face_direction() const {
 	return face_direction;
 }
 
-void BulletType::set_rotation(float p_radians){
+void BulletType::set_rotation(float p_radians) {
 	rotation = p_radians;
 }
 
@@ -186,7 +186,7 @@ Vector2 BulletType::get_scale() const {
 	return scale;
 }
 
-void BulletType::set_custom_data(const Dictionary &p_data){
+void BulletType::set_custom_data(const Dictionary &p_data) {
 	custom_data = p_data;
 }
 
@@ -195,10 +195,10 @@ Dictionary BulletType::get_custom_data() const {
 }
 
 void BulletType::_validate_property(PropertyInfo &property) const {
-	if ((property.name == "h_wave_amplitude" || property.name == "h_wave_frequency") && h_wave_type == NONE){
+	if ((property.name == "h_wave_amplitude" || property.name == "h_wave_frequency") && h_wave_type == NONE) {
 		property.usage = PROPERTY_USAGE_STORAGE;
 	}
-	if ((property.name == "v_wave_amplitude" || property.name == "v_wave_frequency") && v_wave_type == NONE){
+	if ((property.name == "v_wave_amplitude" || property.name == "v_wave_frequency") && v_wave_type == NONE) {
 		property.usage = PROPERTY_USAGE_STORAGE;
 	}
 }
@@ -276,11 +276,11 @@ void BulletType::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_custom_data", "custom_data"), &BulletType::set_custom_data);
 	ClassDB::bind_method(D_METHOD("get_custom_data"), &BulletType::get_custom_data);
 
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "speed", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_speed", "get_speed");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "lifetime", PROPERTY_HINT_RANGE, "0,30,0.01,or_greater"), "set_lifetime", "get_lifetime");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_speed", "get_speed");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "damage", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_damage", "get_damage");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "lifetime", PROPERTY_HINT_RANGE, "0,30,0.01,or_greater"), "set_lifetime", "get_lifetime");
 	ADD_GROUP("Appearance", "");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture"), "set_texture", "get_texture");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"), "set_texture", "get_texture");
 	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "modulate"), "set_modulate", "get_modulate");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "light_mask", PROPERTY_HINT_LAYERS_2D_RENDER), "set_light_mask", "get_light_mask");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "Material"), "set_material", "get_material");
@@ -290,37 +290,37 @@ void BulletType::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "collision_detect_bodies"), "set_collision_detect_bodies", "get_collision_detect_bodies");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "collision_detect_areas"), "set_collision_detect_areas", "get_collision_detect_areas");
 	ADD_GROUP("Trajectory", "");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "linear_acceleration", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_linear_acceleration", "get_linear_acceleration");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "curve_rate", PROPERTY_HINT_RANGE, "-360,360,0.01,or_lesser,or_greater"), "set_curve_rate", "get_curve_rate");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "linear_acceleration", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_linear_acceleration", "get_linear_acceleration");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "curve_rate", PROPERTY_HINT_RANGE, "-360,360,0.01,or_lesser,or_greater"), "set_curve_rate", "get_curve_rate");
 	ADD_GROUP("Parallel Offset Wave", "h_wave_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "h_wave_type", PROPERTY_HINT_ENUM, "None,Sin,Cos"), "set_h_wave_type", "get_h_wave_type");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "h_wave_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_h_wave_amplitude", "get_h_wave_amplitude");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "h_wave_frequency", PROPERTY_HINT_RANGE, "0,5,0.001,or_greater"), "set_h_wave_frequency", "get_h_wave_frequency");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "h_wave_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_h_wave_amplitude", "get_h_wave_amplitude");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "h_wave_frequency", PROPERTY_HINT_RANGE, "0,5,0.001,or_greater"), "set_h_wave_frequency", "get_h_wave_frequency");
 	ADD_GROUP("Perpendicular Offset Wave", "v_wave_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "v_wave_type", PROPERTY_HINT_ENUM, "None,Sin,Cos"), "set_v_wave_type", "get_v_wave_type");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "v_wave_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_v_wave_amplitude", "get_v_wave_amplitude");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "v_wave_frequency", PROPERTY_HINT_RANGE, "0,5,0.001,or_greater"), "set_v_wave_frequency", "get_v_wave_frequency");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "v_wave_amplitude", PROPERTY_HINT_RANGE, "-100,100,0.01,or_lesser,or_greater"), "set_v_wave_amplitude", "get_v_wave_amplitude");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "v_wave_frequency", PROPERTY_HINT_RANGE, "0,5,0.001,or_greater"), "set_v_wave_frequency", "get_v_wave_frequency");
 	ADD_GROUP("Transform", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "face_direction"), "set_face_direction", "get_face_direction");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_rotation", "get_rotation");
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_rotation", "get_rotation");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "set_scale", "get_scale");
 	ADD_GROUP("Custom Data", "");
 	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "custom_data"), "set_custom_data", "get_custom_data");
 
 	BIND_ENUM_CONSTANT(NONE);
-  BIND_ENUM_CONSTANT(SIN);
-  BIND_ENUM_CONSTANT(COS);
+	BIND_ENUM_CONSTANT(SIN);
+	BIND_ENUM_CONSTANT(COS);
 }
 
 BulletType::BulletType() {
 	lifetime = 0.0;
-	texture = Ref<Texture>();
-	modulate = Color(1,1,1,1);
+	texture = Ref<Texture2D>();
+	modulate = Color(1, 1, 1, 1);
 	light_mask = 1;
 	material = Ref<Material>();
 	face_direction = false;
-	scale = Vector2(1,1);
+	scale = Vector2(1, 1);
 	damage = 0.0;
 	collision_shape = Ref<Shape2D>();
 	collision_mask = 1;

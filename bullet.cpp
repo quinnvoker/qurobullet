@@ -8,7 +8,7 @@ void Bullet::spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, con
   set_type(p_type);
   set_position(p_position);
   set_direction(p_direction);
-	VS::get_singleton()->canvas_item_set_visible(ci_rid, true);
+	RS::get_singleton()->canvas_item_set_visible(ci_rid, true);
 }
 
 void Bullet::update(float delta) {
@@ -24,7 +24,7 @@ void Bullet::update(float delta) {
 
 void Bullet::pop() {
   _popped = true;
-	VS::get_singleton()->canvas_item_set_visible(ci_rid, false);
+	RS::get_singleton()->canvas_item_set_visible(ci_rid, false);
 }
 
 bool Bullet::is_popped() {
@@ -138,20 +138,20 @@ RID Bullet::get_ci_rid() const{
 
 void Bullet::_update_appearance(const Ref<BulletType> &p_type) {
 	if (p_type.is_valid()) {
-		VisualServer *vs = VS::get_singleton();
-		Ref<Texture> old_tex = type.is_valid() ? type->get_texture() : NULL;
-		Ref<Texture> new_tex = p_type->get_texture();
+		RenderingServer *rs = RS::get_singleton();
+		Ref<Texture2D> old_tex = type.is_valid() ? type->get_texture() : NULL;
+		Ref<Texture2D> new_tex = p_type->get_texture();
 		if (new_tex.is_null()) {
-			vs->canvas_item_clear(ci_rid);
+			rs->canvas_item_clear(ci_rid);
 		} else if (old_tex != new_tex) {
-			vs->canvas_item_clear(ci_rid);
-			vs->canvas_item_add_texture_rect(ci_rid, Rect2(-new_tex->get_size() / 2, new_tex->get_size()), new_tex->get_rid());
+			rs->canvas_item_clear(ci_rid);
+			rs->canvas_item_add_texture_rect(ci_rid, Rect2(-new_tex->get_size() / 2, new_tex->get_size()), new_tex->get_rid());
 		}
 		if (p_type->get_material().is_valid()) {
-			vs->canvas_item_set_material(ci_rid, p_type->get_material()->get_rid());
+			rs->canvas_item_set_material(ci_rid, p_type->get_material()->get_rid());
 		}
-		vs->canvas_item_set_modulate(ci_rid, p_type->get_modulate());
-		vs->canvas_item_set_light_mask(ci_rid, p_type->get_light_mask());
+		rs->canvas_item_set_modulate(ci_rid, p_type->get_modulate());
+		rs->canvas_item_set_light_mask(ci_rid, p_type->get_light_mask());
 	}
 }
 
@@ -185,10 +185,10 @@ void Bullet::_bind_methods(){
 }
 
 Bullet::Bullet() {
-	ci_rid = VS::get_singleton()->canvas_item_create();
+	ci_rid = RS::get_singleton()->canvas_item_create();
   direction = Vector2(0,0);
 }
 
 Bullet::~Bullet(){
-	VS::get_singleton()->free(ci_rid);
+	RS::get_singleton()->free(ci_rid);
 }

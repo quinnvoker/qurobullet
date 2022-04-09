@@ -29,7 +29,7 @@
 		<method name="fire_shots">
 			<return type="void">
 			</return>
-			<argument index="0" name="shot_indices" type="PoolIntArray">
+			<argument index="0" name="shot_indices" type="PackedInt32Array">
 			</argument>
 			<description>
 				Functionally similar to [code]fire[/code], but takes an array of integers and fires only the shots whose indices are included.
@@ -54,7 +54,7 @@
 		</method>
 	</methods>
 	<members>
-		<member name="active_shot_indices" type="PoolIntArray" setter="set_active_shot_indices" getter="get_active_shot_indices" default="PoolIntArray(  )">
+		<member name="active_shot_indices" type="PackedInt32Array" setter="set_active_shot_indices" getter="get_active_shot_indices" default="PackedInt32Array(  )">
 			The array defining the indices of the active shots for the current volley.  Only active shots will be fired in MANUAL pattern mode.
 			Values entered here can be animated/tweened to make "sweeps", progressively activating and deactivating shots along the arc.
 		</member>

@@ -1,7 +1,7 @@
 #ifndef BULLETTYPE_H
 #define BULLETTYPE_H
 
-#include "core/resource.h"
+#include "core/io/resource.h"
 #include "scene/resources/material.h"
 #include "scene/resources/shape_2d.h"
 #include "scene/resources/texture.h"
@@ -20,7 +20,7 @@ private:
 	float speed;
 	float damage;
 	float lifetime;
-	Ref<Texture> texture;
+	Ref<Texture2D> texture;
 	Color modulate;
 	int light_mask;
 	Ref<Material> material;
@@ -55,8 +55,8 @@ public:
 	void set_lifetime(float p_time);
 	float get_lifetime() const;
 
-	void set_texture(const Ref<Texture> &p_texture);
-	Ref<Texture> get_texture() const;
+	void set_texture(const Ref<Texture2D> &p_texture);
+	Ref<Texture2D> get_texture() const;
 
 	void set_modulate(const Color &p_color);
 	Color get_modulate() const;

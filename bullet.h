@@ -1,8 +1,8 @@
 #ifndef BULLET_H
 #define BULLET_H
 
-#include "core/object.h"
-#include "core/reference.h"
+#include "core/object/object.h"
+#include "core/object/reference.h"
 #include "bullet_type.h"
 #include "core/math/transform_2d.h"
 #include "core/math/rect2.h"
@@ -32,7 +32,7 @@ class Bullet : public Object {
 
 	public:
 		void spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, const Vector2 &p_direction);
-		
+
 		void update(float delta);
 
 		void pop();
