@@ -1,3 +1,5 @@
+_Note: The `main` branch contains unfinished code for Godot 4.x compatility (doesn't work yet). If you're using Godot 3.x, you want the `godot-3.x` branch instead!_
+
 # qurobullet
 A powerful 2D projectile system module for Godot!
 
