@@ -324,4 +324,12 @@ BulletServer::BulletServer() {
 }
 
 BulletServer::~BulletServer() {
+	for (int i = 0; i < live_bullets.size(); i++) {
+		Bullet *bullet = live_bullets[i];
+    memdelete(bullet);
+  }
+	for (int i = 0; i < dead_bullets.size(); i++) {
+		Bullet *bullet = dead_bullets[i];
+    memdelete(bullet);
+  }
 }
