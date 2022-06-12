@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BulletType" inherits="Resource" version="3.2">
+<class name="BulletType" inherits="Resource" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 		Resource containing appearance and behaviour data for [Bullet]s.
 	</brief_description>
@@ -41,7 +41,7 @@
 			The amplitude of this type of bullet's parallel offset wave.
 			Measured in pixels, and determines the maximum distance this type of bullet will be displaced along its trajectory by the parallel offset wave.
 		</member>
-		<member name="h_wave_frequency" type="float" setter="set_h_wave_frequency" getter="get_h_wave_frequency" default="1.4013e-45">
+		<member name="h_wave_frequency" type="float" setter="set_h_wave_frequency" getter="get_h_wave_frequency" default="0.0">
 			The frequency of this type of bullet's parallel offset wave.
 			Measured in Hz, and determines how many times per second the parallel offset wave will repeat.
 		</member>

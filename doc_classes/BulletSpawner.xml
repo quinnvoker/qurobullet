@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BulletSpawner" inherits="Node2D" version="3.2">
+<class name="BulletSpawner" inherits="Node2D" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 		Dynamic spawner node for [Bullet] objects.
 	</brief_description>
@@ -12,41 +12,35 @@
 	</tutorials>
 	<methods>
 		<method name="can_fire" qualifiers="const">
-			<return type="bool">
-			</return>
+			<return type="bool" />
 			<description>
 				Returns [code]true[/code] if this spawner is not in the editor, in the scene tree, and has a valid [code]bullet_type[/code].
 			</description>
 		</method>
 		<method name="fire">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 				Emits the "volley_fired" signal with the current parameters, to be connected to a bullet server for spawning the bullets appropiately.
 				Passes duplicate of [code]bullet_type[/code] instead of referencing the resource directly, so active bullets' type will not be modified by changes made in this spawner.
 			</description>
 		</method>
 		<method name="fire_shots">
-			<return type="void">
-			</return>
-			<argument index="0" name="shot_indices" type="PoolIntArray">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="shot_indices" type="PoolIntArray" />
 			<description>
 				Functionally similar to [code]fire[/code], but takes an array of integers and fires only the shots whose indices are included.
 				Ignores [code]pattern_mode[/code] and [code]active_shot_indices[/code].
 			</description>
 		</method>
 		<method name="get_scattered_volley">
-			<return type="Array">
-			</return>
+			<return type="Array" />
 			<description>
 				Returns the volley defined by this spawner's properties, with shot directions adjusted for scatter.
 				The [Array] returned contains of [Dictionary] elements consisting of a [Vector2] "position" (bullet's spawn point relative to spawner), a [Vector2] "direction" (bullet's global direction vector).
 			</description>
 		</method>
 		<method name="get_volley">
-			<return type="Array">
-			</return>
+			<return type="Array" />
 			<description>
 				Returns the volley defined by this spawner's properties.
 				The [Array] returned contains of [Dictionary] elements consisting of a [Vector2] "position" (bullet's spawn point relative to spawner) and a [Vector2] "direction" (bullet's global direction vector).
@@ -153,12 +147,9 @@
 	</members>
 	<signals>
 		<signal name="volley_fired">
-			<argument index="0" name="type" type="BulletType">
-			</argument>
-			<argument index="1" name="origin" type="Vector2">
-			</argument>
-			<argument index="2" name="volley" type="Array">
-			</argument>
+			<argument index="0" name="type" type="BulletType" />
+			<argument index="1" name="origin" type="Vector2" />
+			<argument index="2" name="volley" type="Array" />
 			<description>
 				Emitted when a volley of bullets is fired. To be passed to a server for spawning the required volley.
 			</description>

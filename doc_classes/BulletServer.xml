@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BulletServer" inherits="Node2D" version="3.2">
+<class name="BulletServer" inherits="Node2D" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 		Node2D which creates, spawns, and processes a set pool of [Bullet] objects and reports their collisions.
 	</brief_description>
@@ -10,57 +10,45 @@
 	</tutorials>
 	<methods>
 		<method name="clear_bullets">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 				Pops all active bullets. Used to clear the board.
 			</description>
 		</method>
-		<method name="get_live_bullets">
-			<return type="Array">
-			</return>
-			<description>
-				Returns an array containing all currently live [Bullet] objects. 
-				Returned array is a copy of the server's internal live bullet array. Modifying this array will have no effect on BulletServer's internal arrays, but modifications made to the [Bullet]s themselves will take effect in the game.
-			</description>
-		</method>
 		<method name="get_live_bullet_count">
-			<return type="int">
-			</return>
+			<return type="int" />
 			<description>
 				Returns the number of bullets that are currently live.
 			</description>
 		</method>
 		<method name="get_live_bullet_positions">
-			<return type="Array">
-			</return>
+			<return type="Array" />
 			<description>
 				Returns an array containing the Vector2 positions of all currently live bullets.
 			</description>
 		</method>
+		<method name="get_live_bullets">
+			<return type="Array" />
+			<description>
+				Returns an array containing all currently live [Bullet] objects. 
+				Returned array is a copy of the server's internal live bullet array. Modifying this array will have no effect on BulletServer's internal arrays, but modifications made to the [Bullet]s themselves will take effect in the game.
+			</description>
+		</method>
 		<method name="spawn_bullet">
-			<return type="void">
-			</return>
-			<argument index="0" name="type" type="BulletType">
-			</argument>
-			<argument index="1" name="position" type="Vector2">
-			</argument>
-			<argument index="2" name="direction" type="Vector2">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="type" type="BulletType" />
+			<argument index="1" name="position" type="Vector2" />
+			<argument index="2" name="direction" type="Vector2" />
 			<description>
 				Spawns a [Bullet] of [code]type[/code] at [code]position[/code], firing in [code]direction[/code].
 				If every bullet in the bullet pool is currently active, the oldest active bullet is recycled and spawned instead.
 			</description>
 		</method>
 		<method name="spawn_volley">
-			<return type="void">
-			</return>
-			<argument index="0" name="type" type="BulletType">
-			</argument>
-			<argument index="1" name="position" type="Vector2">
-			</argument>
-			<argument index="2" name="volley" type="Array">
-			</argument>
+			<return type="void" />
+			<argument index="0" name="type" type="BulletType" />
+			<argument index="1" name="position" type="Vector2" />
+			<argument index="2" name="volley" type="Array" />
 			<description>
 				Spawns a volley of [Bullet]s of [code]type[/code], originating at [code]position[/code], with their relative spawn positions and directions determined by Spawns a [Bullet] of [code]type[/code] at [code]position[/code] from the bullet pool, firing in [code]volley[/code].
 				[code]volley[/code] is an [Array] of [Dictionary] items, each containing a "position" and "direction". You can build your own if you wish to spawn custom volleys.
@@ -103,13 +91,18 @@
 	</members>
 	<signals>
 		<signal name="collision_detected">
-			<argument index="0" name="bullet" type="Bullet">
-			</argument>
-			<argument index="1" name="colliders" type="Array">
-			</argument>
+			<argument index="0" name="bullet" type="Bullet" />
+			<argument index="1" name="colliders" type="Array" />
 			<description>
 				Emitted when a bullet has collided with an area or body. Contains the [Bullet] which collided and an [Array] of the collision objects it collided with.
 				Note that [BulletServer] will report collisions even with unmonitorable collision shapes, so long as they're on the same layer.
+			</description>
+		</signal>
+		<signal name="collision_shape_detected">
+			<argument index="0" name="bullet" type="Bullet" />
+			<argument index="1" name="colliders" type="Array" />
+			<argument index="2" name="shapes" type="Array" />
+			<description>
 			</description>
 		</signal>
 	</signals>
