@@ -321,6 +321,7 @@ BulletServer::BulletServer() {
 	play_area_rect = Rect2();
 	pop_on_collide = true;
 	relay_autoconnect = true;
+  max_lifetime = 0.0;
 }
 
 BulletServer::~BulletServer() {
