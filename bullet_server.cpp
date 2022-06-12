@@ -316,12 +316,13 @@ void BulletServer::_bind_methods() {
 
 BulletServer::BulletServer() {
 	bullet_pool_size = 1500;
-	play_area_mode = VIEWPORT;
-	play_area_margin = 0;
-	play_area_rect = Rect2();
 	pop_on_collide = true;
-	relay_autoconnect = true;
   max_lifetime = 0.0;
+	play_area_mode = VIEWPORT;
+	play_area_rect = Rect2();
+	play_area_margin = 0;
+  play_area_allow_incoming = true;
+	relay_autoconnect = true;
 }
 
 BulletServer::~BulletServer() {
