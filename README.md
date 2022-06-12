@@ -1,3 +1,5 @@
+Pre-built editor and template binaries for Godot 3.4.4 with qurobullet included can now be found [here](https://github.com/quinnvoker/godot-qurobullet/releases/tag/v1.1-godot-3.4.4)!
+
 _Note: The `main` branch contains unfinished code for Godot 4.x compatility (doesn't work yet). If you're using Godot 3.x, you want the `godot-3.x` branch instead!_
 
 # qurobullet
