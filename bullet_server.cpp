@@ -321,7 +321,7 @@ BulletServer::BulletServer() {
 	play_area_mode = VIEWPORT;
 	play_area_rect = Rect2();
 	play_area_margin = 0;
-  play_area_allow_incoming = true;
+  play_area_allow_incoming = false;
 	relay_autoconnect = true;
 }
 
