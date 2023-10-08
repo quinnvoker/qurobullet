@@ -12,19 +12,19 @@
 
 BulletServerRelay *_bullet_server_relay = nullptr;
 
-void register_qurobullet_types() {
+void initialize_qurobullet_module() {
 	_bullet_server_relay = memnew(BulletServerRelay);
 
-	ClassDB::register_class<Bullet>();
-	ClassDB::register_class<BulletType>();
-	ClassDB::register_class<BulletServer>();
-	ClassDB::register_class<BulletServerRelay>();
-	ClassDB::register_class<BulletSpawner>();
+	GDREGISTER_CLASS(Bullet);
+	GDREGISTER_CLASS(BulletType);
+	GDREGISTER_CLASS(BulletServer);
+	GDREGISTER_CLASS(BulletServerRelay);
+	GDREGISTER_CLASS(BulletSpawner);
 
 	Engine::get_singleton()->add_singleton(Engine::Singleton("BulletServerRelay", _bullet_server_relay));
 }
 
-void unregister_qurobullet_types() {
+void initialize_qurobullet_module() {
 	if (_bullet_server_relay) {
 		memdelete(_bullet_server_relay);
 	}
