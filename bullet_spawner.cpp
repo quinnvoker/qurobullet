@@ -63,12 +63,6 @@ void BulletSpawner::fire() {
 	}
 	switch (pattern_mode) {
 		case ALL: {
-			Array vol = get_scattered_volley();
-			for (int i = 0; i < vol.size(); i++) {
-				Dictionary shot = vol[i];
-				String debug_string = "Firing a shot with direction(" + String(shot["direction"]) + "), position(" + String(shot["position"]) + ")";
-				WARN_PRINT(debug_string);
-			}
 			emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), get_scattered_volley());
 		} break;
 
@@ -89,10 +83,22 @@ void BulletSpawner::fire_shots(const PackedInt32Array &p_shot_indices) {
 }
 
 Array BulletSpawner::get_volley() {
-	if (_volley_changed) {
-		_cached_volley = _create_volley();
-		_volley_changed = false;
-	}
+	// FIXME: after switching to godot 4, the "shot" dictionaries stored in _cached_volley
+	// get their values nullified between get_volley calls, so the cache cannot be relied
+	// upon as an alternative to calling _create_volley for the time being
+	// if (_volley_changed) {
+	_cached_volley = _create_volley();
+	_volley_changed = false;
+	//}
+
+	// DEBUG: print cached volley state
+	// String debug_string = "Cached volley state: [";
+	// for (int i = 0; i < _cached_volley.size(); i++) {
+	// 	Dictionary shot = _cached_volley[i];
+	// 	debug_string += "{ direction: " + String(shot["direction"]) + ", position: " + String(shot["position"]) + " },";
+	// }
+	// debug_string += "]";
+	// WARN_PRINT(debug_string);
 	return _cached_volley;
 }
 
@@ -159,8 +165,6 @@ Array BulletSpawner::_create_volley() const {
 		shot["normal"] = dir;
 		shot["position"] = _get_shot_position(dir);
 		shot["direction"] = _get_shot_direction(dir * radius, dir);
-		String debug = "Defined a shot with normal" + String(shot["normal"]) + ", position" + String(shot["position"]) + ", direction" + String(shot["direction"]);
-		WARN_PRINT(debug);
 		volley.push_back(shot);
 		return volley;
 	}
@@ -189,8 +193,6 @@ Array BulletSpawner::_create_volley() const {
 			shot["normal"] = shot_normal;
 			shot["position"] = _get_shot_position(shot_normal);
 			shot["direction"] = _get_shot_direction(shot["position"], shot_normal);
-			String debug = "Defined a shot with normal" + String(shot["normal"]) + ", position" + String(shot["position"]) + ", direction" + String(shot["direction"]);
-			WARN_PRINT(debug);
 			volley.push_back(shot);
 		}
 	}

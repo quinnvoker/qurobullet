@@ -140,8 +140,6 @@ void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_
 	}
 
 	bullet->spawn(p_type, p_position, p_direction);
-	String debug_string = "Spawned a bullet with direction(" + p_direction + "), position(" + p_position + ")";
-	WARN_PRINT(debug_string);
 	RS::get_singleton()->canvas_item_set_draw_index(bullet->get_ci_rid(), 0);
 	live_bullets.insert(0, bullet);
 }
