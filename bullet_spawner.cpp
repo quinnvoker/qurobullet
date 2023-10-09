@@ -153,6 +153,8 @@ Array BulletSpawner::_create_volley() const {
 		shot["normal"] = dir;
 		shot["position"] = _get_shot_position(dir);
 		shot["direction"] = _get_shot_direction(dir * radius, dir);
+		String debug = "Defined a shot with normal" + String(shot["normal"]) + ", position" + String(shot["position"]) + ", direction" + String(shot["direction"]);
+		WARN_PRINT(debug);
 		volley.push_back(shot);
 		return volley;
 	}
@@ -181,6 +183,8 @@ Array BulletSpawner::_create_volley() const {
 			shot["normal"] = shot_normal;
 			shot["position"] = _get_shot_position(shot_normal);
 			shot["direction"] = _get_shot_direction(shot["position"], shot_normal);
+			String debug = "Defined a shot with normal" + String(shot["normal"]) + ", position" + String(shot["position"]) + ", direction" + String(shot["direction"]);
+			WARN_PRINT(debug);
 			volley.push_back(shot);
 		}
 	}
