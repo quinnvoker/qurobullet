@@ -46,8 +46,7 @@ void BulletServer::_notification(int p_what) {
 void BulletServer::_process_bullets(float delta) {
 	Vector<int> bullet_indices_to_clear;
 	PhysicsDirectSpaceState2D *space_state = get_world_2d()->get_direct_space_state();
-	Vector<PhysicsDirectSpaceState2D::ShapeResult> results;
-	results.resize(32);
+	PhysicsDirectSpaceState2D::ShapeParameters shape_params = PhysicsDirectSpaceState2D::ShapeParameters();
 
 	for (int i = 0; i < live_bullets.size(); i++) {
 		Bullet *bullet = live_bullets[i];
@@ -63,15 +62,29 @@ void BulletServer::_process_bullets(float delta) {
 				continue;
 			}
 			Ref<BulletType> b_type = bullet->get_type();
-			int collisions = space_state->intersect_shape(b_type->get_collision_shape()->get_rid(), bullet->get_transform(), Vector2(0, 0), 0, results.ptrw(), results.size(), Set<RID>(), b_type->get_collision_mask(), b_type->get_collision_detect_bodies(), b_type->get_collision_detect_areas());
+
+			shape_params.shape_rid = b_type->get_collision_shape()->get_rid();
+			shape_params.transform = bullet->get_transform();
+			shape_params.motion = Vector2(0, 0);
+			shape_params.margin = 0.0;
+			shape_params.exclude = HashSet<RID>();
+			shape_params.collision_mask = b_type->get_collision_mask();
+			shape_params.collide_with_bodies = b_type->get_collision_detect_bodies();
+			shape_params.collide_with_areas = b_type->get_collision_detect_areas();
+
+			PhysicsShapeQueryParameters2D query = PhysicsShapeQueryParameters2D();
+			query.parameters = shape_params;
+
+			TypedArray<Dictionary> results = space_state->intersect_shape(query, 32);
+			int collisions = results.size();
 			if (collisions > 0) {
 				Array colliders;
 				Array shapes;
 				colliders.resize(collisions);
 				shapes.resize(collisions);
 				for (int c = 0; c < collisions; c++) {
-					colliders[c] = results[c].collider;
-					shapes[c] = results[c].shape;
+					colliders[c] = results[c].get("collider");
+					shapes[c] = results[c].get("shape");
 				}
 				emit_signal("collision_detected", bullet, colliders);
 				emit_signal("collision_shape_detected", bullet, colliders, shapes);
