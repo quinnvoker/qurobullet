@@ -13,7 +13,7 @@ void Bullet::spawn(const Ref<BulletType> &p_type, const Vector2 &p_position, con
 
 void Bullet::update(float delta) {
 	float current_speed = type->get_speed() + type->get_linear_acceleration() * time;
-	set_direction(direction.rotated(Math::deg2rad(type->get_curve_rate()) * delta));
+	set_direction(direction.rotated(Math::deg_to_rad(type->get_curve_rate()) * delta));
 	position += direction * current_speed * delta;
 	_update_offset();
 	time += delta;

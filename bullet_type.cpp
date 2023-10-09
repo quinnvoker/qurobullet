@@ -171,11 +171,11 @@ float BulletType::get_rotation() const {
 }
 
 void BulletType::set_rotation_degrees(float p_degrees) {
-	rotation = Math::deg2rad(p_degrees);
+	rotation = Math::deg_to_rad(p_degrees);
 }
 
 float BulletType::get_rotation_degrees() const {
-	return Math::rad2deg(rotation);
+	return Math::rad_to_deg(rotation);
 }
 
 void BulletType::set_scale(Vector2 p_scale) {

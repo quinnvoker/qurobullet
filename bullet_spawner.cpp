@@ -290,12 +290,12 @@ float BulletSpawner::get_arc_width() const {
 }
 
 void BulletSpawner::set_arc_width_degrees(float p_degrees) {
-	arc_width = Math::deg2rad(p_degrees);
+	arc_width = Math::deg_to_rad(p_degrees);
 	_notify_volley_changed();
 }
 
 float BulletSpawner::get_arc_width_degrees() const {
-	return Math::rad2deg(arc_width);
+	return Math::rad_to_deg(arc_width);
 }
 
 void BulletSpawner::set_arc_rotation(float p_radians) {
@@ -308,12 +308,12 @@ float BulletSpawner::get_arc_rotation() const {
 }
 
 void BulletSpawner::set_arc_rotation_degrees(float p_degrees) {
-	arc_rotation = Math::deg2rad(p_degrees);
+	arc_rotation = Math::deg_to_rad(p_degrees);
 	_notify_volley_changed();
 }
 
 float BulletSpawner::get_arc_rotation_degrees() const {
-	return Math::rad2deg(arc_rotation);
+	return Math::rad_to_deg(arc_rotation);
 }
 
 void BulletSpawner::set_arc_offset(float p_offset) {
@@ -347,11 +347,11 @@ float BulletSpawner::get_aim_angle() const {
 }
 
 void BulletSpawner::set_aim_angle_degrees(float p_degrees) {
-	set_aim_angle(Math::deg2rad(p_degrees));
+	set_aim_angle(Math::deg_to_rad(p_degrees));
 }
 
 float BulletSpawner::get_aim_angle_degrees() const {
-	return Math::rad2deg(aim_angle);
+	return Math::rad_to_deg(aim_angle);
 }
 
 void BulletSpawner::set_aim_target_position(const Vector2 &p_position) {
@@ -383,11 +383,11 @@ float BulletSpawner::get_scatter_range() const {
 }
 
 void BulletSpawner::set_scatter_range_degrees(float p_degrees) {
-	scatter_range = Math::deg2rad(p_degrees);
+	scatter_range = Math::deg_to_rad(p_degrees);
 }
 
 float BulletSpawner::get_scatter_range_degrees() const {
-	return Math::rad2deg(scatter_range);
+	return Math::rad_to_deg(scatter_range);
 }
 
 void BulletSpawner::set_pattern_mode(PatternMode p_mode) {
