@@ -90,7 +90,7 @@ void BulletServer::_process_bullets(float delta) {
 
 	for (int i = 0; i < bullet_indices_to_clear.size(); i++) {
 		Bullet *bullet = live_bullets[bullet_indices_to_clear[i] - i];
-		live_bullets.remove(bullet_indices_to_clear[i] - i);
+		live_bullets.remove_at(bullet_indices_to_clear[i] - i);
 		dead_bullets.insert(0, bullet);
 	}
 }
@@ -122,10 +122,10 @@ void BulletServer::spawn_bullet(const Ref<BulletType> &p_type, const Vector2 &p_
 
 	if (dead_bullets.size() > 0) {
 		bullet = dead_bullets.get(dead_bullets.size() - 1);
-		dead_bullets.remove(dead_bullets.size() - 1);
+		dead_bullets.remove_at(dead_bullets.size() - 1);
 	} else {
 		bullet = live_bullets.get(live_bullets.size() - 1);
-		live_bullets.remove(live_bullets.size() - 1);
+		live_bullets.remove_at(live_bullets.size() - 1);
 	}
 
 	bullet->spawn(p_type, p_position, p_direction);
@@ -178,10 +178,10 @@ void BulletServer::set_bullet_pool_size(int p_size) {
 		Bullet *bullet;
 		if (dead_bullets.size() > 0) {
 			bullet = dead_bullets.get(dead_bullets.size() - 1);
-			dead_bullets.remove(dead_bullets.size() - 1);
+			dead_bullets.remove_at(dead_bullets.size() - 1);
 		} else {
 			bullet = live_bullets.get(live_bullets.size() - 1);
-			live_bullets.remove(live_bullets.size() - 1);
+			live_bullets.remove_at(live_bullets.size() - 1);
 		}
 		RS::get_singleton()->free(bullet->get_ci_rid());
 		memdelete(bullet);
