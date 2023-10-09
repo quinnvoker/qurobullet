@@ -46,6 +46,8 @@ void BulletServer::_notification(int p_what) {
 void BulletServer::_process_bullets(float delta) {
 	Vector<int> bullet_indices_to_clear;
 	PhysicsDirectSpaceState2D *space_state = get_world_2d()->get_direct_space_state();
+	Vector<PhysicsDirectSpaceState2D::ShapeResult> results;
+	results.resize(32);
 	PhysicsDirectSpaceState2D::ShapeParameters shape_params = PhysicsDirectSpaceState2D::ShapeParameters();
 
 	for (int i = 0; i < live_bullets.size(); i++) {
@@ -72,19 +74,15 @@ void BulletServer::_process_bullets(float delta) {
 			shape_params.collide_with_bodies = b_type->get_collision_detect_bodies();
 			shape_params.collide_with_areas = b_type->get_collision_detect_areas();
 
-			PhysicsShapeQueryParameters2D query = PhysicsShapeQueryParameters2D();
-			query.parameters = shape_params;
-
-			TypedArray<Dictionary> results = space_state->intersect_shape(query, 32);
-			int collisions = results.size();
+			int collisions = space_state->intersect_shape(shape_params, results.ptrw(), results.size());
 			if (collisions > 0) {
 				Array colliders;
 				Array shapes;
 				colliders.resize(collisions);
 				shapes.resize(collisions);
 				for (int c = 0; c < collisions; c++) {
-					colliders[c] = results[c].get("collider");
-					shapes[c] = results[c].get("shape");
+					colliders[c] = results[c].collider;
+					shapes[c] = results[c].shape;
 				}
 				emit_signal("collision_detected", bullet, colliders);
 				emit_signal("collision_shape_detected", bullet, colliders, shapes);
