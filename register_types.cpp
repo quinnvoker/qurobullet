@@ -13,6 +13,9 @@
 BulletServerRelay *_bullet_server_relay = nullptr;
 
 void initialize_qurobullet_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
 	_bullet_server_relay = memnew(BulletServerRelay);
 
 	GDREGISTER_CLASS(Bullet);
