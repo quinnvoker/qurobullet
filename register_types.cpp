@@ -24,7 +24,7 @@ void initialize_qurobullet_module(ModuleInitializationLevel p_level) {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("BulletServerRelay", _bullet_server_relay));
 }
 
-void initialize_qurobullet_module(ModuleInitializationLevel p_level) {
+void uninitialize_qurobullet_module(ModuleInitializationLevel p_level) {
 	if (_bullet_server_relay) {
 		memdelete(_bullet_server_relay);
 	}
