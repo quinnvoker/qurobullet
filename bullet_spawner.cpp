@@ -141,7 +141,7 @@ void BulletSpawner::_notify_volley_changed() {
 	update_configuration_warnings();
 #endif
 	if (is_visible_in_tree()) {
-		update();
+		queue_redraw();
 	}
 }
 
@@ -412,7 +412,7 @@ PackedInt32Array BulletSpawner::get_active_shot_indices() const {
 void BulletSpawner::set_preview_visible_in_game(bool p_enabled) {
 	preview_visible_in_game = p_enabled;
 	if (is_visible_in_tree()) {
-		update();
+		queue_redraw();
 	}
 }
 
@@ -423,7 +423,7 @@ bool BulletSpawner::get_preview_visible_in_game() const {
 void BulletSpawner::set_preview_color(const Color &p_color) {
 	preview_color = p_color;
 	if (is_visible_in_tree()) {
-		update();
+		queue_redraw();
 	}
 }
 
@@ -434,7 +434,7 @@ Color BulletSpawner::get_preview_color() const {
 void BulletSpawner::set_preview_shot_color(const Color &p_color) {
 	preview_shot_color = p_color;
 	if (is_visible_in_tree()) {
-		update();
+		queue_redraw();
 	}
 }
 
@@ -445,7 +445,7 @@ Color BulletSpawner::get_preview_shot_color() const {
 void BulletSpawner::set_preview_extent(float p_length) {
 	preview_extent = p_length;
 	if (is_visible_in_tree()) {
-		update();
+		queue_redraw();
 	}
 }
 
@@ -456,7 +456,7 @@ float BulletSpawner::get_preview_extent() const {
 void BulletSpawner::set_preview_arc_points(int p_count) {
 	preview_arc_points = p_count;
 	if (is_visible_in_tree()) {
-		update();
+		queue_redraw();
 	}
 }
 
