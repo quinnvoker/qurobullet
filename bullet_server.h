@@ -1,10 +1,10 @@
 #ifndef BULLETSERVER_H
 #define BULLETSERVER_H
 
-#include "scene/2d/node_2d.h"
 #include "bullet.h"
 #include "bullet_type.h"
 #include "core/os/os.h"
+#include "scene/2d/node_2d.h"
 #include <vector>
 
 class BulletServer : public Node2D {

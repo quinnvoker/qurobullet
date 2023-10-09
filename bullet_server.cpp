@@ -304,7 +304,7 @@ void BulletServer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "relay_autoconnect"), "set_relay_autoconnect", "get_relay_autoconnect");
 
 	ADD_SIGNAL(MethodInfo("collision_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders")));
-	ADD_SIGNAL(MethodInfo("collision_shape_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders"),  PropertyInfo(Variant::ARRAY, "shapes")));
+	ADD_SIGNAL(MethodInfo("collision_shape_detected", PropertyInfo(Variant::OBJECT, "bullet", PROPERTY_HINT_RESOURCE_TYPE, "Bullet"), PropertyInfo(Variant::ARRAY, "colliders"), PropertyInfo(Variant::ARRAY, "shapes")));
 	BIND_ENUM_CONSTANT(VIEWPORT);
 	BIND_ENUM_CONSTANT(MANUAL);
 	BIND_ENUM_CONSTANT(INFINITE);

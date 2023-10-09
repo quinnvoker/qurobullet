@@ -4,7 +4,7 @@ void BulletServerRelay::spawn_bullet(const Ref<BulletType> &p_type, const Vector
 	emit_signal("bullet_spawn_requested", p_type, p_position, p_direction);
 }
 
-void BulletServerRelay::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_origin, const Array &p_shots){
+void BulletServerRelay::spawn_volley(const Ref<BulletType> &p_type, const Vector2 &p_origin, const Array &p_shots) {
 	emit_signal("volley_spawn_requested", p_type, p_origin, p_shots);
 }
 
