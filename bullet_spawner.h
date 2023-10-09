@@ -4,6 +4,7 @@
 #include "bullet_server_relay.h"
 #include "bullet_type.h"
 #include "core/config/engine.h"
+#include "core/config/project_settings.h"
 #include "scene/2d/node_2d.h"
 
 class BulletSpawner : public Node2D {
