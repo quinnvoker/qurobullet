@@ -580,15 +580,15 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const {
 	}
 
 	if (property.name == "aim_target_position" && !(aim_mode == TARGET_RELATIVE || aim_mode == TARGET_GLOBAL)) {
-		property.usage = PROPERTY_USAGE_NOEDITOR;
+		property.usage = PROPERTY_USAGE_NO_EDITOR;
 	}
 
 	if (property.name == "aim_angle_degrees" && !(aim_mode == RADIAL || aim_mode == UNIFORM)) {
-		property.usage = PROPERTY_USAGE_NOEDITOR;
+		property.usage = PROPERTY_USAGE_NO_EDITOR;
 	}
 
 	if (property.name == "active_shot_indices" && pattern_mode != MANUAL) {
-		property.usage = PROPERTY_USAGE_NOEDITOR;
+		property.usage = PROPERTY_USAGE_NO_EDITOR;
 	}
 }
 
@@ -703,20 +703,20 @@ void BulletSpawner::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "interval_frames", PROPERTY_HINT_RANGE, "1,300,or_greater"), "set_interval_frames", "get_interval_frames");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "shot_count", PROPERTY_HINT_RANGE, "1,100,or_greater"), "set_shot_count", "get_shot_count");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "radius", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_radius", "get_radius");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_width", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_width", "get_arc_width");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_width", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NO_EDITOR), "set_arc_width", "get_arc_width");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_width_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_width_degrees", "get_arc_width_degrees");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_arc_rotation", "get_arc_rotation");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NO_EDITOR), "set_arc_rotation", "get_arc_rotation");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_rotation_degrees", "get_arc_rotation_degrees");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_arc_offset", "get_arc_offset");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "bullet_type", PROPERTY_HINT_RESOURCE_TYPE, "BulletType"), "set_bullet_type", "get_bullet_type");
 	ADD_GROUP("Aim", "aim_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "aim_mode", PROPERTY_HINT_ENUM, "Radial,Uniform,Relative Target,Global Target"), "set_aim_mode", "get_aim_mode");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "aim_angle", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_aim_angle", "get_aim_angle");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "aim_angle", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NO_EDITOR), "set_aim_angle", "get_aim_angle");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "aim_angle_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_aim_angle_degrees", "get_aim_angle_degrees");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "aim_target_position"), "set_aim_target_position", "get_aim_target_position");
 	ADD_GROUP("Scatter", "scatter_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "scatter_mode", PROPERTY_HINT_ENUM, "None,Bullet,Volley"), "set_scatter_mode", "get_scatter_mode");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scatter_range", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NOEDITOR), "set_scatter_range", "get_scatter_range");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scatter_range", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NO_EDITOR), "set_scatter_range", "get_scatter_range");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scatter_range_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_scatter_range_degrees", "get_scatter_range_degrees");
 	ADD_GROUP("Pattern", "");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "pattern_mode", PROPERTY_HINT_ENUM, "All,Manual"), "set_pattern_mode", "get_pattern_mode");
