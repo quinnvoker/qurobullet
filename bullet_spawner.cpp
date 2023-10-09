@@ -138,7 +138,7 @@ Array BulletSpawner::_get_selected_shots(const Array &p_volley, const PackedInt3
 void BulletSpawner::_notify_volley_changed() {
 	_volley_changed = true;
 #ifdef TOOLS_ENABLED
-	update_configuration_warning();
+	update_configuration_warnings();
 #endif
 	if (is_visible_in_tree()) {
 		update();
