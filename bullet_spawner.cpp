@@ -63,6 +63,12 @@ void BulletSpawner::fire() {
 	}
 	switch (pattern_mode) {
 		case ALL: {
+			Array vol = get_scattered_volley();
+			for (int i = 0; i < vol.size(); i++) {
+				Dictionary shot = vol[i];
+				String debug_string = "Firing a shot with direction(" + String(shot["direction"]) + "), position(" + String(shot["position"]) + ")";
+				WARN_PRINT(debug_string);
+			}
 			emit_signal("volley_fired", bullet_type->duplicate(), get_global_position(), get_scattered_volley());
 		} break;
 
