@@ -21,7 +21,12 @@ void initialize_qurobullet_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(BulletServerRelay);
 	GDREGISTER_CLASS(BulletSpawner);
 
-	Engine::get_singleton()->add_singleton(Engine::Singleton("BulletServerRelay", _bullet_server_relay));
+	Engine *engine = Engine::get_singleton();
+	if (engine->has_singleton("BulletServerRelay")) {
+		return;
+	}
+
+	engine->add_singleton(Engine::Singleton("BulletServerRelay", _bullet_server_relay));
 }
 
 void uninitialize_qurobullet_module(ModuleInitializationLevel p_level) {
