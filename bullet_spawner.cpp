@@ -23,7 +23,7 @@ void BulletSpawner::_notification(int p_what) {
 			}
 			if (autofire) {
 				_autofire_time += get_physics_process_delta_time();
-				if (_autofire_time >= interval_frames / ProjectSettings::get_singleton()->get("physics/common/physics_fps").operator float()) {
+				if (_autofire_time >= interval_frames / ProjectSettings::get_singleton()->get("physics/common/physics_ticks_per_second").operator float()) {
 					fire();
 					_autofire_time = 0;
 				}
