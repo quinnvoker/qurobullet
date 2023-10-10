@@ -33,6 +33,15 @@ void initialize_qurobullet_module(ModuleInitializationLevel p_level) {
 }
 
 void uninitialize_qurobullet_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+
+	Engine *engine = Engine::get_singleton();
+	if (engine->has_singleton("BulletServerRelay")) {
+		engine->remove_singleton("BulletServerRelay");
+	}
+
 	if (_bullet_server_relay) {
 		memdelete(_bullet_server_relay);
 	}
