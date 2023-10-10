@@ -604,27 +604,21 @@ void BulletSpawner::_validate_property(PropertyInfo &property) const {
 	}
 }
 
-String BulletSpawner::get_configuration_warning() const {
-	String warning;
+PackedStringArray BulletSpawner::get_configuration_warnings() const {
+	PackedStringArray warnings = Node2D::get_configuration_warnings();
 	if (bullet_type.is_null()) {
-		warning += TTR("This BulletSpawner has no BulletType configured, and will not be able to fire bullets.\nConsider defining one in the BulletSpawner's properties.");
+		warnings.push_back("This BulletSpawner has no BulletType configured, and will not be able to fire bullets. Consider defining one in the BulletSpawner's properties.");
 	}
 
 	if (pattern_mode == MANUAL && !Math::is_zero_approx(arc_offset)) {
-		if (warning != String()) {
-			warning += "\n\n";
-		}
-		warning += TTR("This BulletSpawner has a non-zero arc_offset while in MANUAL pattern mode. Shot indices may shift unexpectedly.\nConsider setting the pattern mode to ALL or the arc_offset to zero, depending on your needs.");
+		warnings.push_back("This BulletSpawner has a non-zero arc_offset while in MANUAL pattern mode. Shot indices may shift unexpectedly. Consider setting the pattern mode to ALL or the arc_offset to zero, depending on your needs.");
 	}
 
 	if (aim_mode != RADIAL && Math::is_zero_approx(radius)) {
-		if (warning != String()) {
-			warning += "\n\n";
-		}
-		warning += TTR("This BulletSpawner has a radius of zero, and aim_mode is not RADIAL.\nWith this configuration, only one bullet will be fired, regardless of bullet count and arc width, because all bullets would have identical flight paths.");
+		warnings.push_back("This BulletSpawner has a radius of zero, and aim_mode is not RADIAL. With this configuration, only one bullet will be fired, regardless of bullet count and arc width, because all bullets would have identical flight paths.");
 	}
 
-	return warning;
+	return warnings;
 }
 
 //godot binds
