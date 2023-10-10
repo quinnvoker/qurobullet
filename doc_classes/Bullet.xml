@@ -84,8 +84,8 @@
 		<method name="set_direction">
 			<return type="void">
 			</return>
-			<argument index="0" name="direction" type="Vector2">
-			</argument>
+			<param index="0" name="direction" type="Vector2">
+			</param>
 			<description>
 				Sets the [Vector2] that defines the direction in which this [Bullet] will travel.
 			</description>
@@ -93,8 +93,8 @@
 		<method name="set_position">
 			<return type="void">
 			</return>
-			<argument index="0" name="position" type="Vector2">
-			</argument>
+			<param index="0" name="position" type="Vector2">
+			</param>
 			<description>
 				Sets the position of this [Bullet].
 			</description>
@@ -102,8 +102,8 @@
 		<method name="set_rotation">
 			<return type="void">
 			</return>
-			<argument index="0" name="rotation" type="float">
-			</argument>
+			<param index="0" name="rotation" type="float">
+			</param>
 			<description>
 				Sets the rotation of this [Bullet].
 			</description>
@@ -111,8 +111,8 @@
 		<method name="set_type">
 			<return type="void">
 			</return>
-			<argument index="0" name="type" type="BulletType">
-			</argument>
+			<param index="0" name="type" type="BulletType">
+			</param>
 			<description>
 				Sets the [BulletType] that will be used to define this [Bullet]'s appearance and behaviour.
 				Causes the [CanvasItem] to update to reflect texture or material changes.
@@ -121,12 +121,12 @@
 		<method name="spawn">
 			<return type="void">
 			</return>
-			<argument index="0" name="type" type="BulletType">
-			</argument>
-			<argument index="1" name="position" type="Vector2">
-			</argument>
-			<argument index="2" name="direction" type="Vector2">
-			</argument>
+			<param index="0" name="type" type="BulletType">
+			</param>
+			<param index="1" name="position" type="Vector2">
+			</param>
+			<param index="2" name="direction" type="Vector2">
+			</param>
 			<description>
 				Resets this [Bullet]'s age and state, then deploys it at the given [code]position[/code], in [code]direction[/code], with the traits of [code]type[/code].
 			</description>
@@ -134,8 +134,8 @@
 		<method name="update">
 			<return type="void">
 			</return>
-			<argument index="0" name="delta" type="float">
-			</argument>
+			<param index="0" name="delta" type="float">
+			</param>
 			<description>
 				Updates this [Bullet]'s age and position, using its currently loaded [BulletType].
 				Will automatically pop if the type has a lifetime limit set and this bullet's live time exceeds it.

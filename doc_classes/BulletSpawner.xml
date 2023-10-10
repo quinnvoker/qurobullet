@@ -29,8 +29,8 @@
 		<method name="fire_shots">
 			<return type="void">
 			</return>
-			<argument index="0" name="shot_indices" type="PackedInt32Array">
-			</argument>
+			<param index="0" name="shot_indices" type="PackedInt32Array">
+			</param>
 			<description>
 				Functionally similar to [code]fire[/code], but takes an array of integers and fires only the shots whose indices are included.
 				Ignores [code]pattern_mode[/code] and [code]active_shot_indices[/code].
@@ -153,12 +153,12 @@
 	</members>
 	<signals>
 		<signal name="volley_fired">
-			<argument index="0" name="type" type="BulletType">
-			</argument>
-			<argument index="1" name="origin" type="Vector2">
-			</argument>
-			<argument index="2" name="volley" type="Array">
-			</argument>
+			<param index="0" name="type" type="BulletType">
+			</param>
+			<param index="1" name="origin" type="Vector2">
+			</param>
+			<param index="2" name="volley" type="Array">
+			</param>
 			<description>
 				Emitted when a volley of bullets is fired. To be passed to a server for spawning the required volley.
 			</description>

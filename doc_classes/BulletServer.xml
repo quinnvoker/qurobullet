@@ -41,12 +41,12 @@
 		<method name="spawn_bullet">
 			<return type="void">
 			</return>
-			<argument index="0" name="type" type="BulletType">
-			</argument>
-			<argument index="1" name="position" type="Vector2">
-			</argument>
-			<argument index="2" name="direction" type="Vector2">
-			</argument>
+			<param index="0" name="type" type="BulletType">
+			</param>
+			<param index="1" name="position" type="Vector2">
+			</param>
+			<param index="2" name="direction" type="Vector2">
+			</param>
 			<description>
 				Spawns a [Bullet] of [code]type[/code] at [code]position[/code], firing in [code]direction[/code].
 				If every bullet in the bullet pool is currently active, the oldest active bullet is recycled and spawned instead.
@@ -55,12 +55,12 @@
 		<method name="spawn_volley">
 			<return type="void">
 			</return>
-			<argument index="0" name="type" type="BulletType">
-			</argument>
-			<argument index="1" name="position" type="Vector2">
-			</argument>
-			<argument index="2" name="volley" type="Array">
-			</argument>
+			<param index="0" name="type" type="BulletType">
+			</param>
+			<param index="1" name="position" type="Vector2">
+			</param>
+			<param index="2" name="volley" type="Array">
+			</param>
 			<description>
 				Spawns a volley of [Bullet]s of [code]type[/code], originating at [code]position[/code], with their relative spawn positions and directions determined by Spawns a [Bullet] of [code]type[/code] at [code]position[/code] from the bullet pool, firing in [code]volley[/code].
 				[code]volley[/code] is an [Array] of [Dictionary] items, each containing a "position" and "direction". You can build your own if you wish to spawn custom volleys.
@@ -103,10 +103,10 @@
 	</members>
 	<signals>
 		<signal name="collision_detected">
-			<argument index="0" name="bullet" type="Bullet">
-			</argument>
-			<argument index="1" name="colliders" type="Array">
-			</argument>
+			<param index="0" name="bullet" type="Bullet">
+			</param>
+			<param index="1" name="colliders" type="Array">
+			</param>
 			<description>
 				Emitted when a bullet has collided with an area or body. Contains the [Bullet] which collided and an [Array] of the collision objects it collided with.
 				Note that [BulletServer] will report collisions even with unmonitorable collision shapes, so long as they're on the same layer.
