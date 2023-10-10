@@ -169,7 +169,7 @@ public:
 	void set_relay_autoconnect(bool p_enabled);
 	bool get_relay_autoconnect() const;
 
-	PackedStringArray get_configuration_warnings() const;
+	PackedStringArray get_configuration_warnings() override const;
 
 	BulletSpawner();
 	~BulletSpawner();
