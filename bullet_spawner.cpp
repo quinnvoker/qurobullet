@@ -580,8 +580,8 @@ void BulletSpawner::_draw_shot_lines(const Array &p_volley, float p_length, cons
 	for (int i = 0; i < p_volley.size(); i++) {
 		Dictionary shot = p_volley[i];
 		Vector2 normal = shot["normal"];
-		Vector2 position = shot["position"];
-		Vector2 local_position = position.rotated(-get_global_rotation()) / get_global_scale();
+		Vector2 s_position = shot["position"];
+		Vector2 local_position = s_position.rotated(-get_global_rotation()) / get_global_scale();
 		draw_line(local_position, _get_outer_preview_point(local_position, normal, p_length), p_color);
 	}
 }
