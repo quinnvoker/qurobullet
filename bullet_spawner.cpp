@@ -710,7 +710,7 @@ void BulletSpawner::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "shot_count", PROPERTY_HINT_RANGE, "1,100,or_greater"), "set_shot_count", "get_shot_count");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "radius", PROPERTY_HINT_RANGE, "0,500,0.01,or_greater"), "set_radius", "get_radius");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_width", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NO_EDITOR), "set_arc_width", "get_arc_width");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_width_degrees", PROPERTY_HINT_RANGE, "0,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_width_degrees", "get_arc_width_degrees");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_width_degrees", PROPERTY_HINT_RANGE, "0,360,0.1", PROPERTY_USAGE_EDITOR), "set_arc_width_degrees", "get_arc_width_degrees");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_rotation", PROPERTY_HINT_RANGE, "", PROPERTY_USAGE_NO_EDITOR), "set_arc_rotation", "get_arc_rotation");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_rotation_degrees", PROPERTY_HINT_RANGE, "-360,360,0.1,or_lesser,or_greater", PROPERTY_USAGE_EDITOR), "set_arc_rotation_degrees", "get_arc_rotation_degrees");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "arc_offset", PROPERTY_HINT_RANGE, "-1,1,0.01"), "set_arc_offset", "get_arc_offset");
