@@ -45,7 +45,7 @@ void BulletSpawner::_notification(int p_what) {
 			if (is_visible_in_tree()) {
 				_draw_preview(preview_color, preview_shot_color);
 			}
-		}
+		} break;
 
 		default:
 			break;
