@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BulletServerRelay" inherits="Object" version="3.2">
+<class name="BulletServerRelay" inherits="Object" version="4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 		Singleton for automatic communication between [BulletServer] and [BulletSpawner] nodes.
 	</brief_description>
@@ -11,28 +11,20 @@
 	</tutorials>
 	<methods>
 		<method name="spawn_bullet">
-			<return type="void">
-			</return>
-			<param index="0" name="type" type="BulletType">
-			</param>
-			<param index="1" name="position" type="Vector2">
-			</param>
-			<param index="2" name="direction" type="Vector2">
-			</param>
+			<return type="void" />
+			<param index="0" name="type" type="BulletType" />
+			<param index="1" name="position" type="Vector2" />
+			<param index="2" name="direction" type="Vector2" />
 			<description>
 				Emits [code]bullet_spawn_requested[/code] with the given parameters.
 				Connect custom singular bullet spawn request signals here.
 			</description>
 		</method>
 		<method name="spawn_volley">
-			<return type="void">
-			</return>
-			<param index="0" name="type" type="BulletType">
-			</param>
-			<param index="1" name="origin" type="Vector2">
-			</param>
-			<param index="2" name="shots" type="Array">
-			</param>
+			<return type="void" />
+			<param index="0" name="type" type="BulletType" />
+			<param index="1" name="origin" type="Vector2" />
+			<param index="2" name="shots" type="Array" />
 			<description>
 				Emits [code]volley_spawn_requested[/code] with the given parameters.
 				Connect custom bullet volley spawn request signals here.
@@ -41,30 +33,22 @@
 	</methods>
 	<signals>
 		<signal name="bullet_spawn_requested">
-			<param index="0" name="type" type="BulletType">
-			</param>
-			<param index="1" name="position" type="Vector2">
-			</param>
-			<param index="2" name="direction" type="Vector2">
-			</param>
+			<param index="0" name="type" type="BulletType" />
+			<param index="1" name="position" type="Vector2" />
+			<param index="2" name="direction" type="Vector2" />
 			<description>
 				Emits when the relay has received a bullet spawn request signal.
 				Connect this to custom singular bullet spawning implementations.
 			</description>
 		</signal>
 		<signal name="volley_spawn_requested">
-			<param index="0" name="type" type="BulletType">
-			</param>
-			<param index="1" name="position" type="Vector2">
-			</param>
-			<param index="2" name="shots" type="Array">
-			</param>
+			<param index="0" name="type" type="BulletType" />
+			<param index="1" name="position" type="Vector2" />
+			<param index="2" name="shots" type="Array" />
 			<description>
 				Emits when the relay has received a bullet spawn request signal.
 				Connect this to custom bullet volley spawning implementations.
 			</description>
 		</signal>
 	</signals>
-	<constants>
-	</constants>
 </class>

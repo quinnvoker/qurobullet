@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BulletSpawner" inherits="Node2D" version="3.2">
+<class name="BulletSpawner" inherits="Node2D" version="4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 		Dynamic spawner node for [Bullet] objects.
 	</brief_description>
@@ -12,41 +12,35 @@
 	</tutorials>
 	<methods>
 		<method name="can_fire" qualifiers="const">
-			<return type="bool">
-			</return>
+			<return type="bool" />
 			<description>
 				Returns [code]true[/code] if this spawner is not in the editor, in the scene tree, and has a valid [code]bullet_type[/code].
 			</description>
 		</method>
 		<method name="fire">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 				Emits the "volley_fired" signal with the current parameters, to be connected to a bullet server for spawning the bullets appropiately.
 				Passes duplicate of [code]bullet_type[/code] instead of referencing the resource directly, so active bullets' type will not be modified by changes made in this spawner.
 			</description>
 		</method>
 		<method name="fire_shots">
-			<return type="void">
-			</return>
-			<param index="0" name="shot_indices" type="PackedInt32Array">
-			</param>
+			<return type="void" />
+			<param index="0" name="shot_indices" type="PackedInt32Array" />
 			<description>
 				Functionally similar to [code]fire[/code], but takes an array of integers and fires only the shots whose indices are included.
 				Ignores [code]pattern_mode[/code] and [code]active_shot_indices[/code].
 			</description>
 		</method>
 		<method name="get_scattered_volley">
-			<return type="Array">
-			</return>
+			<return type="Array" />
 			<description>
 				Returns the volley defined by this spawner's properties, with shot directions adjusted for scatter.
 				The [Array] returned contains of [Dictionary] elements consisting of a [Vector2] "position" (bullet's spawn point relative to spawner), a [Vector2] "direction" (bullet's global direction vector).
 			</description>
 		</method>
 		<method name="get_volley">
-			<return type="Array">
-			</return>
+			<return type="Array" />
 			<description>
 				Returns the volley defined by this spawner's properties.
 				The [Array] returned contains of [Dictionary] elements consisting of a [Vector2] "position" (bullet's spawn point relative to spawner) and a [Vector2] "direction" (bullet's global direction vector).
@@ -54,7 +48,7 @@
 		</method>
 	</methods>
 	<members>
-		<member name="active_shot_indices" type="PackedInt32Array" setter="set_active_shot_indices" getter="get_active_shot_indices" default="PackedInt32Array(  )">
+		<member name="active_shot_indices" type="PackedInt32Array" setter="set_active_shot_indices" getter="get_active_shot_indices" default="PackedInt32Array()">
 			The array defining the indices of the active shots for the current volley.  Only active shots will be fired in MANUAL pattern mode.
 			Values entered here can be animated/tweened to make "sweeps", progressively activating and deactivating shots along the arc.
 		</member>
@@ -73,7 +67,7 @@
 			[code]TARGET_RELATIVE[/code] causes all bullets' directions to point towards [code]aim_target_position[/code], relative to the spawner's center.
 			[code]TARGET_GLOBAL[/code] causes all bullet's directions to point towards [code]aim_target_position[/code], in global space.
 		</member>
-		<member name="aim_target_position" type="Vector2" setter="set_aim_target_position" getter="get_aim_target_position" default="Vector2( 0, 0 )">
+		<member name="aim_target_position" type="Vector2" setter="set_aim_target_position" getter="get_aim_target_position" default="Vector2(0, 0)">
 			The point all bullets fired by this spawner will be directed towards. For [code]TARGET_RELATIVE[/code] and [code]TARGET_GLOBAL[/code] aim modes.
 		</member>
 		<member name="arc_offset" type="float" setter="set_arc_offset" getter="get_arc_offset" default="0.0">
@@ -114,13 +108,13 @@
 		<member name="preview_arc_points" type="int" setter="set_preview_arc_points" getter="get_preview_arc_points" default="32">
 			The number of points used to draw preview arcs for this spawner.
 		</member>
-		<member name="preview_color" type="Color" setter="set_preview_color" getter="get_preview_color" default="Color( 0, 1, 0, 1 )">
+		<member name="preview_color" type="Color" setter="set_preview_color" getter="get_preview_color" default="Color(0, 1, 0, 1)">
 			The base color of the preview of this spawner.
 		</member>
 		<member name="preview_extent" type="float" setter="set_preview_extent" getter="get_preview_extent" default="50.0">
 			The length of shots in the preview of this spawner.
 		</member>
-		<member name="preview_shot_color" type="Color" setter="set_preview_shot_color" getter="get_preview_shot_color" default="Color( 1, 1, 1, 1 )">
+		<member name="preview_shot_color" type="Color" setter="set_preview_shot_color" getter="get_preview_shot_color" default="Color(1, 1, 1, 1)">
 			The color used to draw the shots in the preview of this spawner.
 		</member>
 		<member name="preview_visible_in_game" type="bool" setter="set_preview_visible_in_game" getter="get_preview_visible_in_game" default="false">
@@ -153,12 +147,9 @@
 	</members>
 	<signals>
 		<signal name="volley_fired">
-			<param index="0" name="type" type="BulletType">
-			</param>
-			<param index="1" name="origin" type="Vector2">
-			</param>
-			<param index="2" name="volley" type="Array">
-			</param>
+			<param index="0" name="type" type="BulletType" />
+			<param index="1" name="origin" type="Vector2" />
+			<param index="2" name="volley" type="Array" />
 			<description>
 				Emitted when a volley of bullets is fired. To be passed to a server for spawning the required volley.
 			</description>

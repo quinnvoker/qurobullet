@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BulletType" inherits="Resource" version="3.2">
+<class name="BulletType" inherits="Resource" version="4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 		Resource containing appearance and behaviour data for [Bullet]s.
 	</brief_description>
@@ -9,8 +9,6 @@
 	</description>
 	<tutorials>
 	</tutorials>
-	<methods>
-	</methods>
 	<members>
 		<member name="collision_detect_areas" type="bool" setter="set_collision_detect_areas" getter="get_collision_detect_areas" default="true">
 			If [code]true[/code], this type of bullet will scan for areas in its collision checks.
@@ -41,7 +39,7 @@
 			The amplitude of this type of bullet's parallel offset wave.
 			Measured in pixels, and determines the maximum distance this type of bullet will be displaced along its trajectory by the parallel offset wave.
 		</member>
-		<member name="h_wave_frequency" type="float" setter="set_h_wave_frequency" getter="get_h_wave_frequency" default="1.4013e-45">
+		<member name="h_wave_frequency" type="float" setter="set_h_wave_frequency" getter="get_h_wave_frequency" default="0.0">
 			The frequency of this type of bullet's parallel offset wave.
 			Measured in Hz, and determines how many times per second the parallel offset wave will repeat.
 		</member>
@@ -62,7 +60,7 @@
 		<member name="material" type="Material" setter="set_material" getter="get_material">
 			The material applied to this type of bullet's [CanvasItem].
 		</member>
-		<member name="modulate" type="Color" setter="set_modulate" getter="get_modulate" default="Color( 1, 1, 1, 1 )">
+		<member name="modulate" type="Color" setter="set_modulate" getter="get_modulate" default="Color(1, 1, 1, 1)">
 			The color that modulates this type of bullet's [CanvasItem].
 		</member>
 		<member name="rotation" type="float" setter="set_rotation" getter="get_rotation" default="0.0">
@@ -71,7 +69,7 @@
 		<member name="rotation_degrees" type="float" setter="set_rotation_degrees" getter="get_rotation_degrees" default="0.0">
 			The rotation offset of this type of bullet, in degrees.
 		</member>
-		<member name="scale" type="Vector2" setter="set_scale" getter="get_scale" default="Vector2( 1, 1 )">
+		<member name="scale" type="Vector2" setter="set_scale" getter="get_scale" default="Vector2(1, 1)">
 			The scale applied to this type of bullet.
 		</member>
 		<member name="speed" type="float" setter="set_speed" getter="get_speed" default="100.0">

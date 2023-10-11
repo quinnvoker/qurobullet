@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="Bullet" inherits="Object" version="3.2">
+<class name="Bullet" inherits="Object" version="4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 		Representation of a controllable bullet.
 	</brief_description>
@@ -12,136 +12,110 @@
 	</tutorials>
 	<methods>
 		<method name="can_collide">
-			<return type="bool">
-			</return>
+			<return type="bool" />
 			<description>
 				Returns [code]true[/code] if this [Bullet]'s type contains a collision shape and an active collsion mask.
 			</description>
 		</method>
 		<method name="get_ci_rid" qualifiers="const">
-			<return type="RID">
-			</return>
+			<return type="RID" />
 			<description>
 				Returns the [RID] of the [CanvasItem] associated with this [Bullet].
 			</description>
 		</method>
 		<method name="get_direction" qualifiers="const">
-			<return type="Vector2">
-			</return>
+			<return type="Vector2" />
 			<description>
 				Returns a [Vector2] reprenting this [Bullet]'s current direction of travel.
 			</description>
 		</method>
 		<method name="get_position" qualifiers="const">
-			<return type="Vector2">
-			</return>
+			<return type="Vector2" />
 			<description>
 				Returns the current position of this [Bullet].
 			</description>
 		</method>
 		<method name="get_rotation" qualifiers="const">
-			<return type="float">
-			</return>
+			<return type="float" />
 			<description>
 				Returns the current rotation of this [Bullet].
 			</description>
 		</method>
 		<method name="get_time" qualifiers="const">
-			<return type="float">
-			</return>
+			<return type="float" />
 			<description>
 				Returns the amount of time this [Bullet] has been active since spawning, in seconds.
 			</description>
 		</method>
 		<method name="get_transform">
-			<return type="Transform2D">
-			</return>
+			<return type="Transform2D" />
 			<description>
 				Returns a transform representing this [Bullet]'s current position, rotation, and the scale.
 			</description>
 		</method>
 		<method name="get_type" qualifiers="const">
-			<return type="BulletType">
-			</return>
+			<return type="BulletType" />
 			<description>
 				Returns the [BulletType] currently held by this [Bullet].
 			</description>
 		</method>
 		<method name="is_popped">
-			<return type="bool">
-			</return>
+			<return type="bool" />
 			<description>
 				Returns [code]true[/code] if this [Bullet] has been popped.
 			</description>
 		</method>
 		<method name="pop">
-			<return type="void">
-			</return>
+			<return type="void" />
 			<description>
 				Marks this [Bullet] as inactive and ready to be cleaned up by the server, and disables its visibility.
 			</description>
 		</method>
 		<method name="set_direction">
-			<return type="void">
-			</return>
-			<param index="0" name="direction" type="Vector2">
-			</param>
+			<return type="void" />
+			<param index="0" name="direction" type="Vector2" />
 			<description>
 				Sets the [Vector2] that defines the direction in which this [Bullet] will travel.
 			</description>
 		</method>
 		<method name="set_position">
-			<return type="void">
-			</return>
-			<param index="0" name="position" type="Vector2">
-			</param>
+			<return type="void" />
+			<param index="0" name="position" type="Vector2" />
 			<description>
 				Sets the position of this [Bullet].
 			</description>
 		</method>
 		<method name="set_rotation">
-			<return type="void">
-			</return>
-			<param index="0" name="rotation" type="float">
-			</param>
+			<return type="void" />
+			<param index="0" name="rotation" type="float" />
 			<description>
 				Sets the rotation of this [Bullet].
 			</description>
 		</method>
 		<method name="set_type">
-			<return type="void">
-			</return>
-			<param index="0" name="type" type="BulletType">
-			</param>
+			<return type="void" />
+			<param index="0" name="type" type="BulletType" />
 			<description>
 				Sets the [BulletType] that will be used to define this [Bullet]'s appearance and behaviour.
 				Causes the [CanvasItem] to update to reflect texture or material changes.
 			</description>
 		</method>
 		<method name="spawn">
-			<return type="void">
-			</return>
-			<param index="0" name="type" type="BulletType">
-			</param>
-			<param index="1" name="position" type="Vector2">
-			</param>
-			<param index="2" name="direction" type="Vector2">
-			</param>
+			<return type="void" />
+			<param index="0" name="type" type="BulletType" />
+			<param index="1" name="position" type="Vector2" />
+			<param index="2" name="direction" type="Vector2" />
 			<description>
 				Resets this [Bullet]'s age and state, then deploys it at the given [code]position[/code], in [code]direction[/code], with the traits of [code]type[/code].
 			</description>
 		</method>
 		<method name="update">
-			<return type="void">
-			</return>
-			<param index="0" name="delta" type="float">
-			</param>
+			<return type="void" />
+			<param index="0" name="delta" type="float" />
 			<description>
 				Updates this [Bullet]'s age and position, using its currently loaded [BulletType].
 				Will automatically pop if the type has a lifetime limit set and this bullet's live time exceeds it.
 			</description>
 		</method>
 	</methods>
-	<constants>
-	</constants>
 </class>
