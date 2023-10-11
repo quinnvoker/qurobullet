@@ -38,6 +38,10 @@ void BulletServer::_notification(int p_what) {
 			_process_bullets(get_physics_process_delta_time());
 		} break;
 
+		case NOTIFICATION_EXIT_TREE: {
+			_uninit_bullets();
+		} break;
+
 		default:
 			break;
 	}
@@ -116,6 +120,15 @@ void BulletServer::_create_bullet() {
 	Bullet *bullet = memnew(Bullet);
 	RS::get_singleton()->canvas_item_set_parent(bullet->get_ci_rid(), get_canvas_item());
 	dead_bullets.insert(0, bullet);
+}
+
+void BulletServer::_uninit_bullets() {
+	for (int i = 0; i < live_bullets.size(); i++) {
+		memdelete(live_bullets[i]);
+	}
+	for (int i = 0; i < dead_bullets.size(); i++) {
+		memdelete(dead_bullets[i]);
+	}
 }
 
 void BulletServer::_update_play_area() {

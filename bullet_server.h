@@ -37,6 +37,7 @@ private:
 
 	void _init_bullets();
 	void _create_bullet();
+	void _uninit_bullets();
 
 	void _update_play_area();
 
