@@ -63,7 +63,7 @@
 		<member name="max_lifetime" type="float" setter="set_max_lifetime" getter="get_max_lifetime" default="0.0">
 			The maximium lifetime of any [Bullet] managed by the server. Bullets older than this are automatically popped.
 		</member>
-		<member name="play_area_allow_incoming" type="bool" setter="set_play_area_allow_incoming" getter="get_play_area_allow_incoming" default="false">
+		<member name="play_area_allow_incoming" type="bool" setter="set_play_area_allow_incoming" getter="get_play_area_allow_incoming" default="true">
 			If [code]true[/code], bullets outside of the play area will only be automatically popped if they are moving away from it.
 			Bullets outside of the play area will not detect collisions.
 			Calculation of whether bullet is "incoming" is approximate, and based on its angle to the center of the play area, so bullets that would enter a corner of the play area at an oblique angle may still be popped.
