@@ -754,23 +754,40 @@ void BulletSpawner::_bind_methods() {
 //initialiser/terminator
 BulletSpawner::BulletSpawner() {
 	autofire = false;
+	_autofire_time = 0.0;
 	interval_frames = 10;
+
 	shot_count = 1;
+
 	radius = 10.0;
 	arc_width = 0.0;
 	arc_rotation = 0.0;
 	arc_offset = 0.0;
+
+	bullet_type = Ref<BulletType>();
+
 	aim_mode = RADIAL;
 	aim_angle = 0.0;
+	aim_target_position = Vector2();
+
 	scatter_mode = NONE;
 	scatter_range = 0.0;
+
 	pattern_mode = ALL;
+	active_shot_indices = PackedInt32Array();
+
 	preview_visible_in_game = false;
 	preview_color = Color(0.0, 1.0, 0.0, 1.0); //green
 	preview_shot_color = Color(1.0, 1.0, 1.0, 1.0);
-	preview_arc_points = 32;
 	preview_extent = 50;
+	preview_arc_points = 32;
+
 	relay_autoconnect = true;
+
+	_cached_volley = Array();
+	_volley_changed = true;
+
+	_previous_transform = Transform2D();
 }
 
 BulletSpawner::~BulletSpawner() {

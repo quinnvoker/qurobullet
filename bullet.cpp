@@ -186,7 +186,12 @@ void Bullet::_bind_methods() {
 
 Bullet::Bullet() {
 	ci_rid = RS::get_singleton()->canvas_item_create();
-	direction = Vector2(0, 0);
+	direction = Vector2();
+	position = Vector2();
+	type = Ref<BulletType>();
+	rotation = 0.0;
+	_offset = Vector2();
+	_popped = false;
 }
 
 Bullet::~Bullet() {

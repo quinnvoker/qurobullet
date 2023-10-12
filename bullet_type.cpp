@@ -314,28 +314,29 @@ void BulletType::_bind_methods() {
 }
 
 BulletType::BulletType() {
+	speed = 100.0;
+	damage = 0.0;
 	lifetime = 0.0;
 	texture = Ref<Texture2D>();
 	modulate = Color(1, 1, 1, 1);
 	light_mask = 1;
 	material = Ref<Material>();
-	face_direction = false;
-	scale = Vector2(1, 1);
-	damage = 0.0;
 	collision_shape = Ref<Shape2D>();
 	collision_mask = 1;
 	collision_detect_bodies = true;
 	collision_detect_areas = true;
-	speed = 100.0;
 	linear_acceleration = 0.0;
 	curve_rate = 0.0;
-	v_wave_type = WaveType::NONE;
-	v_wave_amplitude = 0.0;
-	v_wave_frequency = 0.0;
-	rotation = 0.0;
 	h_wave_type = WaveType::NONE;
 	h_wave_amplitude = 0.0;
 	h_wave_frequency = 0.0;
+	v_wave_type = WaveType::NONE;
+	v_wave_amplitude = 0.0;
+	v_wave_frequency = 0.0;
+	face_direction = false;
+	rotation = 0.0;
+	scale = Vector2(1, 1);
+	custom_data = Dictionary();
 }
 
 BulletType::~BulletType() {

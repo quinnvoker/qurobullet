@@ -336,6 +336,8 @@ void BulletServer::_bind_methods() {
 
 BulletServer::BulletServer() {
 	bullet_pool_size = 1500;
+	max_lifetime = 0.0;
+	play_area_allow_incoming = true;
 	play_area_mode = VIEWPORT;
 	play_area_margin = 0;
 	play_area_rect = Rect2();
