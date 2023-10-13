@@ -83,22 +83,11 @@ void BulletSpawner::fire_shots(const PackedInt32Array &p_shot_indices) {
 }
 
 Array BulletSpawner::get_volley() {
-	// FIXME: after switching to godot 4, the "shot" dictionaries stored in _cached_volley
-	// get their values nullified between get_volley calls, so the cache cannot be relied
-	// upon as an alternative to calling _create_volley for the time being
-	// if (_volley_changed) {
-	_cached_volley = _create_volley();
-	_volley_changed = false;
-	//}
+	if (_volley_changed) {
+		_cached_volley = _create_volley();
+		_volley_changed = false;
+	}
 
-	// DEBUG: print cached volley state
-	// String debug_string = "Cached volley state: [";
-	// for (int i = 0; i < _cached_volley.size(); i++) {
-	// 	Dictionary shot = _cached_volley[i];
-	// 	debug_string += "{ direction: " + String(shot["direction"]) + ", position: " + String(shot["position"]) + " },";
-	// }
-	// debug_string += "]";
-	// WARN_PRINT(debug_string);
 	return _cached_volley;
 }
 
