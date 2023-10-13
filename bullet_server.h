@@ -28,6 +28,7 @@ private:
 
 	bool pop_on_collide;
 	float max_lifetime;
+	int max_collisions_per_bullet;
 
 	Vector<Bullet *> live_bullets;
 	Vector<Bullet *> dead_bullets;
@@ -75,6 +76,9 @@ public:
 
 	void set_max_lifetime(float p_time);
 	float get_max_lifetime() const;
+
+	void set_max_collisions_per_bullet(int p_count);
+	int get_max_collisions_per_bullet() const;
 
 	void set_play_area_mode(AreaMode p_mode);
 	AreaMode get_play_area_mode() const;

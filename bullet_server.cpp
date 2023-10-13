@@ -231,6 +231,14 @@ bool BulletServer::get_pop_on_collide() const {
 	return pop_on_collide;
 }
 
+void BulletServer::set_max_collisions_per_bullet(int p_count) {
+	max_collisions_per_bullet = p_count;
+}
+
+int BulletServer::get_max_collisions_per_bullet() const {
+	return max_collisions_per_bullet;
+}
+
 void BulletServer::set_play_area_mode(AreaMode p_mode) {
 	play_area_mode = p_mode;
 	notify_property_list_changed();
@@ -300,6 +308,9 @@ void BulletServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_max_lifetime", "time"), &BulletServer::set_max_lifetime);
 	ClassDB::bind_method(D_METHOD("get_max_lifetime"), &BulletServer::get_max_lifetime);
 
+	ClassDB::bind_method(D_METHOD("set_max_collisions_per_bullet", "count"), &BulletServer::set_max_collisions_per_bullet);
+	ClassDB::bind_method(D_METHOD("get_max_collisions_per_bullet"), &BulletServer::get_max_collisions_per_bullet);
+
 	ClassDB::bind_method(D_METHOD("set_play_area_mode", "mode"), &BulletServer::set_play_area_mode);
 	ClassDB::bind_method(D_METHOD("get_play_area_mode"), &BulletServer::get_play_area_mode);
 
@@ -318,6 +329,7 @@ void BulletServer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bullet_pool_size", PROPERTY_HINT_RANGE, "1,5000,1,or_greater"), "set_bullet_pool_size", "get_bullet_pool_size");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_lifetime", PROPERTY_HINT_RANGE, "0,300,0.01,or_greater"), "set_max_lifetime", "get_max_lifetime");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pop_on_collide"), "set_pop_on_collide", "get_pop_on_collide");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_collisions_per_bullet", PROPERTY_HINT_RANGE, "1,256,1,or_greater"), "set_max_collisions_per_bullet", "get_max_collisions_per_bullet");
 	ADD_GROUP("Play Area", "play_area_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "play_area_mode", PROPERTY_HINT_ENUM, "Viewport,Manual,Infinite"), "set_play_area_mode", "get_play_area_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::RECT2, "play_area_rect"), "set_play_area_rect", "get_play_area_rect");
@@ -336,6 +348,7 @@ void BulletServer::_bind_methods() {
 BulletServer::BulletServer() {
 	bullet_pool_size = 1500;
 	max_lifetime = 0.0;
+	max_collisions_per_bullet = 32;
 	play_area_allow_incoming = true;
 	play_area_mode = VIEWPORT;
 	play_area_margin = 0;

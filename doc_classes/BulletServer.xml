@@ -60,6 +60,9 @@
 			The total number of bullets managed by this server.
 			A [BulletServer] generates all bullets on ready, and adds/removes them from play by cycling them between active and inactive groups. Spawning bullets pulls them from the inactive group and makes them active, and recycles the oldest active bullet if no inactive bullets are available.
 		</member>
+		<member name="max_collisions_per_bullet" type="int" setter="set_max_collisions_per_bullet" getter="get_max_collisions_per_bullet" default="32">
+			The max number of collisions a single [Bullet] can detect in a single frame.
+		</member>
 		<member name="max_lifetime" type="float" setter="set_max_lifetime" getter="get_max_lifetime" default="0.0">
 			The maximium lifetime of any [Bullet] managed by the server. Bullets older than this are automatically popped. Setting to 0.0 means bullets do not pop automatically.
 		</member>
