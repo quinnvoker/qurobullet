@@ -2,9 +2,15 @@
 #define BULLETSERVER_H
 
 #include "bullet.h"
+#include "bullet_server_relay.h"
 #include "bullet_type.h"
+
+#include "core/config/engine.h"
 #include "core/os/os.h"
 #include "scene/2d/node_2d.h"
+#include "scene/resources/world_2d.h"
+#include "servers/physics_server_2d.h"
+
 #include <vector>
 
 class BulletServer : public Node2D {
@@ -34,6 +40,8 @@ private:
 	bool relay_autoconnect;
 
 	void _process_bullets(float delta);
+
+	void _handle_collisions(Bullet *bullet, PhysicsDirectSpaceState2D *space_state);
 
 	void _init_bullets();
 	void _create_bullet();

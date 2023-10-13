@@ -1,10 +1,5 @@
 #include "bullet_server.h"
 
-#include "bullet_server_relay.h"
-#include "core/config/engine.h"
-#include "scene/resources/world_2d.h"
-#include "servers/physics_server_2d.h"
-
 void BulletServer::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
@@ -50,9 +45,6 @@ void BulletServer::_notification(int p_what) {
 void BulletServer::_process_bullets(float delta) {
 	Vector<int> bullet_indices_to_clear;
 	PhysicsDirectSpaceState2D *space_state = get_world_2d()->get_direct_space_state();
-	Vector<PhysicsDirectSpaceState2D::ShapeResult> results;
-	results.resize(32);
-	PhysicsDirectSpaceState2D::ShapeParameters shape_params = PhysicsDirectSpaceState2D::ShapeParameters();
 
 	for (int i = 0; i < live_bullets.size(); i++) {
 		Bullet *bullet = live_bullets[i];
@@ -64,36 +56,7 @@ void BulletServer::_process_bullets(float delta) {
 			bullet->pop();
 		} else if (play_area_mode == INFINITE || play_area_rect.has_point(bullet->get_position())) {
 			bullet->update(delta);
-			if (!bullet->can_collide()) {
-				continue;
-			}
-			Ref<BulletType> b_type = bullet->get_type();
-
-			shape_params.shape_rid = b_type->get_collision_shape()->get_rid();
-			shape_params.transform = bullet->get_transform();
-			shape_params.motion = Vector2(0, 0);
-			shape_params.margin = 0.0;
-			shape_params.exclude = HashSet<RID>();
-			shape_params.collision_mask = b_type->get_collision_mask();
-			shape_params.collide_with_bodies = b_type->get_collision_detect_bodies();
-			shape_params.collide_with_areas = b_type->get_collision_detect_areas();
-
-			int collisions = space_state->intersect_shape(shape_params, results.ptrw(), results.size());
-			if (collisions > 0) {
-				Array colliders;
-				Array shapes;
-				colliders.resize(collisions);
-				shapes.resize(collisions);
-				for (int c = 0; c < collisions; c++) {
-					colliders[c] = results[c].collider;
-					shapes[c] = results[c].shape;
-				}
-				emit_signal("collision_detected", bullet, colliders);
-				emit_signal("collision_shape_detected", bullet, colliders, shapes);
-				if (pop_on_collide) {
-					bullet->pop();
-				}
-			}
+			_handle_collisions(bullet, space_state);
 		} else {
 			if (play_area_allow_incoming && bullet->get_direction().dot(play_area_rect.position + play_area_rect.size / 2 - bullet->get_position()) >= 0) {
 				bullet->update(delta);
@@ -107,6 +70,42 @@ void BulletServer::_process_bullets(float delta) {
 		Bullet *bullet = live_bullets[bullet_indices_to_clear[i] - i];
 		live_bullets.remove_at(bullet_indices_to_clear[i] - i);
 		dead_bullets.insert(0, bullet);
+	}
+}
+
+void BulletServer::_handle_collisions(Bullet *bullet, PhysicsDirectSpaceState2D *space_state) {
+	if (!bullet->can_collide()) {
+		return;
+	}
+	Vector<PhysicsDirectSpaceState2D::ShapeResult> results = Vector<PhysicsDirectSpaceState2D::ShapeResult>();
+	results.resize(max_collisions_per_bullet);
+	Ref<BulletType> b_type = bullet->get_type();
+	PhysicsDirectSpaceState2D::ShapeParameters shape_params = PhysicsDirectSpaceState2D::ShapeParameters();
+
+	shape_params.shape_rid = b_type->get_collision_shape()->get_rid();
+	shape_params.transform = bullet->get_transform();
+	shape_params.motion = Vector2(0, 0);
+	shape_params.margin = 0.0;
+	shape_params.exclude = HashSet<RID>();
+	shape_params.collision_mask = b_type->get_collision_mask();
+	shape_params.collide_with_bodies = b_type->get_collision_detect_bodies();
+	shape_params.collide_with_areas = b_type->get_collision_detect_areas();
+
+	int collisions = space_state->intersect_shape(shape_params, results.ptrw(), results.size());
+	if (collisions > 0) {
+		Array colliders;
+		Array shapes;
+		colliders.resize(collisions);
+		shapes.resize(collisions);
+		for (int c = 0; c < collisions; c++) {
+			colliders[c] = results[c].collider;
+			shapes[c] = results[c].shape;
+		}
+		emit_signal("collision_detected", bullet, colliders);
+		emit_signal("collision_shape_detected", bullet, colliders, shapes);
+		if (pop_on_collide) {
+			bullet->pop();
+		}
 	}
 }
 
