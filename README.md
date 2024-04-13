@@ -1,6 +1,6 @@
 Pre-built editor and template binaries for Godot 4.1.2 with qurobullet included can now be found [here](https://github.com/quinnvoker/godot-qurobullet/releases/tag/v1.2.1-godot-4.1.2)!
 
-_Note: The `main` branch contains code for Godot 4.x compatility. If you're using Godot 3.x, you want the `godot-3.x` branch instead! The last Godot 3.x-combpatible tag is `v1.1`, and the first 4.x-compatible tag is `v1.2`._
+_Note: The `main` branch contains code for Godot 4.x compatility. If you're using Godot 3.x, you want the `godot-3.x` branch instead! The last Godot 3.x-compatible tag is `v1.1`, and the first 4.x-compatible tag is `v1.2`._
 
 # qurobullet
 
