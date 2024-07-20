@@ -3,7 +3,7 @@
 
 #include "core/io/resource.h"
 #include "scene/resources/material.h"
-#include "scene/resources/shape_2d.h"
+#include "scene/resources/2d/shape_2d.h"
 #include "scene/resources/texture.h"
 
 class BulletType : public Resource {
